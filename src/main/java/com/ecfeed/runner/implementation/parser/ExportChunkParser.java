@@ -1,4 +1,4 @@
-package com.ecfeed.runner.implementation.parser.export;
+package com.ecfeed.runner.implementation.parser;
 
 import com.ecfeed.runner.design.parser.ChunkParser;
 

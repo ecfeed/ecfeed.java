@@ -1,4 +1,4 @@
-package com.ecfeed.runner.implementation.parser.stream;
+package com.ecfeed.runner.implementation.parser;
 
 import com.ecfeed.runner.design.parser.ChunkParser;
 import org.json.JSONArray;

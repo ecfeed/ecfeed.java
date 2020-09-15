@@ -5,8 +5,9 @@ import com.ecfeed.runner.constant.Template;
 import com.ecfeed.runner.design.IteratorTestStream;
 import com.ecfeed.runner.design.TestProvider;
 
-import com.ecfeed.runner.implementation.parser.export.ExportChunkParser;
-import com.ecfeed.runner.implementation.parser.stream.StreamChunkParser;
+import com.ecfeed.runner.design.parser.ChunkParser;
+import com.ecfeed.runner.implementation.parser.ExportChunkParser;
+import com.ecfeed.runner.implementation.parser.StreamChunkParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -368,8 +369,11 @@ public class TestProviderDefault implements TestProvider {
         return null;
     }
 
-    @Override
-    public void sendRequest(IteratorTestStream iterator, String request) {
+    private ChunkParser sendMockRequest() {
+        return null;
+    }
+
+    private void sendRequest(IteratorTestStream iterator, String request) {
 
         try {
             HttpGet httpRequest = new HttpGet(request);
