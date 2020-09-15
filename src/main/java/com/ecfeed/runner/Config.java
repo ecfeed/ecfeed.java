@@ -26,8 +26,14 @@ public final class Config {
 
         public static String parN = "2";
         public static String parCoverage = "100";
+        public static String parLength = "10";
+        public static String parDuplicates = "false";
+        public static String parAdaptive = "true";
 
         public static String parGenNWise = "genNWise";
+        public static String parGenCartesian = "genCartesian";
+        public static String parGenRandom = "genRandom";
+        public static String parGenStatic = "static";
 
         public static String parRequestTypeExport = "requestExport";
         public static String parRequestTypeStream = "requestData";
@@ -41,6 +47,9 @@ public final class Config {
 
         public static String parN = "n";
         public static String parCoverage = "coverage";
+        public static String parLength = "length";
+        public static String parDuplicates = "duplicates";
+        public static String parAdaptive = "adaptive";
 
         public static String parDataSource = "dataSource";
         public static String parProperties = "properties";

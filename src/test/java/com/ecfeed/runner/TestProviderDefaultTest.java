@@ -1,5 +1,6 @@
 package com.ecfeed.runner;
 
+import com.ecfeed.runner.constant.Template;
 import com.ecfeed.runner.design.TestProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -120,7 +121,7 @@ public class TestProviderDefaultTest {
             for (Object[] chunk : testProvider.streamNWise("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
                 System.out.println(Arrays.toString(chunk));
             };
-            for (String chunk : testProvider.exportNWise("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
+            for (String chunk : testProvider.exportNWise("com.example.test.LoanDecisionTest2.generateCustomerData", Template.JSON, config)) {
                 System.out.println(chunk);
             };
         }

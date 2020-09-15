@@ -1,6 +1,7 @@
 package com.ecfeed.runner.implementation;
 
 import com.ecfeed.runner.Config;
+import com.ecfeed.runner.constant.Template;
 import com.ecfeed.runner.design.IteratorTestStream;
 import com.ecfeed.runner.design.TestProvider;
 
@@ -196,23 +197,48 @@ public class TestProviderDefault implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<String> export(String method, String generator, Map<String, Object> properties) {
+    public IteratorTestStream<String> export(String method, String generator, Template template, Map<String, Object> properties) {
         IteratorTestStream<String> iterator = new IteratorTestStreamDefault<>(new ExportChunkParser());
         String userData = getUserData(generator, properties);
 
-        sendRequest(iterator, getRequest(method, userData, Optional.of("XML")));
+        sendRequest(iterator, getRequest(method, userData, Optional.of(template.toString())));
 
         return iterator;
     }
 
     @Override
-    public IteratorTestStream<String> exportNWise(String method, Map<String, Object> properties) {
+    public IteratorTestStream<String> exportNWise(String method, Template template, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Config.Name.parN, Config.Value.parN);
         addProperty(updatedProperties, Config.Name.parCoverage, Config.Value.parCoverage);
 
-        return export(method, Config.Value.parGenNWise, updatedProperties);
+        return export(method, Config.Value.parGenNWise, template, updatedProperties);
+    }
+
+    @Override
+    public IteratorTestStream<String> exportCartesian(String method, Template template, Map<String, Object> properties) {
+        Map<String, Object> updatedProperties = new HashMap<>(properties);
+
+        return export(method, Config.Value.parGenCartesian, template, updatedProperties);
+    }
+
+    @Override
+    public IteratorTestStream<String> exportRandom(String method, Template template, Map<String, Object> properties) {
+        Map<String, Object> updatedProperties = new HashMap<>(properties);
+
+        addProperty(updatedProperties, Config.Name.parLength, Config.Value.parLength);
+        addProperty(updatedProperties, Config.Name.parAdaptive, Config.Value.parAdaptive);
+        addProperty(updatedProperties, Config.Name.parDuplicates, Config.Value.parDuplicates);
+
+        return export(method, Config.Value.parGenRandom, template, updatedProperties);
+    }
+
+    @Override
+    public IteratorTestStream<String> exportStatic(String method, Template template, Map<String, Object> properties) {
+        Map<String, Object> updatedProperties = new HashMap<>(properties);
+
+        return export(method, Config.Value.parGenStatic, template, updatedProperties);
     }
 
     @Override
@@ -233,6 +259,31 @@ public class TestProviderDefault implements TestProvider {
         addProperty(updatedProperties, Config.Name.parCoverage, Config.Value.parCoverage);
 
         return stream(method, Config.Value.parGenNWise, updatedProperties);
+    }
+
+    @Override
+    public IteratorTestStream<Object[]> streamCartesian(String method, Map<String, Object> properties) {
+        Map<String, Object> updatedProperties = new HashMap<>(properties);
+
+        return stream(method, Config.Value.parGenCartesian, updatedProperties);
+    }
+
+    @Override
+    public IteratorTestStream<Object[]> streamRandom(String method, Map<String, Object> properties) {
+        Map<String, Object> updatedProperties = new HashMap<>(properties);
+
+        addProperty(updatedProperties, Config.Name.parLength, Config.Value.parLength);
+        addProperty(updatedProperties, Config.Name.parAdaptive, Config.Value.parAdaptive);
+        addProperty(updatedProperties, Config.Name.parDuplicates, Config.Value.parDuplicates);
+
+        return stream(method, Config.Value.parGenRandom, updatedProperties);
+    }
+
+    @Override
+    public IteratorTestStream<Object[]> streamStatic(String method, Map<String, Object> properties) {
+        Map<String, Object> updatedProperties = new HashMap<>(properties);
+
+        return stream(method, Config.Value.parGenStatic, updatedProperties);
     }
 
     private Map<String, Object> addProperty(Map<String, Object> map, String key, String value) {
