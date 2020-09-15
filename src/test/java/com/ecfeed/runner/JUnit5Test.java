@@ -72,10 +72,17 @@ public class JUnit5Test {
 
     @Test
     @DisplayName("NWise")
-    void exportNWise() {//choices/constraints/suites
+    void exportNWise() {
         TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
 
         Map<String, Object> config = new HashMap<>();
+
+        String[] constraints = new String[]{ "uno", "dos" };
+        config.put("constraints", constraints);
+
+        Map<String, String[]> choices = new HashMap<>();
+        choices.put("firstName", new String[]{ "male:short" });
+        config.put("choices", choices);
 
         for (Object[] chunk : testProvider.streamNWise("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
             System.out.println(Arrays.toString(chunk));
@@ -121,6 +128,9 @@ public class JUnit5Test {
         TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
 
         Map<String, Object> config = new HashMap<>();
+
+        String[] constraints = new String[]{ "testy" };
+        config.put("suites", constraints);
 
         for (Object[] chunk : testProvider.streamStatic("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
             System.out.println(Arrays.toString(chunk));

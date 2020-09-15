@@ -50,6 +50,9 @@ public final class Config {
         public static String parLength = "length";
         public static String parDuplicates = "duplicates";
         public static String parAdaptive = "adaptive";
+        public static String parConstraints = "constraints";
+        public static String parChoices = "choices";
+        public static String parTestSuites = "testSuites";
 
         public static String parDataSource = "dataSource";
         public static String parProperties = "properties";

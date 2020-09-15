@@ -298,6 +298,21 @@ public class TestProviderDefault implements TestProvider {
     private String getUserData(String generator, Map<String, Object> properties) {
         JSONObject userData = new JSONObject();
 
+        if (properties.containsKey(Config.Name.parConstraints)) {
+            userData.put(Config.Name.parConstraints, properties.get(Config.Name.parConstraints));
+            properties.remove(Config.Name.parConstraints);
+        }
+
+        if (properties.containsKey(Config.Name.parChoices)) {
+            userData.put(Config.Name.parChoices, properties.get(Config.Name.parChoices));
+            properties.remove(Config.Name.parChoices);
+        }
+
+        if (properties.containsKey(Config.Name.parTestSuites)) {
+            userData.put(Config.Name.parTestSuites, properties.get(Config.Name.parTestSuites));
+            properties.remove(Config.Name.parTestSuites);
+        }
+
         userData.put(Config.Name.parDataSource, generator);
         userData.put(Config.Name.parProperties, properties);
 
@@ -327,11 +342,13 @@ public class TestProviderDefault implements TestProvider {
         }
 
         String result = request.toString();
+        System.out.println(result);
         try {
             result = URLEncoder.encode(result, StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException("The URL request could not be built");
         }
+
 
         return requestBuilder.toString() + result;
     }

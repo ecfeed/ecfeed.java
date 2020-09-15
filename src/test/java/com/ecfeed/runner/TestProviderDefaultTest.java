@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestProviderDefaultTest {
 
-
     @Nested
     @DisplayName("Set up")
     class SetUp {
@@ -117,6 +116,13 @@ public class TestProviderDefaultTest {
             TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
 
             Map<String, Object> config = new HashMap<>();
+
+            String[] constraints = new String[]{"uno", "dos"};
+            config.put("constraints", constraints);
+
+            Map<String, String[]> choices = new HashMap<>();
+            choices.put("firstName", new String[]{ "male:short" });
+            config.put("choices", choices);
 
             for (Object[] chunk : testProvider.streamNWise("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
                 System.out.println(Arrays.toString(chunk));
