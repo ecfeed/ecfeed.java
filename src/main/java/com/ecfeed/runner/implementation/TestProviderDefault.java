@@ -202,7 +202,7 @@ public class TestProviderDefault implements TestProvider {
         IteratorTestStream<String> iterator = new IteratorTestStreamDefault<>(new ExportChunkParser());
         String userData = getUserData(generator, properties);
 
-        sendRequest(iterator, getRequest(method, userData, Optional.of(template.toString())));
+        processResponseStream(iterator, generateRequestURL(method, userData, Optional.of(template.toString())));
 
         return iterator;
     }
@@ -247,7 +247,7 @@ public class TestProviderDefault implements TestProvider {
         IteratorTestStream<Object[]> iterator = new IteratorTestStreamDefault<>(new StreamChunkParser());
         String userData = getUserData(generator, properties);
 
-        sendRequest(iterator, getRequest(method, userData, Optional.empty()));
+        processResponseStream(iterator, generateRequestURL(method, userData, Optional.empty()));
 
         return iterator;
     }
@@ -320,7 +320,7 @@ public class TestProviderDefault implements TestProvider {
         return userData.toString().replaceAll("\"", "'");
     }
 
-    private String getRequest(String method, String userData, Optional<String> template) {
+    private String generateRequestURL(String method, String userData, Optional<String> template) {
         StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append(this.generatorAddress + "/" + Config.Name.urlService + "?");
 
@@ -356,24 +356,60 @@ public class TestProviderDefault implements TestProvider {
 
     @Override
     public void validateConnection() {
+        IteratorTestStream<String> iterator = new IteratorTestStreamDefault<>(new ExportChunkParser());
+        processResponseStream(iterator, generateHealthCheckURL());
 
+        for (String ignored : iterator) {
+            System.out.println(ignored);
+        };
+    }
+
+    private String generateHealthCheckURL() {
+
+        return this.generatorAddress + "/" + Config.Name.urlHealthCheck;
     }
 
     @Override
     public List<String> getMethodNames(String methodName) {
-        return null;
+
+        return Arrays.asList(sendMockRequest(methodName).getMethodNames());
     }
 
     @Override
     public List<String> getMethodTypes(String methodName) {
-        return null;
+
+        return Arrays.asList(sendMockRequest(methodName).getMethodTypes());
     }
 
-    private ChunkParser sendMockRequest() {
-        return null;
+    private ChunkParser sendMockRequest(String methodName) {
+        Map<String, Object> properties = new HashMap<>();
+        addProperty(properties, Config.Name.parLength, "0");
+
+        ChunkParser chunkParser = new StreamChunkParser();
+        IteratorTestStream<Object[]> iterator = new IteratorTestStreamDefault<Object[]>(chunkParser);
+
+        String userData = getUserData(Config.Value.parGenRandom, properties);
+
+        processResponseStream(iterator, generateRequestURL(methodName, userData, Optional.empty()));
+
+        dryStream(iterator);
+
+        return chunkParser;
     }
 
-    private void sendRequest(IteratorTestStream iterator, String request) {
+    private InputStream getResponseStream(String request) {
+
+        try {
+            HttpGet httpRequest = new HttpGet(request);
+            HttpResponse httpResponse = httpClient.execute(httpRequest);
+            return httpResponse.getEntity().getContent();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("The connection was closed", e);
+        }
+
+    }
+
+    private void processResponseStream(IteratorTestStream<?> iterator, String request) {
 
         try {
             HttpGet httpRequest = new HttpGet(request);
@@ -386,7 +422,7 @@ public class TestProviderDefault implements TestProvider {
         cleanup(iterator);
     }
 
-    private void processChunkStream(IteratorTestStream iterator, InputStream chunkInputStream) {
+    private void processChunkStream(IteratorTestStream<?> iterator, InputStream chunkInputStream) {
         String chunk;
 
         try(BufferedReader responseReader = new BufferedReader(new InputStreamReader(chunkInputStream))) {
@@ -398,13 +434,22 @@ public class TestProviderDefault implements TestProvider {
         }
     }
 
-    private void processChunk(IteratorTestStream iterator, String chunk) {
+    private void processChunk(IteratorTestStream<?> iterator, String chunk) {
 
         iterator.append(chunk);
     }
 
-    private void cleanup(IteratorTestStream iterator) {
+    private void cleanup(IteratorTestStream<?> iterator) {
 
         iterator.terminate();
     }
+
+    private void dryStream(IteratorTestStream<?> iterator) {
+
+        for (Object ignored : iterator) {
+            nop();
+        };
+    }
+
+    private void nop() { }
 }

@@ -13,6 +13,19 @@ public class StreamChunkParser implements ChunkParser<Optional<Object[]>> {
     private static final String keyTestCaseValue = "value";
 
     private String[] argumentTypes = null;
+    private String[] argumentNames = null;
+
+    @Override
+    public String[] getMethodTypes() {
+
+        return argumentTypes;
+    }
+
+    @Override
+    public String[] getMethodNames() {
+
+        return argumentNames;
+    }
 
     @Override
     public Optional<Object[]> parse(String chunk) {
@@ -40,18 +53,20 @@ public class StreamChunkParser implements ChunkParser<Optional<Object[]>> {
     }
 
     private void parseInfoArgumentTypes(String method) {
-
         String parsedMethod;
 
         parsedMethod = new JSONObject(method).getString(keyInfoMethod);
         parsedMethod = parsedMethod.split("[\\(\\)]")[1];
-        String[] argumentArray = parsedMethod.split(", ");
+        String[] argument = parsedMethod.split(", ");
 
-        for (int i = 0 ; i < argumentArray.length ; i++) {
-            argumentArray[i] = argumentArray[i].split(" ")[0];
+        argumentTypes = new String[argument.length];
+        argumentNames = new String[argument.length];
+
+        for (int i = 0 ; i < argument.length ; i++) {
+            String[] parsedArgument = argument[i].split(" ");
+            argumentTypes[i] = parsedArgument[0];
+            argumentNames[i] = parsedArgument[1];
         }
-
-        argumentTypes = argumentArray;
     }
 
     private Optional<Object[]> parseTestCase(JSONObject json) {

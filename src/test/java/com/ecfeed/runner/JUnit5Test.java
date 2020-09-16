@@ -139,4 +139,28 @@ public class JUnit5Test {
             System.out.println(chunk);
         };
     }
+
+    @Test
+    @DisplayName("Get method types")
+    void getMethodTypes() {
+        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+
+        System.out.println(testProvider.getMethodTypes("com.example.test.LoanDecisionTest2.generateCustomerData"));
+    }
+
+    @Test
+    @DisplayName("Get method names")
+    void getMethodNames() {
+        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+
+        System.out.println(testProvider.getMethodNames("com.example.test.LoanDecisionTest2.generateCustomerData"));
+    }
+
+    @Test
+    @DisplayName("Validate")
+    void validate() {
+        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+
+        testProvider.validateConnection();
+    }
 }

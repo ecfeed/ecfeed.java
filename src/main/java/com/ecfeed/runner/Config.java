@@ -66,6 +66,7 @@ public final class Config {
         public static String parTemplate = "template";
 
         public static String urlService = "testCaseService";
+        public static String urlHealthCheck = "genServiceVersion";
 
         public static String certClient = "connection";
         public static String certServer = "ca";
