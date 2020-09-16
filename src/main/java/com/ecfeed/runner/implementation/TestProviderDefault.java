@@ -1,7 +1,7 @@
 package com.ecfeed.runner.implementation;
 
-import com.ecfeed.runner.Config;
-import com.ecfeed.runner.constant.Template;
+import com.ecfeed.runner.Configuration;
+import com.ecfeed.runner.constant.ExportTemplate;
 import com.ecfeed.runner.design.IteratorTestStream;
 import com.ecfeed.runner.design.TestProvider;
 
@@ -31,6 +31,8 @@ import java.security.cert.CertificateException;
 import java.util.*;
 
 public class TestProviderDefault implements TestProvider {
+
+    private static final boolean development = true;
 
     private String model;
     private String generatorAddress;
@@ -66,13 +68,13 @@ public class TestProviderDefault implements TestProvider {
     private String setupExtractGeneratorAddress(Map<String, String> config) {
         String value = config.get("generatorAddress");
 
-        return value != null ? value : Config.Value.generatorAddress;
+        return value != null ? value : Configuration.Value.generatorAddress;
     }
 
     private String setupExtractKeyStorePassword(Map<String, String> config) {
         String value = config.get("keyStorePassword");
 
-        return value != null ? value : Config.Value.keyStorePassword;
+        return value != null ? value : Configuration.Value.keyStorePassword;
     }
 
     private Path setupExtractKeyStorePath(Map<String, String> config) {
@@ -92,7 +94,7 @@ public class TestProviderDefault implements TestProvider {
 
     private Path getKeyStoreDefault() {
 
-        for (String address : Config.Value.keyStorePath) {
+        for (String address : Configuration.Value.keyStorePath) {
             try {
                 return getKeyStore(address);
             } catch (IllegalArgumentException e) {
@@ -155,7 +157,11 @@ public class TestProviderDefault implements TestProvider {
     private SSLContextBuilder getKeyMaterial(SSLContextBuilder context, KeyStore keyStore) {
 
         try {
-            PrivateKeyStrategy strategy = (aliases, socket) -> Config.Name.certClient;
+            if (!keyStore.containsAlias(Configuration.Name.certClient)) {
+                throw new IllegalArgumentException("The client certificate could not be found: " + keyStorePath.toAbsolutePath());
+            }
+
+            PrivateKeyStrategy strategy = (aliases, socket) -> Configuration.Name.certClient;
             return context.loadKeyMaterial(keyStore, keyStorePassword.toCharArray(), strategy);
         } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException e) {
             throw new IllegalArgumentException("The client certificate could not be accessed.", e);
@@ -165,7 +171,11 @@ public class TestProviderDefault implements TestProvider {
     private SSLContextBuilder getTrustMaterial(SSLContextBuilder context, KeyStore keyStore) {
 
         try {
-            Certificate cert = keyStore.getCertificate(Config.Name.certServer);
+            if (!keyStore.containsAlias(Configuration.Name.certServer)) {
+                throw new IllegalArgumentException("The server certificate could not be found: " + keyStorePath.toAbsolutePath());
+            }
+
+            Certificate cert = keyStore.getCertificate(Configuration.Name.certServer);
             TrustStrategy strategy = (chain, authType) -> Arrays.asList(chain).stream().anyMatch(e -> e.equals(cert));
             return context.loadTrustMaterial(strategy);
         } catch (NoSuchAlgorithmException | KeyStoreException e) {
@@ -198,48 +208,50 @@ public class TestProviderDefault implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<String> export(String method, String generator, Template template, Map<String, Object> properties) {
+    public IteratorTestStream<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
         IteratorTestStream<String> iterator = new IteratorTestStreamDefault<>(new ExportChunkParser());
         String userData = getUserData(generator, properties);
 
-        processResponseStream(iterator, generateRequestURL(method, userData, Optional.of(template.toString())));
+        new Thread(() -> {
+            processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.of(exportTemplate.toString()))));
+        }).start();
 
         return iterator;
     }
 
     @Override
-    public IteratorTestStream<String> exportNWise(String method, Template template, Map<String, Object> properties) {
+    public IteratorTestStream<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Name.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Name.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Configuration.Name.parN, Configuration.Value.parN);
+        addProperty(updatedProperties, Configuration.Name.parCoverage, Configuration.Value.parCoverage);
 
-        return export(method, Config.Value.parGenNWise, template, updatedProperties);
+        return export(method, Configuration.Value.parGenNWise, exportTemplate, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<String> exportCartesian(String method, Template template, Map<String, Object> properties) {
+    public IteratorTestStream<String> exportCartesian(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return export(method, Config.Value.parGenCartesian, template, updatedProperties);
+        return export(method, Configuration.Value.parGenCartesian, exportTemplate, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<String> exportRandom(String method, Template template, Map<String, Object> properties) {
+    public IteratorTestStream<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Name.parLength, Config.Value.parLength);
-        addProperty(updatedProperties, Config.Name.parAdaptive, Config.Value.parAdaptive);
-        addProperty(updatedProperties, Config.Name.parDuplicates, Config.Value.parDuplicates);
+        addProperty(updatedProperties, Configuration.Name.parLength, Configuration.Value.parLength);
+        addProperty(updatedProperties, Configuration.Name.parAdaptive, Configuration.Value.parAdaptive);
+        addProperty(updatedProperties, Configuration.Name.parDuplicates, Configuration.Value.parDuplicates);
 
-        return export(method, Config.Value.parGenRandom, template, updatedProperties);
+        return export(method, Configuration.Value.parGenRandom, exportTemplate, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<String> exportStatic(String method, Template template, Map<String, Object> properties) {
+    public IteratorTestStream<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return export(method, Config.Value.parGenStatic, template, updatedProperties);
+        return export(method, Configuration.Value.parGenStatic, exportTemplate, updatedProperties);
     }
 
     @Override
@@ -247,7 +259,9 @@ public class TestProviderDefault implements TestProvider {
         IteratorTestStream<Object[]> iterator = new IteratorTestStreamDefault<>(new StreamChunkParser());
         String userData = getUserData(generator, properties);
 
-        processResponseStream(iterator, generateRequestURL(method, userData, Optional.empty()));
+        new Thread(() -> {
+            processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.empty())));
+        }).start();
 
         return iterator;
     }
@@ -256,35 +270,35 @@ public class TestProviderDefault implements TestProvider {
     public IteratorTestStream<Object[]> streamNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Name.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Name.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Configuration.Name.parN, Configuration.Value.parN);
+        addProperty(updatedProperties, Configuration.Name.parCoverage, Configuration.Value.parCoverage);
 
-        return stream(method, Config.Value.parGenNWise, updatedProperties);
+        return stream(method, Configuration.Value.parGenNWise, updatedProperties);
     }
 
     @Override
     public IteratorTestStream<Object[]> streamCartesian(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return stream(method, Config.Value.parGenCartesian, updatedProperties);
+        return stream(method, Configuration.Value.parGenCartesian, updatedProperties);
     }
 
     @Override
     public IteratorTestStream<Object[]> streamRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Name.parLength, Config.Value.parLength);
-        addProperty(updatedProperties, Config.Name.parAdaptive, Config.Value.parAdaptive);
-        addProperty(updatedProperties, Config.Name.parDuplicates, Config.Value.parDuplicates);
+        addProperty(updatedProperties, Configuration.Name.parLength, Configuration.Value.parLength);
+        addProperty(updatedProperties, Configuration.Name.parAdaptive, Configuration.Value.parAdaptive);
+        addProperty(updatedProperties, Configuration.Name.parDuplicates, Configuration.Value.parDuplicates);
 
-        return stream(method, Config.Value.parGenRandom, updatedProperties);
+        return stream(method, Configuration.Value.parGenRandom, updatedProperties);
     }
 
     @Override
     public IteratorTestStream<Object[]> streamStatic(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return stream(method, Config.Value.parGenStatic, updatedProperties);
+        return stream(method, Configuration.Value.parGenStatic, updatedProperties);
     }
 
     private Map<String, Object> addProperty(Map<String, Object> map, String key, String value) {
@@ -299,51 +313,50 @@ public class TestProviderDefault implements TestProvider {
     private String getUserData(String generator, Map<String, Object> properties) {
         JSONObject userData = new JSONObject();
 
-        if (properties.containsKey(Config.Name.parConstraints)) {
-            userData.put(Config.Name.parConstraints, properties.get(Config.Name.parConstraints));
-            properties.remove(Config.Name.parConstraints);
-        }
+        transferProperty(Configuration.Name.parConstraints, userData, properties);
+        transferProperty(Configuration.Name.parChoices, userData, properties);
+        transferProperty(Configuration.Name.parTestSuites, userData, properties);
 
-        if (properties.containsKey(Config.Name.parChoices)) {
-            userData.put(Config.Name.parChoices, properties.get(Config.Name.parChoices));
-            properties.remove(Config.Name.parChoices);
-        }
-
-        if (properties.containsKey(Config.Name.parTestSuites)) {
-            userData.put(Config.Name.parTestSuites, properties.get(Config.Name.parTestSuites));
-            properties.remove(Config.Name.parTestSuites);
-        }
-
-        userData.put(Config.Name.parDataSource, generator);
-        userData.put(Config.Name.parProperties, properties);
+        userData.put(Configuration.Name.parDataSource, generator);
+        userData.put(Configuration.Name.parProperties, properties);
 
         return userData.toString().replaceAll("\"", "'");
     }
 
+    private void transferProperty(String propertyName, JSONObject userData, Map<String, Object> properties) {
+
+        if (properties.containsKey(propertyName)) {
+            userData.put(propertyName, properties.get(propertyName));
+            properties.remove(propertyName);
+        }
+    }
+
     private String generateRequestURL(String method, String userData, Optional<String> template) {
         StringBuilder requestBuilder = new StringBuilder();
-        requestBuilder.append(this.generatorAddress + "/" + Config.Name.urlService + "?");
+        requestBuilder.append(this.generatorAddress + "/" + Configuration.Name.urlService + "?");
 
         if (template.isPresent()) {
-            requestBuilder.append(Config.Name.parRequestType + "=" + Config.Value.parRequestTypeExport);
+            requestBuilder.append(Configuration.Name.parRequestType + "=" + Configuration.Value.parRequestTypeExport);
         } else {
-            requestBuilder.append(Config.Name.parRequestType + "=" + Config.Value.parRequestTypeStream);
+            requestBuilder.append(Configuration.Name.parRequestType + "=" + Configuration.Value.parRequestTypeStream);
         }
 
-        requestBuilder.append("&" + Config.Name.parClient + "=" + Config.Value.parClient);
-        requestBuilder.append("&" + Config.Name.parRequest + "=");
+        requestBuilder.append("&" + Configuration.Name.parClient + "=" + Configuration.Value.parClient);
+        requestBuilder.append("&" + Configuration.Name.parRequest + "=");
 
         JSONObject request = new JSONObject();
-        request.put(Config.Name.parModel, this.model);
-        request.put(Config.Name.parMethod, method);
-        request.put(Config.Name.parUserData, userData);
+        request.put(Configuration.Name.parModel, this.model);
+        request.put(Configuration.Name.parMethod, method);
+        request.put(Configuration.Name.parUserData, userData);
 
         if (template.isPresent()) {
-            request.put(Config.Name.parTemplate, template.get());
+            request.put(Configuration.Name.parTemplate, template.get());
         }
 
         String result = request.toString();
-        System.out.println(result);
+
+        log(result);
+
         try {
             result = URLEncoder.encode(result, StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
@@ -357,16 +370,18 @@ public class TestProviderDefault implements TestProvider {
     @Override
     public void validateConnection() {
         IteratorTestStream<String> iterator = new IteratorTestStreamDefault<>(new ExportChunkParser());
-        processResponseStream(iterator, generateHealthCheckURL());
 
-        for (String ignored : iterator) {
-            System.out.println(ignored);
-        };
+        try {
+            processChunkStream(iterator, getChunkStream(generateHealthCheckURL()));
+            dryChunkStream(iterator);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("The connection could not be established", e);
+        }
     }
 
     private String generateHealthCheckURL() {
 
-        return this.generatorAddress + "/" + Config.Name.urlHealthCheck;
+        return this.generatorAddress + "/" + Configuration.Name.urlHealthCheck;
     }
 
     @Override
@@ -383,43 +398,29 @@ public class TestProviderDefault implements TestProvider {
 
     private ChunkParser sendMockRequest(String methodName) {
         Map<String, Object> properties = new HashMap<>();
-        addProperty(properties, Config.Name.parLength, "0");
+        addProperty(properties, Configuration.Name.parLength, "0");
 
         ChunkParser chunkParser = new StreamChunkParser();
         IteratorTestStream<Object[]> iterator = new IteratorTestStreamDefault<Object[]>(chunkParser);
 
-        String userData = getUserData(Config.Value.parGenRandom, properties);
+        String userData = getUserData(Configuration.Value.parGenRandom, properties);
 
-        processResponseStream(iterator, generateRequestURL(methodName, userData, Optional.empty()));
+        processChunkStream(iterator, getChunkStream(generateRequestURL(methodName, userData, Optional.empty())));
 
-        dryStream(iterator);
+        dryChunkStream(iterator);
 
         return chunkParser;
     }
 
-    private InputStream getResponseStream(String request) {
+    private InputStream getChunkStream(String request) {
 
         try {
             HttpGet httpRequest = new HttpGet(request);
             HttpResponse httpResponse = httpClient.execute(httpRequest);
             return httpResponse.getEntity().getContent();
         } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was closed", e);
+            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous): https://" + this.generatorAddress, e);
         }
-
-    }
-
-    private void processResponseStream(IteratorTestStream<?> iterator, String request) {
-
-        try {
-            HttpGet httpRequest = new HttpGet(request);
-            HttpResponse httpResponse = httpClient.execute(httpRequest);
-            processChunkStream(iterator, httpResponse.getEntity().getContent());
-        } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was closed", e);
-        }
-
-        cleanup(iterator);
     }
 
     private void processChunkStream(IteratorTestStream<?> iterator, InputStream chunkInputStream) {
@@ -432,6 +433,8 @@ public class TestProviderDefault implements TestProvider {
         } catch (IOException e) {
             throw new IllegalArgumentException("The connection was interrupted", e);
         }
+
+        cleanup(iterator);
     }
 
     private void processChunk(IteratorTestStream<?> iterator, String chunk) {
@@ -444,12 +447,22 @@ public class TestProviderDefault implements TestProvider {
         iterator.terminate();
     }
 
-    private void dryStream(IteratorTestStream<?> iterator) {
+    private void dryChunkStream(IteratorTestStream<?> iterator) {
 
         for (Object ignored : iterator) {
-            nop();
+            nop(ignored);
         };
     }
 
-    private void nop() { }
+    private void nop(Object chunk) {
+
+        System.out.println(chunk);
+    }
+
+    private void log(String event) {
+
+        if (development) {
+            System.out.println(event);
+        }
+    }
 }

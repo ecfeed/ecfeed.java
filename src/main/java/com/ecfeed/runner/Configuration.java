@@ -1,6 +1,6 @@
 package com.ecfeed.runner;
 
-public final class Config {
+public final class Configuration {
 
     private final static String homeUser;
     private final static String homeJava;
@@ -10,7 +10,7 @@ public final class Config {
         homeJava = System.getProperty("java.home");
     }
 
-    private Config() { }
+    private Configuration() { }
 
     public final static class Value {
 

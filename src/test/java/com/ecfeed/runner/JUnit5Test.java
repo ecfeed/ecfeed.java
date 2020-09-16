@@ -1,6 +1,6 @@
 package com.ecfeed.runner;
 
-import com.ecfeed.runner.constant.Template;
+import com.ecfeed.runner.constant.ExportTemplate;
 import com.ecfeed.runner.design.TestProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,9 @@ import java.util.Map;
 
 public class JUnit5Test {
 
+    private static String model = "MDWG-I8K7-BXRY-JTFR-JEDQ";
+    private static String method = "com.example.test.LoanDecisionTest2.generateCustomerData";
+
     enum Gender {
         MALE, FEMALE
     }
@@ -23,27 +26,27 @@ public class JUnit5Test {
     }
 
     static Iterator<Object[]> testProviderNWise() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
-        return testProvider.streamNWise("com.example.test.LoanDecisionTest2.generateCustomerData", config);
+        return testProvider.streamNWise(method, config);
     }
 
     static Iterator<Object[]> testProviderCartesian() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
-        return testProvider.streamCartesian("com.example.test.LoanDecisionTest2.generateCustomerData", config);
+        return testProvider.streamCartesian(method, config);
     }
 
     static Iterator<Object[]> testProviderRandom() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
-        return testProvider.streamRandom("com.example.test.LoanDecisionTest2.generateCustomerData", config);
+        return testProvider.streamRandom(method, config);
     }
 
     static Iterator<Object[]> testProviderStatic() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
-        return testProvider.streamStatic("com.example.test.LoanDecisionTest2.generateCustomerData", config);
+        return testProvider.streamStatic(method, config);
     }
 
     @ParameterizedTest
@@ -73,7 +76,7 @@ public class JUnit5Test {
     @Test
     @DisplayName("NWise")
     void exportNWise() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
 
         Map<String, Object> config = new HashMap<>();
 
@@ -84,10 +87,10 @@ public class JUnit5Test {
         choices.put("firstName", new String[]{ "male:short" });
         config.put("choices", choices);
 
-        for (Object[] chunk : testProvider.streamNWise("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
+        for (Object[] chunk : testProvider.streamNWise(method, config)) {
             System.out.println(Arrays.toString(chunk));
         };
-        for (String chunk : testProvider.exportNWise("com.example.test.LoanDecisionTest2.generateCustomerData", Template.JSON, config)) {
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, config)) {
             System.out.println(chunk);
         };
     }
@@ -95,14 +98,14 @@ public class JUnit5Test {
     @Test
     @DisplayName("Cartesian")
     void exportCartesian() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
 
         Map<String, Object> config = new HashMap<>();
 
-        for (Object[] chunk : testProvider.streamCartesian("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
+        for (Object[] chunk : testProvider.streamCartesian(method, config)) {
             System.out.println(Arrays.toString(chunk));
         };
-        for (String chunk : testProvider.exportCartesian("com.example.test.LoanDecisionTest2.generateCustomerData", Template.JSON, config)) {
+        for (String chunk : testProvider.exportCartesian(method, ExportTemplate.JSON, config)) {
             System.out.println(chunk);
         };
     }
@@ -110,14 +113,14 @@ public class JUnit5Test {
     @Test
     @DisplayName("Random")
     void exportRandom() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
 
         Map<String, Object> config = new HashMap<>();
 
-        for (Object[] chunk : testProvider.streamRandom("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
+        for (Object[] chunk : testProvider.streamRandom(method, config)) {
             System.out.println(Arrays.toString(chunk));
         };
-        for (String chunk : testProvider.exportRandom("com.example.test.LoanDecisionTest2.generateCustomerData", Template.JSON, config)) {
+        for (String chunk : testProvider.exportRandom(method, ExportTemplate.JSON, config)) {
             System.out.println(chunk);
         };
     }
@@ -125,17 +128,17 @@ public class JUnit5Test {
     @Test
     @DisplayName("Static")
     void exportStatic() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
 
         Map<String, Object> config = new HashMap<>();
 
         String[] constraints = new String[]{ "testy" };
         config.put("suites", constraints);
 
-        for (Object[] chunk : testProvider.streamStatic("com.example.test.LoanDecisionTest2.generateCustomerData", config)) {
+        for (Object[] chunk : testProvider.streamStatic(method, config)) {
             System.out.println(Arrays.toString(chunk));
         };
-        for (String chunk : testProvider.exportStatic("com.example.test.LoanDecisionTest2.generateCustomerData", Template.JSON, config)) {
+        for (String chunk : testProvider.exportStatic(method, ExportTemplate.JSON, config)) {
             System.out.println(chunk);
         };
     }
@@ -143,24 +146,108 @@ public class JUnit5Test {
     @Test
     @DisplayName("Get method types")
     void getMethodTypes() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
 
-        System.out.println(testProvider.getMethodTypes("com.example.test.LoanDecisionTest2.generateCustomerData"));
+        System.out.println(testProvider.getMethodTypes(method));
     }
 
     @Test
     @DisplayName("Get method names")
     void getMethodNames() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
 
-        System.out.println(testProvider.getMethodNames("com.example.test.LoanDecisionTest2.generateCustomerData"));
+        System.out.println(testProvider.getMethodNames(method));
     }
 
     @Test
     @DisplayName("Validate")
     void validate() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider("MDWG-I8K7-BXRY-JTFR-JEDQ");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
 
         testProvider.validateConnection();
+    }
+
+    @Test
+    @DisplayName("Error - generator address")
+    void errorGeneratorAddress() {
+        Map<String, String> config = new HashMap<>();
+        config.put("generatorAddress", "testAddress");
+        config.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+            System.out.println(chunk);
+        };
+    }
+
+    @Test
+    @DisplayName("Error - model name")
+    void errorModelName() {
+        Map<String, String> config = new HashMap<>();
+        config.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = EcFeedFactory.getTestProvider("testModel", config);
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+            System.out.println(chunk);
+        };
+    }
+
+    @Test
+    @DisplayName("Error - method name")
+    void errorMethodName() {
+        Map<String, String> config = new HashMap<>();
+        config.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+
+        for (String chunk : testProvider.exportNWise("testMethod", ExportTemplate.JSON, new HashMap<>())) {
+            System.out.println(chunk);
+        };
+    }
+
+    @Test
+    @DisplayName("Error - keystore address")
+    void errorKeyStoreAddress() {
+        Map<String, String> config = new HashMap<>();
+        config.put("keyStorePath", "testPath");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+
+        testProvider.validateConnection();
+    }
+
+    @Test
+    @DisplayName("Error - keystore password")
+    void errorKeyStorePassword() {
+        Map<String, String> config = new HashMap<>();
+        config.put("keyStorePassword", "testPassword");
+        config.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+            System.out.println(chunk);
+        };
+    }
+
+    @Test
+    @DisplayName("Error - missing client certificate")
+    void errorMissingClientCertificate() {
+        Map<String, String> config = new HashMap<>();
+        config.put("keyStorePath", "src/test/resources/securityNoClient.p12");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+            System.out.println(chunk);
+        };
+    }
+
+    @Test
+    @DisplayName("Error - missing server certificate")
+    void errorMissingServeCertificate() {
+        Map<String, String> config = new HashMap<>();
+        config.put("keyStorePath", "src/test/resources/securityNoServer.p12");
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+            System.out.println(chunk);
+        };
     }
 }

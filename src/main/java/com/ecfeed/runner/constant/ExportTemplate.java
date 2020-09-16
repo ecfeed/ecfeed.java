@@ -1,5 +1,5 @@
 package com.ecfeed.runner.constant;
 
-public enum Template {
+public enum ExportTemplate {
     XML, CSV, JSON, Gherkin
 }
