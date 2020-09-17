@@ -1,2 +1,4 @@
 rootProject.name = 'ecfeed.java'
+include 'com.ecfeed.runner'
+include 'com.ecfeed.test'
 
