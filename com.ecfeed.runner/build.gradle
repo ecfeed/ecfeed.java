@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'org.javamodularity.moduleplugin' version '1.7.0' apply false
 }
 
 group 'ecfeed.com'
@@ -36,6 +35,4 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
-
-  //  testCompile project(':com.ecfeed.runner').sourceSets.test.output
 }
