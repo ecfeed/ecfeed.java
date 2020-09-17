@@ -80,7 +80,7 @@ public class JUnit5Test {
 
         Map<String, Object> config = new HashMap<>();
 
-        String[] constraints = new String[]{ "uno", "dos" };
+        String[] constraints = new String[]{ "gender" };
         config.put("constraints", constraints);
 
         Map<String, String[]> choices = new HashMap<>();
@@ -89,10 +89,10 @@ public class JUnit5Test {
 
         for (Object[] chunk : testProvider.streamNWise(method, config)) {
             System.out.println(Arrays.toString(chunk));
-        };
+        }
         for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, config)) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -104,10 +104,10 @@ public class JUnit5Test {
 
         for (Object[] chunk : testProvider.streamCartesian(method, config)) {
             System.out.println(Arrays.toString(chunk));
-        };
+        }
         for (String chunk : testProvider.exportCartesian(method, ExportTemplate.JSON, config)) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -119,10 +119,10 @@ public class JUnit5Test {
 
         for (Object[] chunk : testProvider.streamRandom(method, config)) {
             System.out.println(Arrays.toString(chunk));
-        };
+        }
         for (String chunk : testProvider.exportRandom(method, ExportTemplate.JSON, config)) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -132,15 +132,15 @@ public class JUnit5Test {
 
         Map<String, Object> config = new HashMap<>();
 
-        String[] constraints = new String[]{ "testy" };
+        String[] constraints = new String[]{ "tests" };
         config.put("suites", constraints);
 
         for (Object[] chunk : testProvider.streamStatic(method, config)) {
             System.out.println(Arrays.toString(chunk));
-        };
+        }
         for (String chunk : testProvider.exportStatic(method, ExportTemplate.JSON, config)) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -177,7 +177,7 @@ public class JUnit5Test {
 
         for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -189,7 +189,7 @@ public class JUnit5Test {
 
         for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -201,7 +201,7 @@ public class JUnit5Test {
 
         for (String chunk : testProvider.exportNWise("testMethod", ExportTemplate.JSON, new HashMap<>())) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -224,7 +224,7 @@ public class JUnit5Test {
 
         for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -236,7 +236,7 @@ public class JUnit5Test {
 
         for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
             System.out.println(chunk);
-        };
+        }
     }
 
     @Test
@@ -248,6 +248,6 @@ public class JUnit5Test {
 
         for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
             System.out.println(chunk);
-        };
+        }
     }
 }

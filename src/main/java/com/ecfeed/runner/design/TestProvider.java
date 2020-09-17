@@ -15,7 +15,6 @@ public interface TestProvider {
 
     String getModel();
     String getGeneratorAddress();
-    String getKeyStorePassword();
     Path getKeyStorePath();
 
     IteratorTestStream<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties);

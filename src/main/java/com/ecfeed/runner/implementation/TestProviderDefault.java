@@ -98,7 +98,6 @@ public class TestProviderDefault implements TestProvider {
             try {
                 return getKeyStore(address);
             } catch (IllegalArgumentException e) {
-                continue;
             }
         }
 
@@ -176,7 +175,7 @@ public class TestProviderDefault implements TestProvider {
             }
 
             Certificate cert = keyStore.getCertificate(Configuration.Name.certServer);
-            TrustStrategy strategy = (chain, authType) -> Arrays.asList(chain).stream().anyMatch(e -> e.equals(cert));
+            TrustStrategy strategy = (chain, authType) -> Arrays.asList(chain).contains(cert);
             return context.loadTrustMaterial(strategy);
         } catch (NoSuchAlgorithmException | KeyStoreException e) {
             throw new IllegalArgumentException("The server certificate could not be accessed.", e);
@@ -196,12 +195,6 @@ public class TestProviderDefault implements TestProvider {
     }
 
     @Override
-    public String getKeyStorePassword() {
-
-        return keyStorePassword;
-    }
-
-    @Override
     public Path getKeyStorePath() {
 
         return keyStorePath;
@@ -213,7 +206,11 @@ public class TestProviderDefault implements TestProvider {
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
-            processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.of(exportTemplate.toString()))));
+            try {
+                processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.of(exportTemplate.toString()))));
+            } finally {
+                iterator.terminate();
+            }
         }).start();
 
         return iterator;
@@ -260,7 +257,11 @@ public class TestProviderDefault implements TestProvider {
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
-            processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.empty())));
+            try {
+                processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.empty())));
+            } finally {
+                iterator.terminate();
+            }
         }).start();
 
         return iterator;
@@ -333,25 +334,23 @@ public class TestProviderDefault implements TestProvider {
 
     private String generateRequestURL(String method, String userData, Optional<String> template) {
         StringBuilder requestBuilder = new StringBuilder();
-        requestBuilder.append(this.generatorAddress + "/" + Configuration.Name.urlService + "?");
+        requestBuilder.append(this.generatorAddress).append("/").append(Configuration.Name.urlService).append("?");
 
         if (template.isPresent()) {
-            requestBuilder.append(Configuration.Name.parRequestType + "=" + Configuration.Value.parRequestTypeExport);
+            requestBuilder.append(Configuration.Name.parRequestType).append("=").append(Configuration.Value.parRequestTypeExport);
         } else {
-            requestBuilder.append(Configuration.Name.parRequestType + "=" + Configuration.Value.parRequestTypeStream);
+            requestBuilder.append(Configuration.Name.parRequestType).append("=").append(Configuration.Value.parRequestTypeStream);
         }
 
-        requestBuilder.append("&" + Configuration.Name.parClient + "=" + Configuration.Value.parClient);
-        requestBuilder.append("&" + Configuration.Name.parRequest + "=");
+        requestBuilder.append("&").append(Configuration.Name.parClient).append("=").append(Configuration.Value.parClient);
+        requestBuilder.append("&").append(Configuration.Name.parRequest).append("=");
 
         JSONObject request = new JSONObject();
         request.put(Configuration.Name.parModel, this.model);
         request.put(Configuration.Name.parMethod, method);
         request.put(Configuration.Name.parUserData, userData);
 
-        if (template.isPresent()) {
-            request.put(Configuration.Name.parTemplate, template.get());
-        }
+        template.ifPresent(s -> request.put(Configuration.Name.parTemplate, s));
 
         String result = request.toString();
 
@@ -419,7 +418,7 @@ public class TestProviderDefault implements TestProvider {
             HttpResponse httpResponse = httpClient.execute(httpRequest);
             return httpResponse.getEntity().getContent();
         } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous): https://" + this.generatorAddress, e);
+            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous): https://" + this.generatorAddress + "/", e);
         }
     }
 
@@ -451,7 +450,7 @@ public class TestProviderDefault implements TestProvider {
 
         for (Object ignored : iterator) {
             nop(ignored);
-        };
+        }
     }
 
     private void nop(Object chunk) {
