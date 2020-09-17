@@ -1,6 +1,6 @@
-package com.ecfeed.runner.implementation.parser;
+package com.ecfeed.runner.implementation;
 
-import com.ecfeed.runner.design.parser.ChunkParser;
+import com.ecfeed.runner.design.ChunkParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

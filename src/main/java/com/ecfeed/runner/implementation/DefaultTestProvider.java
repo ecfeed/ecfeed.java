@@ -5,9 +5,7 @@ import com.ecfeed.runner.constant.ExportTemplate;
 import com.ecfeed.runner.design.IteratorTestStream;
 import com.ecfeed.runner.design.TestProvider;
 
-import com.ecfeed.runner.design.parser.ChunkParser;
-import com.ecfeed.runner.implementation.parser.ExportChunkParser;
-import com.ecfeed.runner.implementation.parser.StreamChunkParser;
+import com.ecfeed.runner.design.ChunkParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -30,7 +28,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
 
-public class TestProviderDefault implements TestProvider {
+public class DefaultTestProvider implements TestProvider {
 
     private static final boolean development = true;
 
@@ -40,19 +38,19 @@ public class TestProviderDefault implements TestProvider {
     private Path keyStorePath;
     private HttpClient httpClient;
 
-    private TestProviderDefault(String model, Map<String, String> config) {
+    private DefaultTestProvider(String model, Map<String, String> config) {
 
         setup(model, config);
     }
 
     public static TestProvider getTestProvider(String model) {
 
-        return new TestProviderDefault(model, new HashMap<>());
+        return new DefaultTestProvider(model, new HashMap<>());
     }
 
     public static TestProvider getTestProvider(String model, Map<String, String> config) {
 
-        return new TestProviderDefault(model, config);
+        return new DefaultTestProvider(model, config);
     }
 
     private void setup(String model, Map<String, String> config) {
@@ -202,7 +200,7 @@ public class TestProviderDefault implements TestProvider {
 
     @Override
     public IteratorTestStream<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
-        IteratorTestStream<String> iterator = new IteratorTestStreamDefault<>(new ExportChunkParser());
+        IteratorTestStream<String> iterator = new DefaultIteratorTestStream<>(new ExportChunkParser());
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
@@ -253,7 +251,7 @@ public class TestProviderDefault implements TestProvider {
 
     @Override
     public IteratorTestStream<Object[]> stream(String method, String generator, Map<String, Object> properties) {
-        IteratorTestStream<Object[]> iterator = new IteratorTestStreamDefault<>(new StreamChunkParser());
+        IteratorTestStream<Object[]> iterator = new DefaultIteratorTestStream<>(new StreamChunkParser());
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
@@ -368,7 +366,7 @@ public class TestProviderDefault implements TestProvider {
 
     @Override
     public void validateConnection() {
-        IteratorTestStream<String> iterator = new IteratorTestStreamDefault<>(new ExportChunkParser());
+        IteratorTestStream<String> iterator = new DefaultIteratorTestStream<>(new ExportChunkParser());
 
         try {
             processChunkStream(iterator, getChunkStream(generateHealthCheckURL()));
@@ -400,7 +398,7 @@ public class TestProviderDefault implements TestProvider {
         addProperty(properties, Configuration.Name.parLength, "0");
 
         ChunkParser chunkParser = new StreamChunkParser();
-        IteratorTestStream<Object[]> iterator = new IteratorTestStreamDefault<Object[]>(chunkParser);
+        IteratorTestStream<Object[]> iterator = new DefaultIteratorTestStream<Object[]>(chunkParser);
 
         String userData = getUserData(Configuration.Value.parGenRandom, properties);
 

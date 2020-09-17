@@ -16,60 +16,60 @@ public final class Configuration {
 
         private Value() { }
 
-        public static String generatorAddress = "https://develop-gen.ecfeed.com";
-        public static String keyStorePassword = "changeit";
-        public static String[] keyStorePath = {
+        public final static String generatorAddress = "https://develop-gen.ecfeed.com";
+        public final static String keyStorePassword = "changeit";
+        public final static String[] keyStorePath = {
                 ".ecfeed/security.p12", "ecfeed/security.p12",
                 homeUser + "/.ecfeed/security.p12", homeUser + "/ecfeed/security.p12",
                 homeJava + "/lib/security/cacerts"
         };
 
-        public static String parN = "2";
-        public static String parCoverage = "100";
-        public static String parLength = "10";
-        public static String parDuplicates = "false";
-        public static String parAdaptive = "true";
+        public final static String parN = "2";
+        public final static String parCoverage = "100";
+        public final static String parLength = "10";
+        public final static String parDuplicates = "false";
+        public final static String parAdaptive = "true";
 
-        public static String parGenNWise = "genNWise";
-        public static String parGenCartesian = "genCartesian";
-        public static String parGenRandom = "genRandom";
-        public static String parGenStatic = "static";
+        public final static String parGenNWise = "genNWise";
+        public final static String parGenCartesian = "genCartesian";
+        public final static String parGenRandom = "genRandom";
+        public final static String parGenStatic = "static";
 
-        public static String parRequestTypeExport = "requestExport";
-        public static String parRequestTypeStream = "requestData";
+        public final static String parRequestTypeExport = "requestExport";
+        public final static String parRequestTypeStream = "requestData";
 
-        public static String parClient = "java";
+        public final static String parClient = "java";
     }
 
     public final static class Name {
 
         private Name() { }
 
-        public static String parN = "n";
-        public static String parCoverage = "coverage";
-        public static String parLength = "length";
-        public static String parDuplicates = "duplicates";
-        public static String parAdaptive = "adaptive";
-        public static String parConstraints = "constraints";
-        public static String parChoices = "choices";
-        public static String parTestSuites = "testSuites";
+        public final static String parN = "n";
+        public final static String parCoverage = "coverage";
+        public final static String parLength = "length";
+        public final static String parDuplicates = "duplicates";
+        public final static String parAdaptive = "adaptive";
+        public final static String parConstraints = "constraints";
+        public final static String parChoices = "choices";
+        public final static String parTestSuites = "testSuites";
 
-        public static String parDataSource = "dataSource";
-        public static String parProperties = "properties";
+        public final static String parDataSource = "dataSource";
+        public final static String parProperties = "properties";
 
-        public static String parModel = "model";
-        public static String parMethod = "method";
-        public static String parUserData = "userData";
-        public static String parRequestType = "requestType";
-        public static String parClient = "client";
-        public static String parRequest = "request";
-        public static String parTemplate = "template";
+        public final static String parModel = "model";
+        public final static String parMethod = "method";
+        public final static String parUserData = "userData";
+        public final static String parRequestType = "requestType";
+        public final static String parClient = "client";
+        public final static String parRequest = "request";
+        public final static String parTemplate = "template";
 
-        public static String urlService = "testCaseService";
-        public static String urlHealthCheck = "genServiceVersion";
+        public final static String urlService = "testCaseService";
+        public final static String urlHealthCheck = "genServiceVersion";
 
-        public static String certClient = "connection";
-        public static String certServer = "ca";
+        public final static String certClient = "connection";
+        public final static String certServer = "ca";
     }
 
 }

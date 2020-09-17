@@ -1,7 +1,7 @@
 package com.ecfeed.runner;
 
 import com.ecfeed.runner.design.TestProvider;
-import com.ecfeed.runner.implementation.TestProviderDefault;
+import com.ecfeed.runner.implementation.DefaultTestProvider;
 
 import java.util.Map;
 
@@ -11,11 +11,11 @@ public final class EcFeedFactory {
 
     public static TestProvider getTestProvider(String model) {
 
-        return TestProviderDefault.getTestProvider(model);
+        return DefaultTestProvider.getTestProvider(model);
     }
 
     public static TestProvider getTestProvider(String model, Map<String, String> config) {
 
-        return TestProviderDefault.getTestProvider(model, config);
+        return DefaultTestProvider.getTestProvider(model, config);
     }
 }
