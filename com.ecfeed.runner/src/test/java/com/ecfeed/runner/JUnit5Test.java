@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class JUnit5Test {
 
-    private static String model = "MDWG-I8K7-BXRY-JTFR-JEDQ";
+    private static String model = "ZCPH-DFYI-R7R7-R6MM-89L8";
     private static String method = "com.example.test.LoanDecisionTest2.generateCustomerData";
 
     enum Gender {
