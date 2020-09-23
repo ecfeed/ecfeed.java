@@ -154,11 +154,11 @@ public class DefaultTestProvider implements TestProvider {
     private SSLContextBuilder getKeyMaterial(SSLContextBuilder context, KeyStore keyStore) {
 
         try {
-            if (!keyStore.containsAlias(Configuration.Name.certClient)) {
+            if (!keyStore.containsAlias(Configuration.Key.certClient)) {
                 throw new IllegalArgumentException("The client certificate could not be found: " + keyStorePath.toAbsolutePath());
             }
 
-            PrivateKeyStrategy strategy = (aliases, socket) -> Configuration.Name.certClient;
+            PrivateKeyStrategy strategy = (aliases, socket) -> Configuration.Key.certClient;
             return context.loadKeyMaterial(keyStore, keyStorePassword.toCharArray(), strategy);
         } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException e) {
             throw new IllegalArgumentException("The client certificate could not be accessed.", e);
@@ -168,11 +168,11 @@ public class DefaultTestProvider implements TestProvider {
     private SSLContextBuilder getTrustMaterial(SSLContextBuilder context, KeyStore keyStore) {
 
         try {
-            if (!keyStore.containsAlias(Configuration.Name.certServer)) {
+            if (!keyStore.containsAlias(Configuration.Key.certServer)) {
                 throw new IllegalArgumentException("The server certificate could not be found: " + keyStorePath.toAbsolutePath());
             }
 
-            Certificate cert = keyStore.getCertificate(Configuration.Name.certServer);
+            Certificate cert = keyStore.getCertificate(Configuration.Key.certServer);
             TrustStrategy strategy = (chain, authType) -> Arrays.asList(chain).contains(cert);
             return context.loadTrustMaterial(strategy);
         } catch (NoSuchAlgorithmException | KeyStoreException e) {
@@ -200,6 +200,8 @@ public class DefaultTestProvider implements TestProvider {
 
     @Override
     public Iterable<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
+        Configuration.validateUserParameters(properties);
+
         IterableTestStream<String> iterator = new DefaultIterableTestStream<>(new ExportChunkParser());
         String userData = getUserData(generator, properties);
 
@@ -218,8 +220,8 @@ public class DefaultTestProvider implements TestProvider {
     public Iterable<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Configuration.Name.parN, Configuration.Value.parN);
-        addProperty(updatedProperties, Configuration.Name.parCoverage, Configuration.Value.parCoverage);
+        addProperty(updatedProperties, Configuration.Key.parN, Configuration.Value.parN);
+        addProperty(updatedProperties, Configuration.Key.parCoverage, Configuration.Value.parCoverage);
 
         return export(method, Configuration.Value.parGenNWise, exportTemplate, updatedProperties);
     }
@@ -235,9 +237,9 @@ public class DefaultTestProvider implements TestProvider {
     public Iterable<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Configuration.Name.parLength, Configuration.Value.parLength);
-        addProperty(updatedProperties, Configuration.Name.parAdaptive, Configuration.Value.parAdaptive);
-        addProperty(updatedProperties, Configuration.Name.parDuplicates, Configuration.Value.parDuplicates);
+        addProperty(updatedProperties, Configuration.Key.parLength, Configuration.Value.parLength);
+        addProperty(updatedProperties, Configuration.Key.parAdaptive, Configuration.Value.parAdaptive);
+        addProperty(updatedProperties, Configuration.Key.parDuplicates, Configuration.Value.parDuplicates);
 
         return export(method, Configuration.Value.parGenRandom, exportTemplate, updatedProperties);
     }
@@ -251,6 +253,8 @@ public class DefaultTestProvider implements TestProvider {
 
     @Override
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
+        Configuration.validateUserParameters(properties);
+
         IterableTestStream<Object[]> iterator = new DefaultIterableTestStream<>(new StreamChunkParser());
         String userData = getUserData(generator, properties);
 
@@ -269,8 +273,8 @@ public class DefaultTestProvider implements TestProvider {
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Configuration.Name.parN, Configuration.Value.parN);
-        addProperty(updatedProperties, Configuration.Name.parCoverage, Configuration.Value.parCoverage);
+        addProperty(updatedProperties, Configuration.Key.parN, Configuration.Value.parN);
+        addProperty(updatedProperties, Configuration.Key.parCoverage, Configuration.Value.parCoverage);
 
         return generate(method, Configuration.Value.parGenNWise, updatedProperties);
     }
@@ -286,9 +290,9 @@ public class DefaultTestProvider implements TestProvider {
     public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Configuration.Name.parLength, Configuration.Value.parLength);
-        addProperty(updatedProperties, Configuration.Name.parAdaptive, Configuration.Value.parAdaptive);
-        addProperty(updatedProperties, Configuration.Name.parDuplicates, Configuration.Value.parDuplicates);
+        addProperty(updatedProperties, Configuration.Key.parLength, Configuration.Value.parLength);
+        addProperty(updatedProperties, Configuration.Key.parAdaptive, Configuration.Value.parAdaptive);
+        addProperty(updatedProperties, Configuration.Key.parDuplicates, Configuration.Value.parDuplicates);
 
         return generate(method, Configuration.Value.parGenRandom, updatedProperties);
     }
@@ -312,12 +316,12 @@ public class DefaultTestProvider implements TestProvider {
     private String getUserData(String generator, Map<String, Object> properties) {
         JSONObject userData = new JSONObject();
 
-        transferProperty(Configuration.Name.parConstraints, userData, properties);
-        transferProperty(Configuration.Name.parChoices, userData, properties);
-        transferProperty(Configuration.Name.parTestSuites, userData, properties);
+        transferProperty(Configuration.Key.parConstraints, userData, properties);
+        transferProperty(Configuration.Key.parChoices, userData, properties);
+        transferProperty(Configuration.Key.parTestSuites, userData, properties);
 
-        userData.put(Configuration.Name.parDataSource, generator);
-        userData.put(Configuration.Name.parProperties, properties);
+        userData.put(Configuration.Key.parDataSource, generator);
+        userData.put(Configuration.Key.parProperties, properties);
 
         return userData.toString().replaceAll("\"", "'");
     }
@@ -332,24 +336,24 @@ public class DefaultTestProvider implements TestProvider {
 
     private String generateRequestURL(String method, String userData, Optional<String> template) {
         StringBuilder requestBuilder = new StringBuilder();
-        requestBuilder.append(this.generatorAddress).append("/").append(Configuration.Name.urlService).append("?");
+        requestBuilder.append(this.generatorAddress).append("/").append(Configuration.Key.urlService).append("?");
 
         if (template.isPresent() && !template.get().equals(ExportTemplate.Raw.toString())) {
-            requestBuilder.append(Configuration.Name.parRequestType).append("=").append(Configuration.Value.parRequestTypeExport);
+            requestBuilder.append(Configuration.Key.parRequestType).append("=").append(Configuration.Value.parRequestTypeExport);
         } else {
-            requestBuilder.append(Configuration.Name.parRequestType).append("=").append(Configuration.Value.parRequestTypeStream);
+            requestBuilder.append(Configuration.Key.parRequestType).append("=").append(Configuration.Value.parRequestTypeStream);
         }
 
-        requestBuilder.append("&").append(Configuration.Name.parClient).append("=").append(Configuration.Value.parClient);
-        requestBuilder.append("&").append(Configuration.Name.parRequest).append("=");
+        requestBuilder.append("&").append(Configuration.Key.parClient).append("=").append(Configuration.Value.parClient);
+        requestBuilder.append("&").append(Configuration.Key.parRequest).append("=");
 
         JSONObject request = new JSONObject();
-        request.put(Configuration.Name.parModel, this.model);
-        request.put(Configuration.Name.parMethod, method);
-        request.put(Configuration.Name.parUserData, userData);
+        request.put(Configuration.Key.parModel, this.model);
+        request.put(Configuration.Key.parMethod, method);
+        request.put(Configuration.Key.parUserData, userData);
 
         if (template.isPresent() && !template.get().equals(ExportTemplate.Raw.toString())) {
-            request.put(Configuration.Name.parTemplate, template.get());
+            request.put(Configuration.Key.parTemplate, template.get());
         }
 
         String result = request.toString();
@@ -380,7 +384,7 @@ public class DefaultTestProvider implements TestProvider {
 
     private String generateHealthCheckURL() {
 
-        return this.generatorAddress + "/" + Configuration.Name.urlHealthCheck;
+        return this.generatorAddress + "/" + Configuration.Key.urlHealthCheck;
     }
 
     @Override
@@ -397,7 +401,7 @@ public class DefaultTestProvider implements TestProvider {
 
     private ChunkParser sendMockRequest(String methodName) {
         Map<String, Object> properties = new HashMap<>();
-        addProperty(properties, Configuration.Name.parLength, "0");
+        addProperty(properties, Configuration.Key.parLength, "0");
 
         ChunkParser chunkParser = new StreamChunkParser();
         IterableTestStream<Object[]> iterator = new DefaultIterableTestStream<Object[]>(chunkParser);
