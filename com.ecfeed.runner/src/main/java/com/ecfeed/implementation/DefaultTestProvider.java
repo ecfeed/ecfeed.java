@@ -1,6 +1,5 @@
 package com.ecfeed.implementation;
 
-import com.ecfeed.Configuration;
 import com.ecfeed.constant.ExportTemplate;
 import com.ecfeed.design.IterableTestStream;
 import com.ecfeed.design.TestProvider;
@@ -66,13 +65,13 @@ public class DefaultTestProvider implements TestProvider {
     private String setupExtractGeneratorAddress(Map<String, String> config) {
         String value = config.get("generatorAddress");
 
-        return value != null ? value : Configuration.Value.generatorAddress;
+        return value != null ? value : Config.Value.generatorAddress;
     }
 
     private String setupExtractKeyStorePassword(Map<String, String> config) {
         String value = config.get("keyStorePassword");
 
-        return value != null ? value : Configuration.Value.keyStorePassword;
+        return value != null ? value : Config.Value.keyStorePassword;
     }
 
     private Path setupExtractKeyStorePath(Map<String, String> config) {
@@ -92,7 +91,7 @@ public class DefaultTestProvider implements TestProvider {
 
     private Path getKeyStoreDefault() {
 
-        for (String address : Configuration.Value.keyStorePath) {
+        for (String address : Config.Value.keyStorePath) {
             try {
                 return getKeyStore(address);
             } catch (IllegalArgumentException ignored) {
@@ -154,11 +153,11 @@ public class DefaultTestProvider implements TestProvider {
     private SSLContextBuilder getKeyMaterial(SSLContextBuilder context, KeyStore keyStore) {
 
         try {
-            if (!keyStore.containsAlias(Configuration.Key.certClient)) {
+            if (!keyStore.containsAlias(Config.Key.certClient)) {
                 throw new IllegalArgumentException("The client certificate could not be found: " + keyStorePath.toAbsolutePath());
             }
 
-            PrivateKeyStrategy strategy = (aliases, socket) -> Configuration.Key.certClient;
+            PrivateKeyStrategy strategy = (aliases, socket) -> Config.Key.certClient;
             return context.loadKeyMaterial(keyStore, keyStorePassword.toCharArray(), strategy);
         } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException e) {
             throw new IllegalArgumentException("The client certificate could not be accessed.", e);
@@ -168,11 +167,11 @@ public class DefaultTestProvider implements TestProvider {
     private SSLContextBuilder getTrustMaterial(SSLContextBuilder context, KeyStore keyStore) {
 
         try {
-            if (!keyStore.containsAlias(Configuration.Key.certServer)) {
+            if (!keyStore.containsAlias(Config.Key.certServer)) {
                 throw new IllegalArgumentException("The server certificate could not be found: " + keyStorePath.toAbsolutePath());
             }
 
-            Certificate cert = keyStore.getCertificate(Configuration.Key.certServer);
+            Certificate cert = keyStore.getCertificate(Config.Key.certServer);
             TrustStrategy strategy = (chain, authType) -> Arrays.asList(chain).contains(cert);
             return context.loadTrustMaterial(strategy);
         } catch (NoSuchAlgorithmException | KeyStoreException e) {
@@ -200,7 +199,7 @@ public class DefaultTestProvider implements TestProvider {
 
     @Override
     public Iterable<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
-        Configuration.validateUserParameters(properties);
+        Config.validateUserParameters(properties);
 
         IterableTestStream<String> iterator = new DefaultIterableTestStream<>(new ExportChunkParser());
         String userData = getUserData(generator, properties);
@@ -220,40 +219,40 @@ public class DefaultTestProvider implements TestProvider {
     public Iterable<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Configuration.Key.parN, Configuration.Value.parN);
-        addProperty(updatedProperties, Configuration.Key.parCoverage, Configuration.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
-        return export(method, Configuration.Value.parGenNWise, exportTemplate, updatedProperties);
+        return export(method, Config.Value.parGenNWise, exportTemplate, updatedProperties);
     }
 
     @Override
     public Iterable<String> exportCartesian(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return export(method, Configuration.Value.parGenCartesian, exportTemplate, updatedProperties);
+        return export(method, Config.Value.parGenCartesian, exportTemplate, updatedProperties);
     }
 
     @Override
     public Iterable<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Configuration.Key.parLength, Configuration.Value.parLength);
-        addProperty(updatedProperties, Configuration.Key.parAdaptive, Configuration.Value.parAdaptive);
-        addProperty(updatedProperties, Configuration.Key.parDuplicates, Configuration.Value.parDuplicates);
+        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
+        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
+        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
 
-        return export(method, Configuration.Value.parGenRandom, exportTemplate, updatedProperties);
+        return export(method, Config.Value.parGenRandom, exportTemplate, updatedProperties);
     }
 
     @Override
     public Iterable<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return export(method, Configuration.Value.parGenStatic, exportTemplate, updatedProperties);
+        return export(method, Config.Value.parGenStatic, exportTemplate, updatedProperties);
     }
 
     @Override
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
-        Configuration.validateUserParameters(properties);
+        Config.validateUserParameters(properties);
 
         IterableTestStream<Object[]> iterator = new DefaultIterableTestStream<>(new StreamChunkParser());
         String userData = getUserData(generator, properties);
@@ -273,35 +272,35 @@ public class DefaultTestProvider implements TestProvider {
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Configuration.Key.parN, Configuration.Value.parN);
-        addProperty(updatedProperties, Configuration.Key.parCoverage, Configuration.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
-        return generate(method, Configuration.Value.parGenNWise, updatedProperties);
+        return generate(method, Config.Value.parGenNWise, updatedProperties);
     }
 
     @Override
     public Iterable<Object[]> generateCartesian(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return generate(method, Configuration.Value.parGenCartesian, updatedProperties);
+        return generate(method, Config.Value.parGenCartesian, updatedProperties);
     }
 
     @Override
     public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Configuration.Key.parLength, Configuration.Value.parLength);
-        addProperty(updatedProperties, Configuration.Key.parAdaptive, Configuration.Value.parAdaptive);
-        addProperty(updatedProperties, Configuration.Key.parDuplicates, Configuration.Value.parDuplicates);
+        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
+        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
+        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
 
-        return generate(method, Configuration.Value.parGenRandom, updatedProperties);
+        return generate(method, Config.Value.parGenRandom, updatedProperties);
     }
 
     @Override
     public Iterable<Object[]> generateStatic(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return generate(method, Configuration.Value.parGenStatic, updatedProperties);
+        return generate(method, Config.Value.parGenStatic, updatedProperties);
     }
 
     private Map<String, Object> addProperty(Map<String, Object> map, String key, String value) {
@@ -316,12 +315,12 @@ public class DefaultTestProvider implements TestProvider {
     private String getUserData(String generator, Map<String, Object> properties) {
         JSONObject userData = new JSONObject();
 
-        transferProperty(Configuration.Key.parConstraints, userData, properties);
-        transferProperty(Configuration.Key.parChoices, userData, properties);
-        transferProperty(Configuration.Key.parTestSuites, userData, properties);
+        transferProperty(Config.Key.parConstraints, userData, properties);
+        transferProperty(Config.Key.parChoices, userData, properties);
+        transferProperty(Config.Key.parTestSuites, userData, properties);
 
-        userData.put(Configuration.Key.parDataSource, generator);
-        userData.put(Configuration.Key.parProperties, properties);
+        userData.put(Config.Key.parDataSource, generator);
+        userData.put(Config.Key.parProperties, properties);
 
         return userData.toString().replaceAll("\"", "'");
     }
@@ -336,24 +335,24 @@ public class DefaultTestProvider implements TestProvider {
 
     private String generateRequestURL(String method, String userData, Optional<String> template) {
         StringBuilder requestBuilder = new StringBuilder();
-        requestBuilder.append(this.generatorAddress).append("/").append(Configuration.Key.urlService).append("?");
+        requestBuilder.append(this.generatorAddress).append("/").append(Config.Key.urlService).append("?");
 
         if (template.isPresent() && !template.get().equals(ExportTemplate.Raw.toString())) {
-            requestBuilder.append(Configuration.Key.parRequestType).append("=").append(Configuration.Value.parRequestTypeExport);
+            requestBuilder.append(Config.Key.parRequestType).append("=").append(Config.Value.parRequestTypeExport);
         } else {
-            requestBuilder.append(Configuration.Key.parRequestType).append("=").append(Configuration.Value.parRequestTypeStream);
+            requestBuilder.append(Config.Key.parRequestType).append("=").append(Config.Value.parRequestTypeStream);
         }
 
-        requestBuilder.append("&").append(Configuration.Key.parClient).append("=").append(Configuration.Value.parClient);
-        requestBuilder.append("&").append(Configuration.Key.parRequest).append("=");
+        requestBuilder.append("&").append(Config.Key.parClient).append("=").append(Config.Value.parClient);
+        requestBuilder.append("&").append(Config.Key.parRequest).append("=");
 
         JSONObject request = new JSONObject();
-        request.put(Configuration.Key.parModel, this.model);
-        request.put(Configuration.Key.parMethod, method);
-        request.put(Configuration.Key.parUserData, userData);
+        request.put(Config.Key.parModel, this.model);
+        request.put(Config.Key.parMethod, method);
+        request.put(Config.Key.parUserData, userData);
 
         if (template.isPresent() && !template.get().equals(ExportTemplate.Raw.toString())) {
-            request.put(Configuration.Key.parTemplate, template.get());
+            request.put(Config.Key.parTemplate, template.get());
         }
 
         String result = request.toString();
@@ -384,7 +383,7 @@ public class DefaultTestProvider implements TestProvider {
 
     private String generateHealthCheckURL() {
 
-        return this.generatorAddress + "/" + Configuration.Key.urlHealthCheck;
+        return this.generatorAddress + "/" + Config.Key.urlHealthCheck;
     }
 
     @Override
@@ -401,12 +400,12 @@ public class DefaultTestProvider implements TestProvider {
 
     private ChunkParser sendMockRequest(String methodName) {
         Map<String, Object> properties = new HashMap<>();
-        addProperty(properties, Configuration.Key.parLength, "0");
+        addProperty(properties, Config.Key.parLength, "0");
 
         ChunkParser chunkParser = new StreamChunkParser();
         IterableTestStream<Object[]> iterator = new DefaultIterableTestStream<Object[]>(chunkParser);
 
-        String userData = getUserData(Configuration.Value.parGenRandom, properties);
+        String userData = getUserData(Config.Value.parGenRandom, properties);
 
         processChunkStream(iterator, getChunkStream(generateRequestURL(methodName, userData, Optional.empty())));
 
