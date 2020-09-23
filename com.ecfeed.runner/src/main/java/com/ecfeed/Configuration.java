@@ -1,5 +1,10 @@
 package com.ecfeed;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public final class Configuration {
 
     private final static String homeUser;
@@ -41,9 +46,9 @@ public final class Configuration {
         public final static String parClient = "java";
     }
 
-    public final static class Name {
+    public final static class Key {
 
-        private Name() { }
+        private Key() { }
 
         public final static String parN = "n";
         public final static String parCoverage = "coverage";
@@ -70,6 +75,20 @@ public final class Configuration {
 
         public final static String certClient = "connection";
         public final static String certServer = "ca";
+
+        public final static List<String> userAllowedKeys = Arrays.asList(
+                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites
+        );
+    }
+
+    public static void validateUserParameters(Map<String, Object> config) {
+        List<String> incorrectKeys = config.keySet().stream()
+                .filter( k -> !Key.userAllowedKeys.contains(k)).collect(Collectors.toList());
+
+        if (incorrectKeys.size() > 0) {
+            throw new IllegalArgumentException("The following configuration parameters are invalid: " +
+                    Arrays.toString(incorrectKeys.toArray()));
+        }
     }
 
 }

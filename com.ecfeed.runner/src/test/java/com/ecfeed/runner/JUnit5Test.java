@@ -298,4 +298,15 @@ public class JUnit5Test {
             System.out.println(chunk);
         }
     }
+
+    @Test
+    @DisplayName("Error - invalid user parameters")
+    void errorInvalidUserParameters() {
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+
+        Map<String, Object> config = new HashMap<>();
+        config.put("error", "error");
+
+        testProvider.exportNWise(method, ExportTemplate.JSON, config);
+    }
 }
