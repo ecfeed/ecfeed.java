@@ -5,7 +5,7 @@ import com.ecfeed.design.TestProvider;
 
 public class Main {
     public static void main(String[] args) {
-        TestProvider provider = EcFeedFactory.getTestProvider("dupa");
+        TestProvider provider = EcFeedFactory.getTestProvider("test");
 
     }
 }
