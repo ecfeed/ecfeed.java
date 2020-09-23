@@ -76,14 +76,14 @@ public final class Configuration {
         public final static String certClient = "connection";
         public final static String certServer = "ca";
 
-        public final static List<String> userKeys = Arrays.asList(
+        public final static List<String> userAllowedKeys = Arrays.asList(
                 parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites
         );
     }
 
     public static void validateUserParameters(Map<String, Object> config) {
         List<String> incorrectKeys = config.keySet().stream()
-                .filter( k -> !Key.userKeys.contains(k)).collect(Collectors.toList());
+                .filter( k -> !Key.userAllowedKeys.contains(k)).collect(Collectors.toList());
 
         if (incorrectKeys.size() > 0) {
             throw new IllegalArgumentException("The following configuration parameters are invalid: " +
