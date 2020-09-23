@@ -1,7 +1,7 @@
-package com.ecfeed.runner;
+package com.ecfeed;
 
-import com.ecfeed.runner.design.TestProvider;
-import com.ecfeed.runner.implementation.DefaultTestProvider;
+import com.ecfeed.design.TestProvider;
+import com.ecfeed.implementation.DefaultTestProvider;
 
 import java.util.Map;
 

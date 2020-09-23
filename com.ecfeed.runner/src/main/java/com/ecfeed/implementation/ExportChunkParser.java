@@ -1,6 +1,6 @@
-package com.ecfeed.runner.implementation;
+package com.ecfeed.implementation;
 
-import com.ecfeed.runner.design.ChunkParser;
+import com.ecfeed.design.ChunkParser;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.ecfeed.runner;
+package com.ecfeed;
 
 public final class Configuration {
 

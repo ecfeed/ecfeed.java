@@ -1,11 +1,11 @@
-package com.ecfeed.runner.implementation;
+package com.ecfeed.implementation;
 
-import com.ecfeed.runner.Configuration;
-import com.ecfeed.runner.constant.ExportTemplate;
-import com.ecfeed.runner.design.IteratorTestStream;
-import com.ecfeed.runner.design.TestProvider;
+import com.ecfeed.Configuration;
+import com.ecfeed.constant.ExportTemplate;
+import com.ecfeed.design.IteratorTestStream;
+import com.ecfeed.design.TestProvider;
 
-import com.ecfeed.runner.design.ChunkParser;
+import com.ecfeed.design.ChunkParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -95,7 +95,7 @@ public class DefaultTestProvider implements TestProvider {
         for (String address : Configuration.Value.keyStorePath) {
             try {
                 return getKeyStore(address);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException ignored) {
             }
         }
 
@@ -250,7 +250,7 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<Object[]> stream(String method, String generator, Map<String, Object> properties) {
+    public IteratorTestStream<Object[]> generate(String method, String generator, Map<String, Object> properties) {
         IteratorTestStream<Object[]> iterator = new DefaultIteratorTestStream<>(new StreamChunkParser());
         String userData = getUserData(generator, properties);
 
@@ -266,38 +266,38 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<Object[]> streamNWise(String method, Map<String, Object> properties) {
+    public IteratorTestStream<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Configuration.Name.parN, Configuration.Value.parN);
         addProperty(updatedProperties, Configuration.Name.parCoverage, Configuration.Value.parCoverage);
 
-        return stream(method, Configuration.Value.parGenNWise, updatedProperties);
+        return generate(method, Configuration.Value.parGenNWise, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<Object[]> streamCartesian(String method, Map<String, Object> properties) {
+    public IteratorTestStream<Object[]> generateCartesian(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return stream(method, Configuration.Value.parGenCartesian, updatedProperties);
+        return generate(method, Configuration.Value.parGenCartesian, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<Object[]> streamRandom(String method, Map<String, Object> properties) {
+    public IteratorTestStream<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Configuration.Name.parLength, Configuration.Value.parLength);
         addProperty(updatedProperties, Configuration.Name.parAdaptive, Configuration.Value.parAdaptive);
         addProperty(updatedProperties, Configuration.Name.parDuplicates, Configuration.Value.parDuplicates);
 
-        return stream(method, Configuration.Value.parGenRandom, updatedProperties);
+        return generate(method, Configuration.Value.parGenRandom, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<Object[]> streamStatic(String method, Map<String, Object> properties) {
+    public IteratorTestStream<Object[]> generateStatic(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return stream(method, Configuration.Value.parGenStatic, updatedProperties);
+        return generate(method, Configuration.Value.parGenStatic, updatedProperties);
     }
 
     private Map<String, Object> addProperty(Map<String, Object> map, String key, String value) {

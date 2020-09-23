@@ -1,7 +1,7 @@
-package com.ecfeed.runner.implementation;
+package com.ecfeed.implementation;
 
-import com.ecfeed.runner.design.IteratorTestStream;
-import com.ecfeed.runner.design.ChunkParser;
+import com.ecfeed.design.IteratorTestStream;
+import com.ecfeed.design.ChunkParser;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -59,7 +59,7 @@ public class DefaultIteratorTestStream<T> implements IteratorTestStream<T> {
     @Override
     public void append(String chunk) {
 
-        chunkParser.parse(chunk).ifPresent(e -> appendParsedTest(e));
+        chunkParser.parse(chunk).ifPresent(this::appendParsedTest);
     }
 
     private void appendParsedTest(T parsedTest) {

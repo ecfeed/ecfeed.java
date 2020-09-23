@@ -1,6 +1,6 @@
-package com.ecfeed.runner.design;
+package com.ecfeed.design;
 
-import com.ecfeed.runner.constant.ExportTemplate;
+import com.ecfeed.constant.ExportTemplate;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -23,9 +23,9 @@ public interface TestProvider {
     IteratorTestStream<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
     IteratorTestStream<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
 
-    IteratorTestStream<Object[]> stream(String method, String generator, Map<String, Object> properties);
-    IteratorTestStream<Object[]> streamNWise(String method, Map<String, Object> properties);
-    IteratorTestStream<Object[]> streamCartesian(String method, Map<String, Object> properties);
-    IteratorTestStream<Object[]> streamRandom(String method, Map<String, Object> properties);
-    IteratorTestStream<Object[]> streamStatic(String method, Map<String, Object> properties);
+    IteratorTestStream<Object[]> generate(String method, String generator, Map<String, Object> properties);
+    IteratorTestStream<Object[]> generateNWise(String method, Map<String, Object> properties);
+    IteratorTestStream<Object[]> generateCartesian(String method, Map<String, Object> properties);
+    IteratorTestStream<Object[]> generateRandom(String method, Map<String, Object> properties);
+    IteratorTestStream<Object[]> generateStatic(String method, Map<String, Object> properties);
 }

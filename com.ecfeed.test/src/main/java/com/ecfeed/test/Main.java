@@ -1,7 +1,7 @@
 package com.ecfeed.test;
 
-import com.ecfeed.runner.EcFeedFactory;
-import com.ecfeed.runner.design.TestProvider;
+import com.ecfeed.EcFeedFactory;
+import com.ecfeed.design.TestProvider;
 
 public class Main {
     public static void main(String[] args) {

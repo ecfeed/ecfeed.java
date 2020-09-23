@@ -1,7 +1,8 @@
-module com.ecfeed.runner {
+module com.ecfeed {
     requires org.apache.httpcomponents.httpcore;
     requires org.apache.httpcomponents.httpclient;
     requires org.json;
-    exports com.ecfeed.runner;
-    exports com.ecfeed.runner.design;
+    exports com.ecfeed;
+    exports com.ecfeed.design;
+    exports com.ecfeed.constant;
 }

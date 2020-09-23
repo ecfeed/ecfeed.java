@@ -1,7 +1,8 @@
 package com.ecfeed.runner;
 
-import com.ecfeed.runner.constant.ExportTemplate;
-import com.ecfeed.runner.design.TestProvider;
+import com.ecfeed.EcFeedFactory;
+import com.ecfeed.constant.ExportTemplate;
+import com.ecfeed.design.TestProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,25 +29,25 @@ public class JUnit5Test {
     static Iterator<Object[]> testProviderNWise() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
-        return testProvider.streamNWise(method, config);
+        return testProvider.generateNWise(method, config);
     }
 
     static Iterator<Object[]> testProviderCartesian() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
-        return testProvider.streamCartesian(method, config);
+        return testProvider.generateCartesian(method, config);
     }
 
     static Iterator<Object[]> testProviderRandom() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
-        return testProvider.streamRandom(method, config);
+        return testProvider.generateRandom(method, config);
     }
 
     static Iterator<Object[]> testProviderStatic() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
-        return testProvider.streamStatic(method, config);
+        return testProvider.generateStatic(method, config);
     }
 
     @ParameterizedTest
@@ -87,7 +88,7 @@ public class JUnit5Test {
         choices.put("firstName", new String[]{ "male:short" });
         config.put("choices", choices);
 
-        for (Object[] chunk : testProvider.streamNWise(method, config)) {
+        for (Object[] chunk : testProvider.generateNWise(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
         for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, config)) {
@@ -102,7 +103,7 @@ public class JUnit5Test {
 
         Map<String, Object> config = new HashMap<>();
 
-        for (Object[] chunk : testProvider.streamCartesian(method, config)) {
+        for (Object[] chunk : testProvider.generateCartesian(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
         for (String chunk : testProvider.exportCartesian(method, ExportTemplate.JSON, config)) {
@@ -117,7 +118,7 @@ public class JUnit5Test {
 
         Map<String, Object> config = new HashMap<>();
 
-        for (Object[] chunk : testProvider.streamRandom(method, config)) {
+        for (Object[] chunk : testProvider.generateRandom(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
         for (String chunk : testProvider.exportRandom(method, ExportTemplate.JSON, config)) {
@@ -135,7 +136,7 @@ public class JUnit5Test {
         String[] constraints = new String[]{ "tests" };
         config.put("suites", constraints);
 
-        for (Object[] chunk : testProvider.streamStatic(method, config)) {
+        for (Object[] chunk : testProvider.generateStatic(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
         for (String chunk : testProvider.exportStatic(method, ExportTemplate.JSON, config)) {
