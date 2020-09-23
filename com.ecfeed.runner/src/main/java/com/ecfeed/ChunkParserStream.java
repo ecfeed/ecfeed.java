@@ -1,12 +1,11 @@
 package com.ecfeed;
 
-import com.ecfeed.design.ChunkParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Optional;
 
-public class StreamChunkParser implements ChunkParser<Optional<Object[]>> {
+public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     private static final String keyInfo = "info";
     private static final String keyInfoMethod = "method";
     private static final String keyTestCase = "testCase";

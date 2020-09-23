@@ -1,8 +1,5 @@
 package com.ecfeed;
 
-import com.ecfeed.constant.ExportTemplate;
-
-import com.ecfeed.design.ChunkParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -192,15 +189,15 @@ public class TestProvider {
         return keyStorePath;
     }
 
-    public Iterable<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> export(String method, String generator, TypeExport typeExport, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
-        IterableTestStream<String> iterator = new IterableTestStream<>(new ExportChunkParser());
+        IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
             try {
-                processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.of(exportTemplate.toString()))));
+                processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.of(typeExport.toString()))));
             } finally {
                 iterator.terminate();
             }
@@ -209,41 +206,41 @@ public class TestProvider {
         return iterator;
     }
 
-    public Iterable<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> exportNWise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
         addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
-        return export(method, Config.Value.parGenNWise, exportTemplate, updatedProperties);
+        return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
     }
 
-    public Iterable<String> exportCartesian(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> exportCartesian(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return export(method, Config.Value.parGenCartesian, exportTemplate, updatedProperties);
+        return export(method, Config.Value.parGenCartesian, typeExport, updatedProperties);
     }
 
-    public Iterable<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> exportRandom(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
         addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
         addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
 
-        return export(method, Config.Value.parGenRandom, exportTemplate, updatedProperties);
+        return export(method, Config.Value.parGenRandom, typeExport, updatedProperties);
     }
 
-    public Iterable<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> exportStatic(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return export(method, Config.Value.parGenStatic, exportTemplate, updatedProperties);
+        return export(method, Config.Value.parGenStatic, typeExport, updatedProperties);
     }
 
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
-        IterableTestStream<Object[]> iterator = new IterableTestStream<>(new StreamChunkParser());
+        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(new ChunkParserStream());
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
@@ -322,7 +319,7 @@ public class TestProvider {
         StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append(this.generatorAddress).append("/").append(Config.Key.urlService).append("?");
 
-        if (template.isPresent() && !template.get().equals(ExportTemplate.Raw.toString())) {
+        if (template.isPresent() && !template.get().equals(TypeExport.Raw.toString())) {
             requestBuilder.append(Config.Key.parRequestType).append("=").append(Config.Value.parRequestTypeExport);
         } else {
             requestBuilder.append(Config.Key.parRequestType).append("=").append(Config.Value.parRequestTypeStream);
@@ -336,7 +333,7 @@ public class TestProvider {
         request.put(Config.Key.parMethod, method);
         request.put(Config.Key.parUserData, userData);
 
-        if (template.isPresent() && !template.get().equals(ExportTemplate.Raw.toString())) {
+        if (template.isPresent() && !template.get().equals(TypeExport.Raw.toString())) {
             request.put(Config.Key.parTemplate, template.get());
         }
 
@@ -355,7 +352,7 @@ public class TestProvider {
     }
 
     public void validateConnection() {
-        IterableTestStream<String> iterator = new IterableTestStream<>(new ExportChunkParser());
+        IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
 
         try {
             processChunkStream(iterator, getChunkStream(generateHealthCheckURL()));
@@ -384,8 +381,8 @@ public class TestProvider {
         Map<String, Object> properties = new HashMap<>();
         addProperty(properties, Config.Key.parLength, "0");
 
-        ChunkParser chunkParser = new StreamChunkParser();
-        IterableTestStream<Object[]> iterator = new IterableTestStream<Object[]>(chunkParser);
+        ChunkParser chunkParser = new ChunkParserStream();
+        IterableTestQueue<Object[]> iterator = new IterableTestQueue<Object[]>(chunkParser);
 
         String userData = getUserData(Config.Value.parGenRandom, properties);
 
@@ -407,7 +404,7 @@ public class TestProvider {
         }
     }
 
-    private void processChunkStream(IterableTestStream<?> iterator, InputStream chunkInputStream) {
+    private void processChunkStream(IterableTestQueue<?> iterator, InputStream chunkInputStream) {
         String chunk;
 
         try(BufferedReader responseReader = new BufferedReader(new InputStreamReader(chunkInputStream))) {
@@ -421,17 +418,17 @@ public class TestProvider {
         cleanup(iterator);
     }
 
-    private void processChunk(IterableTestStream<?> iterator, String chunk) {
+    private void processChunk(IterableTestQueue<?> iterator, String chunk) {
 
         iterator.append(chunk);
     }
 
-    private void cleanup(IterableTestStream<?> iterator) {
+    private void cleanup(IterableTestQueue<?> iterator) {
 
         iterator.terminate();
     }
 
-    private void dryChunkStream(IterableTestStream<?> iterator) {
+    private void dryChunkStream(IterableTestQueue<?> iterator) {
 
         for (Object ignored : iterator) {
             nop(ignored);

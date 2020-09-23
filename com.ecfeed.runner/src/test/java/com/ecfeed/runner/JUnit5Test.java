@@ -1,7 +1,7 @@
 package com.ecfeed.runner;
 
 import com.ecfeed.TestProvider;
-import com.ecfeed.constant.ExportTemplate;
+import com.ecfeed.TypeExport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class JUnit5Test {
 
-    private static String model = "ZCPH-DFYI-R7R7-R6MM-89L8";
-    private static String method = "com.example.test.LoanDecisionTest2.generateCustomerData";
+    private static final String model = "ZCPH-DFYI-R7R7-R6MM-89L8";
+    private static final String method = "com.example.test.LoanDecisionTest2.generateCustomerData";
 
     enum Gender {
         MALE, FEMALE
@@ -79,7 +79,7 @@ public class JUnit5Test {
 
         Map<String, Object> config = new HashMap<>();
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.Raw, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.Raw, config)) {
             System.out.println(chunk);
         }
     }
@@ -91,7 +91,7 @@ public class JUnit5Test {
 
         Map<String, Object> config = new HashMap<>();
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -103,7 +103,7 @@ public class JUnit5Test {
 
         Map<String, Object> config = new HashMap<>();
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.CSV, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.CSV, config)) {
             System.out.println(chunk);
         }
     }
@@ -115,7 +115,7 @@ public class JUnit5Test {
 
         Map<String, Object> config = new HashMap<>();
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.Gherkin, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.Gherkin, config)) {
             System.out.println(chunk);
         }
     }
@@ -137,7 +137,7 @@ public class JUnit5Test {
         for (Object[] chunk : testProvider.generateNWise(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -152,7 +152,7 @@ public class JUnit5Test {
         for (Object[] chunk : testProvider.generateCartesian(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
-        for (String chunk : testProvider.exportCartesian(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportCartesian(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -167,7 +167,7 @@ public class JUnit5Test {
         for (Object[] chunk : testProvider.generateRandom(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
-        for (String chunk : testProvider.exportRandom(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportRandom(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -185,7 +185,7 @@ public class JUnit5Test {
         for (Object[] chunk : testProvider.generateStatic(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
-        for (String chunk : testProvider.exportStatic(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportStatic(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -222,7 +222,7 @@ public class JUnit5Test {
         config.put("keyStorePath", "src/test/resources/security.p12");
         TestProvider testProvider = TestProvider.create(model, config);
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
     }
@@ -234,7 +234,7 @@ public class JUnit5Test {
         config.put("keyStorePath", "src/test/resources/security.p12");
         TestProvider testProvider = TestProvider.create("testModel", config);
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
     }
@@ -246,7 +246,7 @@ public class JUnit5Test {
         config.put("keyStorePath", "src/test/resources/security.p12");
         TestProvider testProvider = TestProvider.create(model, config);
 
-        for (String chunk : testProvider.exportNWise("testMethod", ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise("testMethod", TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
     }
@@ -269,7 +269,7 @@ public class JUnit5Test {
         config.put("keyStorePath", "src/test/resources/security.p12");
         TestProvider testProvider = TestProvider.create(model, config);
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
     }
@@ -281,7 +281,7 @@ public class JUnit5Test {
         config.put("keyStorePath", "src/test/resources/securityNoClient.p12");
         TestProvider testProvider = TestProvider.create(model, config);
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
     }
@@ -293,7 +293,7 @@ public class JUnit5Test {
         config.put("keyStorePath", "src/test/resources/securityNoServer.p12");
         TestProvider testProvider = TestProvider.create(model, config);
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
     }
@@ -306,6 +306,6 @@ public class JUnit5Test {
         Map<String, Object> config = new HashMap<>();
         config.put("error", "error");
 
-        testProvider.exportNWise(method, ExportTemplate.JSON, config);
+        testProvider.exportNWise(method, TypeExport.JSON, config);
     }
 }
