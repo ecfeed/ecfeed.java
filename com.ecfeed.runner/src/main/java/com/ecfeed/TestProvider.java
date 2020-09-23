@@ -1,7 +1,6 @@
 package com.ecfeed;
 
 import com.ecfeed.constant.ExportTemplate;
-import com.ecfeed.design.IterableTestStream;
 
 import com.ecfeed.design.ChunkParser;
 import org.apache.http.HttpResponse;
@@ -196,7 +195,7 @@ public class TestProvider {
     public Iterable<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
-        IterableTestStream<String> iterator = new DefaultIterableTestStream<>(new ExportChunkParser());
+        IterableTestStream<String> iterator = new IterableTestStream<>(new ExportChunkParser());
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
@@ -244,7 +243,7 @@ public class TestProvider {
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
-        IterableTestStream<Object[]> iterator = new DefaultIterableTestStream<>(new StreamChunkParser());
+        IterableTestStream<Object[]> iterator = new IterableTestStream<>(new StreamChunkParser());
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
@@ -356,7 +355,7 @@ public class TestProvider {
     }
 
     public void validateConnection() {
-        IterableTestStream<String> iterator = new DefaultIterableTestStream<>(new ExportChunkParser());
+        IterableTestStream<String> iterator = new IterableTestStream<>(new ExportChunkParser());
 
         try {
             processChunkStream(iterator, getChunkStream(generateHealthCheckURL()));
@@ -386,7 +385,7 @@ public class TestProvider {
         addProperty(properties, Config.Key.parLength, "0");
 
         ChunkParser chunkParser = new StreamChunkParser();
-        IterableTestStream<Object[]> iterator = new DefaultIterableTestStream<Object[]>(chunkParser);
+        IterableTestStream<Object[]> iterator = new IterableTestStream<Object[]>(chunkParser);
 
         String userData = getUserData(Config.Value.parGenRandom, properties);
 

@@ -180,7 +180,7 @@ public class JUnit5Test {
         Map<String, Object> config = new HashMap<>();
 
         String[] constraints = new String[]{ "tests" };
-        config.put("suites", constraints);
+        config.put("testSuites", constraints);
 
         for (Object[] chunk : testProvider.generateStatic(method, config)) {
             System.out.println(Arrays.toString(chunk));
