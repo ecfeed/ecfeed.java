@@ -17,15 +17,15 @@ public interface TestProvider {
     String getGeneratorAddress();
     Path getKeyStorePath();
 
-    IteratorTestStream<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties);
-    IteratorTestStream<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
-    IteratorTestStream<String> exportCartesian(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
-    IteratorTestStream<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
-    IteratorTestStream<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
+    Iterable<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties);
+    Iterable<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
+    Iterable<String> exportCartesian(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
+    Iterable<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
+    Iterable<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties);
 
-    IteratorTestStream<Object[]> generate(String method, String generator, Map<String, Object> properties);
-    IteratorTestStream<Object[]> generateNWise(String method, Map<String, Object> properties);
-    IteratorTestStream<Object[]> generateCartesian(String method, Map<String, Object> properties);
-    IteratorTestStream<Object[]> generateRandom(String method, Map<String, Object> properties);
-    IteratorTestStream<Object[]> generateStatic(String method, Map<String, Object> properties);
+    Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties);
+    Iterable<Object[]> generateNWise(String method, Map<String, Object> properties);
+    Iterable<Object[]> generateCartesian(String method, Map<String, Object> properties);
+    Iterable<Object[]> generateRandom(String method, Map<String, Object> properties);
+    Iterable<Object[]> generateStatic(String method, Map<String, Object> properties);
 }

@@ -26,25 +26,25 @@ public class JUnit5Test {
         PASSPORT, DRIVERS_LICENSE, PERSONAL_ID
     }
 
-    static Iterator<Object[]> testProviderNWise() {
+    static Iterable<Object[]> testProviderNWise() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateNWise(method, config);
     }
 
-    static Iterator<Object[]> testProviderCartesian() {
+    static Iterable<Object[]> testProviderCartesian() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateCartesian(method, config);
     }
 
-    static Iterator<Object[]> testProviderRandom() {
+    static Iterable<Object[]> testProviderRandom() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateRandom(method, config);
     }
 
-    static Iterator<Object[]> testProviderStatic() {
+    static Iterable<Object[]> testProviderStatic() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateStatic(method, config);
