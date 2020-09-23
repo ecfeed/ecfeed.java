@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class JUnit5Test {
 
-    private static String model = "MDWG-I8K7-BXRY-JTFR-JEDQ";
+    private static String model = "ZCPH-DFYI-R7R7-R6MM-89L8";
     private static String method = "com.example.test.LoanDecisionTest2.generateCustomerData";
 
     enum Gender {
@@ -26,25 +26,25 @@ public class JUnit5Test {
         PASSPORT, DRIVERS_LICENSE, PERSONAL_ID
     }
 
-    static Iterator<Object[]> testProviderNWise() {
+    static Iterable<Object[]> testProviderNWise() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateNWise(method, config);
     }
 
-    static Iterator<Object[]> testProviderCartesian() {
+    static Iterable<Object[]> testProviderCartesian() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateCartesian(method, config);
     }
 
-    static Iterator<Object[]> testProviderRandom() {
+    static Iterable<Object[]> testProviderRandom() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateRandom(method, config);
     }
 
-    static Iterator<Object[]> testProviderStatic() {
+    static Iterable<Object[]> testProviderStatic() {
         TestProvider testProvider = EcFeedFactory.getTestProvider(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateStatic(method, config);

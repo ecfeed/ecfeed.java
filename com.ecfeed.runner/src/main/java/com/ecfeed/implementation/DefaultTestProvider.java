@@ -2,7 +2,7 @@ package com.ecfeed.implementation;
 
 import com.ecfeed.Configuration;
 import com.ecfeed.constant.ExportTemplate;
-import com.ecfeed.design.IteratorTestStream;
+import com.ecfeed.design.IterableTestStream;
 import com.ecfeed.design.TestProvider;
 
 import com.ecfeed.design.ChunkParser;
@@ -199,8 +199,8 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
-        IteratorTestStream<String> iterator = new DefaultIteratorTestStream<>(new ExportChunkParser());
+    public Iterable<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
+        IterableTestStream<String> iterator = new DefaultIterableTestStream<>(new ExportChunkParser());
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
@@ -215,7 +215,7 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Configuration.Name.parN, Configuration.Value.parN);
@@ -225,14 +225,14 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<String> exportCartesian(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> exportCartesian(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         return export(method, Configuration.Value.parGenCartesian, exportTemplate, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Configuration.Name.parLength, Configuration.Value.parLength);
@@ -243,15 +243,15 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
+    public Iterable<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         return export(method, Configuration.Value.parGenStatic, exportTemplate, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<Object[]> generate(String method, String generator, Map<String, Object> properties) {
-        IteratorTestStream<Object[]> iterator = new DefaultIteratorTestStream<>(new StreamChunkParser());
+    public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
+        IterableTestStream<Object[]> iterator = new DefaultIterableTestStream<>(new StreamChunkParser());
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {
@@ -266,7 +266,7 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<Object[]> generateNWise(String method, Map<String, Object> properties) {
+    public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Configuration.Name.parN, Configuration.Value.parN);
@@ -276,14 +276,14 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<Object[]> generateCartesian(String method, Map<String, Object> properties) {
+    public Iterable<Object[]> generateCartesian(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         return generate(method, Configuration.Value.parGenCartesian, updatedProperties);
     }
 
     @Override
-    public IteratorTestStream<Object[]> generateRandom(String method, Map<String, Object> properties) {
+    public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Configuration.Name.parLength, Configuration.Value.parLength);
@@ -294,7 +294,7 @@ public class DefaultTestProvider implements TestProvider {
     }
 
     @Override
-    public IteratorTestStream<Object[]> generateStatic(String method, Map<String, Object> properties) {
+    public Iterable<Object[]> generateStatic(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         return generate(method, Configuration.Value.parGenStatic, updatedProperties);
@@ -366,7 +366,7 @@ public class DefaultTestProvider implements TestProvider {
 
     @Override
     public void validateConnection() {
-        IteratorTestStream<String> iterator = new DefaultIteratorTestStream<>(new ExportChunkParser());
+        IterableTestStream<String> iterator = new DefaultIterableTestStream<>(new ExportChunkParser());
 
         try {
             processChunkStream(iterator, getChunkStream(generateHealthCheckURL()));
@@ -398,7 +398,7 @@ public class DefaultTestProvider implements TestProvider {
         addProperty(properties, Configuration.Name.parLength, "0");
 
         ChunkParser chunkParser = new StreamChunkParser();
-        IteratorTestStream<Object[]> iterator = new DefaultIteratorTestStream<Object[]>(chunkParser);
+        IterableTestStream<Object[]> iterator = new DefaultIterableTestStream<Object[]>(chunkParser);
 
         String userData = getUserData(Configuration.Value.parGenRandom, properties);
 
@@ -420,7 +420,7 @@ public class DefaultTestProvider implements TestProvider {
         }
     }
 
-    private void processChunkStream(IteratorTestStream<?> iterator, InputStream chunkInputStream) {
+    private void processChunkStream(IterableTestStream<?> iterator, InputStream chunkInputStream) {
         String chunk;
 
         try(BufferedReader responseReader = new BufferedReader(new InputStreamReader(chunkInputStream))) {
@@ -434,17 +434,17 @@ public class DefaultTestProvider implements TestProvider {
         cleanup(iterator);
     }
 
-    private void processChunk(IteratorTestStream<?> iterator, String chunk) {
+    private void processChunk(IterableTestStream<?> iterator, String chunk) {
 
         iterator.append(chunk);
     }
 
-    private void cleanup(IteratorTestStream<?> iterator) {
+    private void cleanup(IterableTestStream<?> iterator) {
 
         iterator.terminate();
     }
 
-    private void dryChunkStream(IteratorTestStream<?> iterator) {
+    private void dryChunkStream(IterableTestStream<?> iterator) {
 
         for (Object ignored : iterator) {
             nop(ignored);

@@ -1,6 +1,6 @@
 package com.ecfeed.implementation;
 
-import com.ecfeed.design.IteratorTestStream;
+import com.ecfeed.design.IterableTestStream;
 import com.ecfeed.design.ChunkParser;
 
 import java.util.Iterator;
@@ -8,14 +8,14 @@ import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class DefaultIteratorTestStream<T> implements IteratorTestStream<T> {
+public class DefaultIterableTestStream<T> implements IterableTestStream<T> {
 
     private final BlockingQueue<Optional<T>> parsedTestBuffer;
     private final ChunkParser<Optional<T>> chunkParser;
     private Optional<T> parsedTest;
     private boolean readyToSend;
 
-    public DefaultIteratorTestStream(ChunkParser<Optional<T>> chunkParser) {
+    public DefaultIterableTestStream(ChunkParser<Optional<T>> chunkParser) {
 
         this.parsedTestBuffer = new LinkedBlockingQueue<>();
         this.chunkParser = chunkParser;
