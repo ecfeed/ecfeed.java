@@ -377,12 +377,12 @@ public class TestProvider {
         return Arrays.asList(sendMockRequest(methodName).getMethodTypes());
     }
 
-    private ChunkParser sendMockRequest(String methodName) {
+    private ChunkParser<Optional<Object[]>> sendMockRequest(String methodName) {
         Map<String, Object> properties = new HashMap<>();
         addProperty(properties, Config.Key.parLength, "0");
 
-        ChunkParser chunkParser = new ChunkParserStream();
-        IterableTestQueue<Object[]> iterator = new IterableTestQueue<Object[]>(chunkParser);
+        ChunkParser<Optional<Object[]>> chunkParser = new ChunkParserStream();
+        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(chunkParser);
 
         String userData = getUserData(Config.Value.parGenRandom, properties);
 
