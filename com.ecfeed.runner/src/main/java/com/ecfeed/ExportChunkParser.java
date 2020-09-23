@@ -1,4 +1,4 @@
-package com.ecfeed.implementation;
+package com.ecfeed;
 
 import com.ecfeed.design.ChunkParser;
 

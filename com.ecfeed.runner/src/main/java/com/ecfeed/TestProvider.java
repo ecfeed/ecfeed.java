@@ -1,8 +1,7 @@
-package com.ecfeed.implementation;
+package com.ecfeed;
 
 import com.ecfeed.constant.ExportTemplate;
 import com.ecfeed.design.IterableTestStream;
-import com.ecfeed.design.TestProvider;
 
 import com.ecfeed.design.ChunkParser;
 import org.apache.http.HttpResponse;
@@ -27,7 +26,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
 
-public class DefaultTestProvider implements TestProvider {
+public class TestProvider {
 
     private static final boolean development = true;
 
@@ -37,19 +36,19 @@ public class DefaultTestProvider implements TestProvider {
     private Path keyStorePath;
     private HttpClient httpClient;
 
-    private DefaultTestProvider(String model, Map<String, String> config) {
+    private TestProvider(String model, Map<String, String> config) {
 
         setup(model, config);
     }
 
-    public static TestProvider getTestProvider(String model) {
+    public static TestProvider create(String model) {
 
-        return new DefaultTestProvider(model, new HashMap<>());
+        return new TestProvider(model, new HashMap<>());
     }
 
-    public static TestProvider getTestProvider(String model, Map<String, String> config) {
+    public static TestProvider create(String model, Map<String, String> config) {
 
-        return new DefaultTestProvider(model, config);
+        return new TestProvider(model, config);
     }
 
     private void setup(String model, Map<String, String> config) {
@@ -179,25 +178,21 @@ public class DefaultTestProvider implements TestProvider {
         }
     }
 
-    @Override
     public String getModel() {
 
         return model;
     }
 
-    @Override
     public String getGeneratorAddress() {
 
         return generatorAddress;
     }
 
-    @Override
     public Path getKeyStorePath() {
 
         return keyStorePath;
     }
 
-    @Override
     public Iterable<String> export(String method, String generator, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
@@ -215,7 +210,6 @@ public class DefaultTestProvider implements TestProvider {
         return iterator;
     }
 
-    @Override
     public Iterable<String> exportNWise(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
@@ -225,14 +219,12 @@ public class DefaultTestProvider implements TestProvider {
         return export(method, Config.Value.parGenNWise, exportTemplate, updatedProperties);
     }
 
-    @Override
     public Iterable<String> exportCartesian(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         return export(method, Config.Value.parGenCartesian, exportTemplate, updatedProperties);
     }
 
-    @Override
     public Iterable<String> exportRandom(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
@@ -243,14 +235,12 @@ public class DefaultTestProvider implements TestProvider {
         return export(method, Config.Value.parGenRandom, exportTemplate, updatedProperties);
     }
 
-    @Override
     public Iterable<String> exportStatic(String method, ExportTemplate exportTemplate, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         return export(method, Config.Value.parGenStatic, exportTemplate, updatedProperties);
     }
 
-    @Override
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
@@ -268,7 +258,6 @@ public class DefaultTestProvider implements TestProvider {
         return iterator;
     }
 
-    @Override
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
@@ -278,14 +267,12 @@ public class DefaultTestProvider implements TestProvider {
         return generate(method, Config.Value.parGenNWise, updatedProperties);
     }
 
-    @Override
     public Iterable<Object[]> generateCartesian(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         return generate(method, Config.Value.parGenCartesian, updatedProperties);
     }
 
-    @Override
     public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
@@ -296,7 +283,6 @@ public class DefaultTestProvider implements TestProvider {
         return generate(method, Config.Value.parGenRandom, updatedProperties);
     }
 
-    @Override
     public Iterable<Object[]> generateStatic(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
@@ -369,7 +355,6 @@ public class DefaultTestProvider implements TestProvider {
         return requestBuilder.toString() + result;
     }
 
-    @Override
     public void validateConnection() {
         IterableTestStream<String> iterator = new DefaultIterableTestStream<>(new ExportChunkParser());
 
@@ -386,13 +371,11 @@ public class DefaultTestProvider implements TestProvider {
         return this.generatorAddress + "/" + Config.Key.urlHealthCheck;
     }
 
-    @Override
     public List<String> getMethodNames(String methodName) {
 
         return Arrays.asList(sendMockRequest(methodName).getMethodNames());
     }
 
-    @Override
     public List<String> getMethodTypes(String methodName) {
 
         return Arrays.asList(sendMockRequest(methodName).getMethodTypes());
