@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class JUnit5Test {
@@ -72,6 +71,54 @@ public class JUnit5Test {
     @MethodSource("testProviderStatic")
     void testProviderStatic(String name, String firstName, Gender gender, int age, String id, ID type) {
         System.out.println("name = " + name + ", firstName = " + firstName + ", gender = " + gender + ", age = " + age + ", id = " + id + ", type = " + type);
+    }
+
+    @Test
+    @DisplayName("Export raw")
+    void exportTypeRaw() {
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+
+        Map<String, Object> config = new HashMap<>();
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.Raw, config)) {
+            System.out.println(chunk);
+        }
+    }
+
+    @Test
+    @DisplayName("Export json")
+    void exportTypeJson() {
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+
+        Map<String, Object> config = new HashMap<>();
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, config)) {
+            System.out.println(chunk);
+        }
+    }
+
+    @Test
+    @DisplayName("Export csv")
+    void exportTypeCsv() {
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+
+        Map<String, Object> config = new HashMap<>();
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.CSV, config)) {
+            System.out.println(chunk);
+        }
+    }
+
+    @Test
+    @DisplayName("Export gherkin")
+    void exportTypeGherkin() {
+        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+
+        Map<String, Object> config = new HashMap<>();
+
+        for (String chunk : testProvider.exportNWise(method, ExportTemplate.Gherkin, config)) {
+            System.out.println(chunk);
+        }
     }
 
     @Test

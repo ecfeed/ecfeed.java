@@ -334,7 +334,7 @@ public class DefaultTestProvider implements TestProvider {
         StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append(this.generatorAddress).append("/").append(Configuration.Name.urlService).append("?");
 
-        if (template.isPresent()) {
+        if (template.isPresent() && !template.get().equals(ExportTemplate.Raw.toString())) {
             requestBuilder.append(Configuration.Name.parRequestType).append("=").append(Configuration.Value.parRequestTypeExport);
         } else {
             requestBuilder.append(Configuration.Name.parRequestType).append("=").append(Configuration.Value.parRequestTypeStream);
@@ -348,7 +348,9 @@ public class DefaultTestProvider implements TestProvider {
         request.put(Configuration.Name.parMethod, method);
         request.put(Configuration.Name.parUserData, userData);
 
-        template.ifPresent(s -> request.put(Configuration.Name.parTemplate, s));
+        if (template.isPresent() && !template.get().equals(ExportTemplate.Raw.toString())) {
+            request.put(Configuration.Name.parTemplate, template.get());
+        }
 
         String result = request.toString();
 
