@@ -1,8 +1,7 @@
 package com.ecfeed.runner;
 
-import com.ecfeed.EcFeedFactory;
-import com.ecfeed.constant.ExportTemplate;
-import com.ecfeed.design.TestProvider;
+import com.ecfeed.TestProvider;
+import com.ecfeed.TypeExport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,10 +11,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class JUnit5Test {
 
-    private static String model = "ZCPH-DFYI-R7R7-R6MM-89L8";
-    private static String method = "com.example.test.LoanDecisionTest2.generateCustomerData";
+    private static final String model = "ZCPH-DFYI-R7R7-R6MM-89L8";
+    private static final String method = "com.example.test.LoanDecisionTest2.generateCustomerData";
 
     enum Gender {
         MALE, FEMALE
@@ -26,25 +28,33 @@ public class JUnit5Test {
     }
 
     static Iterable<Object[]> testProviderNWise() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateNWise(method, config);
     }
 
     static Iterable<Object[]> testProviderCartesian() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateCartesian(method, config);
     }
 
     static Iterable<Object[]> testProviderRandom() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);;
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateRandom(method, config);
     }
 
     static Iterable<Object[]> testProviderStatic() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateStatic(method, config);
     }
@@ -76,11 +86,27 @@ public class JUnit5Test {
     @Test
     @DisplayName("Export raw")
     void exportTypeRaw() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.Raw, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.Raw, config)) {
+            System.out.println(chunk);
+        }
+    }
+
+    @Test
+    @DisplayName("Export xml")
+    void exportTypeXml() {
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
+
+        Map<String, Object> config = new HashMap<>();
+
+        for (String chunk : testProvider.exportNWise(method, TypeExport.XML, config)) {
             System.out.println(chunk);
         }
     }
@@ -88,11 +114,13 @@ public class JUnit5Test {
     @Test
     @DisplayName("Export json")
     void exportTypeJson() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -100,11 +128,13 @@ public class JUnit5Test {
     @Test
     @DisplayName("Export csv")
     void exportTypeCsv() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.CSV, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.CSV, config)) {
             System.out.println(chunk);
         }
     }
@@ -112,11 +142,13 @@ public class JUnit5Test {
     @Test
     @DisplayName("Export gherkin")
     void exportTypeGherkin() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.Gherkin, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.Gherkin, config)) {
             System.out.println(chunk);
         }
     }
@@ -124,7 +156,9 @@ public class JUnit5Test {
     @Test
     @DisplayName("NWise")
     void exportNWise() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
 
@@ -138,7 +172,7 @@ public class JUnit5Test {
         for (Object[] chunk : testProvider.generateNWise(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -146,14 +180,16 @@ public class JUnit5Test {
     @Test
     @DisplayName("Cartesian")
     void exportCartesian() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
 
         for (Object[] chunk : testProvider.generateCartesian(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
-        for (String chunk : testProvider.exportCartesian(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportCartesian(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -161,14 +197,16 @@ public class JUnit5Test {
     @Test
     @DisplayName("Random")
     void exportRandom() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
 
         for (Object[] chunk : testProvider.generateRandom(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
-        for (String chunk : testProvider.exportRandom(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportRandom(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -176,17 +214,19 @@ public class JUnit5Test {
     @Test
     @DisplayName("Static")
     void exportStatic() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
 
         String[] constraints = new String[]{ "tests" };
-        config.put("suites", constraints);
+        config.put("testSuites", constraints);
 
         for (Object[] chunk : testProvider.generateStatic(method, config)) {
             System.out.println(Arrays.toString(chunk));
         }
-        for (String chunk : testProvider.exportStatic(method, ExportTemplate.JSON, config)) {
+        for (String chunk : testProvider.exportStatic(method, TypeExport.JSON, config)) {
             System.out.println(chunk);
         }
     }
@@ -194,7 +234,9 @@ public class JUnit5Test {
     @Test
     @DisplayName("Get method types")
     void getMethodTypes() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         System.out.println(testProvider.getMethodTypes(method));
     }
@@ -202,7 +244,9 @@ public class JUnit5Test {
     @Test
     @DisplayName("Get method names")
     void getMethodNames() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         System.out.println(testProvider.getMethodNames(method));
     }
@@ -210,20 +254,78 @@ public class JUnit5Test {
     @Test
     @DisplayName("Validate")
     void validate() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         testProvider.validateConnection();
     }
 
     @Test
+    @DisplayName("Get model")
+    void getModel() {
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
+
+        assertEquals(model, testProvider.getModel(),
+                "The default name of the model is erroneous");
+    }
+
+    @Test
+    @DisplayName("Get model (custom)")
+    void getModelCustom() {
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create("testModel", configProvider);
+
+        assertEquals("testModel", testProvider.getModel(),
+                "The custom name of the model is erroneous");
+    }
+
+    @Test
+    @DisplayName("Get generator address")
+    void getGeneratorAddress() {
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
+
+        assertEquals("https://develop-gen.ecfeed.com", testProvider.getGeneratorAddress(),
+                "The default generator address is erroneous");
+    }
+
+    @Test
+    @DisplayName("Get generator address (custom)")
+    void getGeneratorAddressCustom() {
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("generatorAddress", "testAddress");
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
+
+        assertEquals("testAddress", testProvider.getGeneratorAddress(),
+                "The custom generator address is erroneous");
+    }
+
+    @Test
+    @DisplayName("Get keystore path")
+    void getKeyStorePath() {
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
+
+        assertEquals("src/test/resources/security.p12", testProvider.getKeyStorePath().toString(),
+                "The keystore path is erroneous");
+    }
+
+    @Test
     @DisplayName("Error - generator address")
     void errorGeneratorAddress() {
-        Map<String, String> config = new HashMap<>();
-        config.put("generatorAddress", "testAddress");
-        config.put("keyStorePath", "src/test/resources/security.p12");
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("generatorAddress", "testAddress");
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
     }
@@ -231,11 +333,11 @@ public class JUnit5Test {
     @Test
     @DisplayName("Error - model name")
     void errorModelName() {
-        Map<String, String> config = new HashMap<>();
-        config.put("keyStorePath", "src/test/resources/security.p12");
-        TestProvider testProvider = EcFeedFactory.getTestProvider("testModel", config);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create("testModel", configProvider);
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
     }
@@ -243,70 +345,53 @@ public class JUnit5Test {
     @Test
     @DisplayName("Error - method name")
     void errorMethodName() {
-        Map<String, String> config = new HashMap<>();
-        config.put("keyStorePath", "src/test/resources/security.p12");
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
-        for (String chunk : testProvider.exportNWise("testMethod", ExportTemplate.JSON, new HashMap<>())) {
+        for (String chunk : testProvider.exportNWise("testMethod", TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
         }
-    }
-
-    @Test
-    @DisplayName("Error - keystore address")
-    void errorKeyStoreAddress() {
-        Map<String, String> config = new HashMap<>();
-        config.put("keyStorePath", "testPath");
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
-
-        testProvider.validateConnection();
     }
 
     @Test
     @DisplayName("Error - keystore password")
     void errorKeyStorePassword() {
-        Map<String, String> config = new HashMap<>();
-        config.put("keyStorePassword", "testPassword");
-        config.put("keyStorePath", "src/test/resources/security.p12");
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePassword", "testPassword");
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
-            System.out.println(chunk);
-        }
+        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(model, configProvider));
     }
 
     @Test
     @DisplayName("Error - missing client certificate")
     void errorMissingClientCertificate() {
-        Map<String, String> config = new HashMap<>();
-        config.put("keyStorePath", "src/test/resources/securityNoClient.p12");
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/securityNoClient.p12");
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
-            System.out.println(chunk);
-        }
+        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(model, configProvider));
     }
 
     @Test
     @DisplayName("Error - missing server certificate")
     void errorMissingServeCertificate() {
-        Map<String, String> config = new HashMap<>();
-        config.put("keyStorePath", "src/test/resources/securityNoServer.p12");
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model, config);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/securityNoServer.p12");
 
-        for (String chunk : testProvider.exportNWise(method, ExportTemplate.JSON, new HashMap<>())) {
-            System.out.println(chunk);
-        }
+        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(model, configProvider));
     }
 
     @Test
     @DisplayName("Error - invalid user parameters")
     void errorInvalidUserParameters() {
-        TestProvider testProvider = EcFeedFactory.getTestProvider(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
         config.put("error", "error");
 
-        testProvider.exportNWise(method, ExportTemplate.JSON, config);
+        assertThrows(IllegalArgumentException.class, () -> testProvider.exportNWise(method, TypeExport.JSON, config));
     }
 }

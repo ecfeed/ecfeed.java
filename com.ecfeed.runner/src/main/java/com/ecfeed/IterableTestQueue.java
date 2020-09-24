@@ -1,21 +1,18 @@
-package com.ecfeed.implementation;
-
-import com.ecfeed.design.IterableTestStream;
-import com.ecfeed.design.ChunkParser;
+package com.ecfeed;
 
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class DefaultIterableTestStream<T> implements IterableTestStream<T> {
+public class IterableTestQueue<T> implements Iterator<T>, Iterable<T> {
 
     private final BlockingQueue<Optional<T>> parsedTestBuffer;
     private final ChunkParser<Optional<T>> chunkParser;
     private Optional<T> parsedTest;
     private boolean readyToSend;
 
-    public DefaultIterableTestStream(ChunkParser<Optional<T>> chunkParser) {
+    public IterableTestQueue(ChunkParser<Optional<T>> chunkParser) {
 
         this.parsedTestBuffer = new LinkedBlockingQueue<>();
         this.chunkParser = chunkParser;
@@ -48,16 +45,14 @@ public class DefaultIterableTestStream<T> implements IterableTestStream<T> {
         if (readyToSend) {
             response = parsedTest.orElseThrow(() -> new IllegalArgumentException("The chunk could not be retrieved"));
         } else {
-            hasNext();
-            response = next();
+            response = hasNext() ? next() : null;
         }
 
         readyToSend = false;
         return response;
     }
 
-    @Override
-    public void append(String chunk) {
+    void append(String chunk) {
 
         chunkParser.parse(chunk).ifPresent(this::appendParsedTest);
     }
@@ -71,8 +66,7 @@ public class DefaultIterableTestStream<T> implements IterableTestStream<T> {
         }
     }
 
-    @Override
-    public void terminate() {
+    void terminate() {
 
         try {
             parsedTestBuffer.put(Optional.empty());

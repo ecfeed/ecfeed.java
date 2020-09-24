@@ -1,11 +1,10 @@
 package com.ecfeed.test;
 
-import com.ecfeed.EcFeedFactory;
-import com.ecfeed.design.TestProvider;
+import com.ecfeed.TestProvider;
 
 public class Main {
     public static void main(String[] args) {
-        TestProvider provider = EcFeedFactory.getTestProvider("test");
+        TestProvider provider = TestProvider.create("test");
 
     }
 }
