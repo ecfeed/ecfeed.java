@@ -55,7 +55,7 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
         String parsedMethod;
 
         parsedMethod = new JSONObject(method).getString(keyInfoMethod);
-        parsedMethod = parsedMethod.split("[\\(\\)]")[1];
+        parsedMethod = parsedMethod.split("[()]")[1];
         String[] argument = parsedMethod.split(", ");
 
         argumentTypes = new String[argument.length];

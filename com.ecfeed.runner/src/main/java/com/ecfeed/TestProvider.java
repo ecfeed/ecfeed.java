@@ -167,7 +167,7 @@ public class TestProvider {
             }
 
             Certificate cert = keyStore.getCertificate(Config.Key.certServer);
-            TrustStrategy strategy = (chain, authType) -> Arrays.asList(chain).contains(cert);
+            TrustStrategy strategy = (chain, authType) -> Arrays.asList((Certificate[]) chain).contains(cert);
             return context.loadTrustMaterial(strategy);
         } catch (NoSuchAlgorithmException | KeyStoreException e) {
             throw new IllegalArgumentException("The server certificate could not be accessed.", e);
@@ -285,13 +285,11 @@ public class TestProvider {
         return generate(method, Config.Value.parGenStatic, updatedProperties);
     }
 
-    private Map<String, Object> addProperty(Map<String, Object> map, String key, String value) {
+    private void addProperty(Map<String, Object> map, String key, String value) {
 
         if (!map.containsKey(key)) {
             map.put(key, value);
         }
-
-        return map;
     }
 
     private String getUserData(String generator, Map<String, Object> properties) {

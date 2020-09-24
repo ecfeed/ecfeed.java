@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class JUnit5Test {
 
     private static final String model = "ZCPH-DFYI-R7R7-R6MM-89L8";
@@ -80,6 +82,18 @@ public class JUnit5Test {
         Map<String, Object> config = new HashMap<>();
 
         for (String chunk : testProvider.exportNWise(method, TypeExport.Raw, config)) {
+            System.out.println(chunk);
+        }
+    }
+
+    @Test
+    @DisplayName("Export xml")
+    void exportTypeXml() {
+        TestProvider testProvider = TestProvider.create(model);
+
+        Map<String, Object> config = new HashMap<>();
+
+        for (String chunk : testProvider.exportNWise(method, TypeExport.XML, config)) {
             System.out.println(chunk);
         }
     }
@@ -212,6 +226,55 @@ public class JUnit5Test {
         TestProvider testProvider = TestProvider.create(model);
 
         testProvider.validateConnection();
+    }
+
+    @Test
+    @DisplayName("Get model")
+    void getModel() {
+        TestProvider testProvider = TestProvider.create(model);
+
+        assertEquals(model, testProvider.getModel(),
+                "The default name of the model is erroneous");
+    }
+
+    @Test
+    @DisplayName("Get model (custom)")
+    void getModelCustom() {
+        TestProvider testProvider = TestProvider.create("testModel");
+
+        assertEquals("testModel", testProvider.getModel(),
+                "The custom name of the model is erroneous");
+    }
+
+    @Test
+    @DisplayName("Get generator address")
+    void getGeneratorAddress() {
+        TestProvider testProvider = TestProvider.create(model);
+
+        assertEquals("https://develop-gen.ecfeed.com", testProvider.getGeneratorAddress(),
+                "The default generator address is erroneous");
+    }
+
+    @Test
+    @DisplayName("Get generator address (custom)")
+    void getGeneratorAddressCustom() {
+        Map<String, String> config = new HashMap<>();
+        config.put("generatorAddress", "testAddress");
+        TestProvider testProvider = TestProvider.create(model, config);
+
+        assertEquals("testAddress", testProvider.getGeneratorAddress(),
+                "The custom generator address is erroneous");
+    }
+
+    @Test
+    @DisplayName("Get keystore path")
+    void getKeyStorePath() {
+        Map<String, String> config = new HashMap<>();
+        config.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model, config);
+
+        assertEquals("src/test/resources/security.p12", testProvider.getKeyStorePath().toString(),
+                "The keystore path is erroneous");
     }
 
     @Test

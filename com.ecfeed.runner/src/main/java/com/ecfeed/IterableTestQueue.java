@@ -45,8 +45,7 @@ public class IterableTestQueue<T> implements Iterator<T>, Iterable<T> {
         if (readyToSend) {
             response = parsedTest.orElseThrow(() -> new IllegalArgumentException("The chunk could not be retrieved"));
         } else {
-            hasNext();
-            response = next();
+            response = hasNext() ? next() : null;
         }
 
         readyToSend = false;
