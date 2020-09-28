@@ -10,13 +10,13 @@ Prerequisites:
 - Create a test model on the ecFeed webpage.
 - Generate a personal keystore named 'security.p12' and put it in the \~/.ecfeed/ directory (Linux users) or in the \~/ecfeed/ directory (Windows users).  
 
-For the full documentation check the source directly at [GitHub](https://github.com/ecfeed/ecfeed.java).  
+For the complete documentation check the source directly at [GitHub](https://github.com/ecfeed/ecfeed.java).  
 
-The ecFeed library can be found online in the [Maven Repository](https://mvnrepository.com/artifact/com.ecfeed/ecfeed.junit).  
+The ecFeed library can be found online in the [Maven Repository](https://mvnrepository.com/artifact/com.ecfeed/ecfeed.java).  
 
 ## Examples
 
-Methods, used in the tutorial, are a part of the welcome model, created during the user registration process at the 'ecfeed.com' webpage. If the model is missing (e.g. it has been deleted by the user), it can be downloaded (and then imported) from [here](https://s3-eu-west-1.amazonaws.com/resources.ecfeed.com/repo/tutorial/Welcome.ect).  
+Methods, used in the tutorial, are a part of the welcome model, created during the registration process at the 'ecfeed.com' webpage. If the model is missing (e.g. it has been deleted by the user), it can be downloaded (and then imported) from [here](https://s3-eu-west-1.amazonaws.com/resources.ecfeed.com/repo/tutorial/Welcome.ect).  
 
 ```java
 import com.ecfeed.TestProvider;
@@ -37,11 +37,11 @@ public class Main {
 
 Do not hesitate to experiment with the code and modify the welcome mode. It can be recreated easily and there is no better way to learn than hands-on exercises.  
 
-However, have in mind that the ID of every model (including the welcome model) is unique. If you want to copy and paste the example, be sure to update it accordingly.
+However, have in mind that the ID of each model (including the welcome model) is unique. If you want to copy and paste the above example, be sure to update it accordingly.
 
 ## JUnit
 
-The ecFeed library can be used to create test cases for JUnit, which is ont of the mose common Java testing frameworks. It is possible, because generation methods return the 'Iterable<Object[]>' interface, which can be directly used as the data source.  
+The ecFeed library can be used to create test cases for JUnit, which is one of the mose common testing frameworks for Java. It is possible, because generation methods return the 'Iterable<Object[]>' interface, which can be directly used as the data source.  
 
 ```java
 public class JUnit5Test {
@@ -57,11 +57,10 @@ public class JUnit5Test {
         System.out.println("arg1 = " + arg1 + ", arg2 = " + arg2 + ", arg3 = " + arg3);
     }
 
-
 }
 ```
 
-It is also possible to use enums as arguments. To do so, they must be defined (and visible) in the arbitrary path of the project.  
+It is also possible to use enums as arguments. To do so, they must be defined (and visible) somewhere in the project.  
 
 ```java
 public class JUnit5Test {
@@ -85,7 +84,6 @@ public class JUnit5Test {
         System.out.println("name = " + name + ", firstName = " + firstName + ", gender = " + gender + ", age = " + age + ", id = " + id + ", type = " + type);
     }
 
-
 }
 ```
 
@@ -97,17 +95,17 @@ The library provides connectivity with the ecFeed test generation service using 
 
 The 'TestProvider' constructor takes one required and three optional parameters which can be provided in the form of a 'Map<String, String>'. If they are not provided, default values are used (which, for the vast majority of cases, are sufficient).  
 
-- *model* - The model ID. It is a 20 digit number (grouped by 4) tha can be found in the 'My projects' page at 'ecfeed.com'. It can also be found in the URL of the model editor page.
+- *model* - The model ID. It is a 20 digit number (grouped by 4) that can be found in the 'My projects' page at 'ecfeed.com'. It can be also found in the URL of the model editor page.
 ```java
 TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");
 ```
-- *keyStorePath* - The path to a keystore downloaded from 'ecfeed.com' webpage ('Settings' -> 'Security'). The keystore contains the user certificate which is needed to authenticate the user at the generator service. Be default, the constructor looks for the keystore in \~/.ecfeed/security.p12, except for Windows, where the default path is \~/ecfeed/security.p12.
+- *keyStorePath* - The path to the keystore downloaded from the 'ecfeed.com' webpage ('Settings' -> 'Security'). The keystore contains the user certificate which is needed to authenticate the user at the generator service. Be default, the constructor looks for the keystore in \~/.ecfeed/security.p12, except for Windows, where the default path is \~/ecfeed/security.p12.
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("keyStorePath", "testKeyStorePath");
 TestProvider testProvider = TestProvider.create(model, configProvider);
 ```
-- *keyStorePassword* - The password for the keystore. The default value is 'changeit' and this is the password used to encrypt the keystore downloaded form the 'ecfeed.com' page.
+- *keyStorePassword* - The password for the keystore. The default value is 'changeit' which is the password used to encrypt the keystore downloaded form the 'ecfeed.com' page.
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("keyStorePassword", "testKeyStorePassword");
@@ -122,7 +120,7 @@ TestProvider testProvider = TestProvider.create(model, configProvider);
 
 ## Generator calls
 
-'TestProvider' can invoke four methods to access the ecFeed generator service. They produce data parsed to 'Object[]'. All additional parameters can be included in the configuration map.
+'TestProvider' can invoke four methods to access the ecFeed generator service. They produce data parsed to 'Object[]'. Additional parameters can be included in the configuration map.
 
 ### public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties)
 
