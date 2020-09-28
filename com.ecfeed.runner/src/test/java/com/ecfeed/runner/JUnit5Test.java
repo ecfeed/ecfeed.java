@@ -28,9 +28,9 @@ public class JUnit5Test {
     }
 
     static Iterable<Object[]> testProviderNWise() {
-        Map<String, String> configProvider = new HashMap<>();
-        configProvider.put("keyStorePath", "src/test/resources/security.p12");
-        TestProvider testProvider = TestProvider.create(model, configProvider);
+//        Map<String, String> configProvider = new HashMap<>();
+//        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        TestProvider testProvider = TestProvider.create(model);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateNWise(method, config);
     }
