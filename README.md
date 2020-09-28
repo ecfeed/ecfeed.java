@@ -39,7 +39,7 @@ Do not hesitate to experiment with the code and modify the welcome mode. It can 
 
 However, have in mind that the ID of each model (including the welcome model) is unique. If you want to copy and paste the above example, be sure to update it accordingly.
 
-## JUnit
+## JUnit5
 
 The ecFeed library can be used to create test cases for JUnit, which is one of the mose common testing frameworks for Java. It is possible, because generation methods return the 'Iterable<Object[]>' interface, which can be directly used as the data source.  
 
@@ -103,19 +103,19 @@ TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("keyStorePath", "testKeyStorePath");
-TestProvider testProvider = TestProvider.create(model, configProvider);
+TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL", configProvider);
 ```
 - *keyStorePassword* - The password for the keystore. The default value is 'changeit' which is the password used to encrypt the keystore downloaded form the 'ecfeed.com' page.
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("keyStorePassword", "testKeyStorePassword");
-TestProvider testProvider = TestProvider.create(model, configProvider);
+TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL", configProvider);
 ```
 - *generatorAddress* - The URL of the ecfeed generator service. By default, it is 'gen.ecfeed.com'.
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("generatorAddress", "testGeneratorAddress");
-TestProvider testProvider = TestProvider.create(model, configProvider);
+TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL", configProvider);
 ```
 
 ## Generator calls
