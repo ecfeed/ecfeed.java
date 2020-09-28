@@ -16,7 +16,7 @@ The ecFeed library can be found online in the [Maven Repository](https://mvnrepo
 
 ## Examples
 
-Methods, used in the tutorial, are a part of the welcome model, created during the user registration process at the 'ecfeed.com' webpage. If the model is missing (e.g. it has been deleted by the user), it can be downloaded (and then reimported) from [here](https://s3-eu-west-1.amazonaws.com/resources.ecfeed.com/repo/tutorial/Welcome.ect).  
+Methods, used in the tutorial, are a part of the welcome model, created during the user registration process at the 'ecfeed.com' webpage. If the model is missing (e.g. it has been deleted by the user), it can be downloaded (and then imported) from [here](https://s3-eu-west-1.amazonaws.com/resources.ecfeed.com/repo/tutorial/Welcome.ect).  
 
 ```java
 import com.ecfeed.TestProvider;
@@ -55,6 +55,34 @@ public class JUnit5Test {
     @MethodSource("testProviderNWise")
     void testProviderNWise(int arg1, int arg2, int arg3) {
         System.out.println("arg1 = " + arg1 + ", arg2 = " + arg2 + ", arg3 = " + arg3);
+    }
+
+
+}
+```
+
+It is also possible to use enums as arguments. To do so, they must be defined (and visible) in the arbitrary path of the project.  
+
+```java
+public class JUnit5Test {
+    
+ enum Gender {
+        MALE, FEMALE
+    }
+
+    enum ID {
+        PASSPORT, DRIVERS_LICENSE, PERSONAL_ID
+    }
+
+    static Iterable<Object[]> testProviderNWise() {
+        TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");
+        return testProvider.generateNWise("com.example.test.LoanDecisionTest2.generateCustomerData", new HashMap<>());
+    }
+
+    @ParameterizedTest
+    @MethodSource("testProviderNWise")
+    void testProviderNWise(String name, String firstName, Gender gender, int age, String id, ID type) {
+        System.out.println("name = " + name + ", firstName = " + firstName + ", gender = " + gender + ", age = " + age + ", id = " + id + ", type = " + type);
     }
 
 
@@ -151,3 +179,30 @@ Download generated test cases (do not use the generator).
 Arguments:
 - *method (required)* - See 'generateNWise'.
 - *testSuites* - An array of test case names to be downloaded. Additionally, one string value can be used instead, i.e. "ALL".
+
+## Export calls
+
+Those methods look similarly to 'generate' methods. However, they return the 'Iterable<String>' interface, do not parse the data, and generate the output using templates. For this reason, they require one more argument, namely 'template'. The predefined values are: 'TypeExport.JSON', 'TypeExport.XML', 'TypeExport.Gherkin', 'TypeExport.CSV', 'TypeExport.Raw'. 
+
+```java
+public Iterable<String> exportNWise(String method, TypeExport typeExport, Map<String, Object> properties);
+public Iterable<String> exportCartesian(String method, TypeExport typeExport, Map<String, Object> properties);
+public Iterable<String> exportRandom(String method, TypeExport typeExport, Map<String, Object> properties);
+public Iterable<String> exportStatic(String method, TypeExport typeExport, Map<String, Object> properties);
+```
+
+## Other methods
+
+The following section describes non-crucial methods.
+
+### public void validateConnection()
+
+Verifies if the connection settings (including the keystore) are correct. If something is wrong, an exception is thrown. 
+
+### public List<String> getMethodNames(String methodName)
+
+Gets the names of the method parameters in the on-line model.
+
+### public List<String> getMethodTypes(String methodName)
+
+Gets the types of the method parameters in the on-line model.
