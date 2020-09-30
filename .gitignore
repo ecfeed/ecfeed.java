@@ -43,6 +43,7 @@ hs_err_pid*
 **/main/resources/application.properties
 **/test/resources/security
 
+gradle.properties
 
 
 
