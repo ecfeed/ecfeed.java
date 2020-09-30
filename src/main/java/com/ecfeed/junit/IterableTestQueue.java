@@ -1,4 +1,4 @@
-package com.ecfeed;
+package com.ecfeed.junit;
 
 import java.util.Iterator;
 import java.util.Optional;

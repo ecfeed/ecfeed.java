@@ -1,7 +1,7 @@
 package com.ecfeed.runner;
 
-import com.ecfeed.TestProvider;
-import com.ecfeed.TypeExport;
+import com.ecfeed.junit.TestProvider;
+import com.ecfeed.junit.TypeExport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

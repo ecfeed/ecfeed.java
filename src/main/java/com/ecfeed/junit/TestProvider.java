@@ -1,4 +1,4 @@
-package com.ecfeed;
+package com.ecfeed.junit;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

@@ -1,4 +1,4 @@
-package com.ecfeed;
+package com.ecfeed.junit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

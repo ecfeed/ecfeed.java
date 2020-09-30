@@ -1,6 +1,6 @@
-module com.ecfeed {
+module com.ecfeed.junit {
     requires org.apache.httpcomponents.httpcore;
     requires org.apache.httpcomponents.httpclient;
     requires org.json;
-    exports com.ecfeed;
+    exports com.ecfeed.junit;
 }
