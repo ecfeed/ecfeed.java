@@ -1,111 +1,98 @@
 plugins {
     id 'java-library'
-    id 'maven'
+    id 'maven-publish'
     id 'signing'
 }
 
 group 'com.ecfeed'
-version '2.0.0-SNAPSHOT'
+version '2.0.1-SNAPSHOT'
 
 java {
     modularity.inferModulePath = true
+    withJavadocJar()
+    withSourcesJar()
 }
-
-//test {
-//    useJUnitPlatform()
-//}
 
 javadoc {
-    include 'com/ecfeed/annotation/*'
-}
-
-if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
+    if (JavaVersion.current().isJava8Compatible()) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier.set("javadoc")
-    from 'build/docs/javadoc'
-}
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-task sourcesJar(type: Jar) {
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
-signing {
-    sign configurations.archives
-}
-
-uploadArchives {
+publishing {
     repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
-                authentication(userName: gradle.sonatypeUsername, password: gradle.sonatypePassword)
+        maven {
+            def releasesRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepo = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = isReleaseVersion ? releasesRepo : snapshotsRepo
+            credentials {
+                username = gradle.sonatypeUsername
+                password = gradle.sonatypePassword
             }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'ecfeed.runner'
+            from components.java
 
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: gradle.sonatypeUsername, password: gradle.sonatypePassword)
-            }
-
-            pom.project {
-                name 'ecFeed'
-                packaging 'jar'
-                description '' +
-                        'An open library used to connect to the ecFeed service. ' +
-                        'It is integrated with Junit5 and generates a stream of test cases using a selected algorithm (e.g. Cartesian, N-Wise).'
-                url 'https://ecfeed.com/'
-
-                scm {
-                    url 'scm:git@github.com:ecfeed/ecfeed.java.git'
-                    connection 'scm:git@github.com:ecfeed/ecfeed.java.git'
-                    developerConnection 'scm:git@github.com:ecfeed/ecfeed.java.git'
-                }
+            pom {
+                name = 'ecFeed'
+                description = 'An open library used to connect to the ecFeed service. It is integrated with Junit5 and generates a stream of test cases using a selected algorithm (e.g. Cartesian, N-Wise).'
+                url = 'https://ecfeed.com/'
 
                 licenses {
                     license {
-                        name 'Eclipse Public License - v 1.0'
-                        url 'https://www.eclipse.org/legal/epl-v10.html'
+                        name = 'Eclipse Public License - v 1.0'
+                        url = 'https://www.eclipse.org/legal/epl-v10.html'
                     }
+                }
+
+                scm {
+                    url = 'scm:git@github.com:ecfeed/ecfeed.java.git'
+                    connection = 'scm:git@github.com:ecfeed/ecfeed.java.git'
+                    developerConnection = 'scm:git@github.com:ecfeed/ecfeed.java.git'
                 }
 
                 developers {
                     developer {
-                        id 'p.chamuczynski'
-                        name 'Patryk Chamuczynski'
-                        email 'p.chamuczynski@testify.no'
+                        id = 'p.chamuczynski'
+                        name = 'Patryk Chamuczynski'
+                        email = 'p.chamuczynski@testify.no'
                     }
                     developer {
-                        id 'marek'
-                        name 'Marek Kuczabinski'
-                        email 'm.kuczabinski@testify.no'
+                        id = 'marek'
+                        name = 'Marek Kuczabinski'
+                        email = 'm.kuczabinski@testify.no'
                     }
                     developer {
-                        id 'k.skorupski'
-                        name 'Krzysztof Skorupski'
-                        email 'k.skorupski@testify.no'
-                    }
-                    developer {
-                        id 'izulin'
-                        name 'Przemyslaw Uznanski'
-                        email 'p.uznanski@testify.no'
+                        id = 'k.skorupski'
+                        name = 'Krzysztof Skorupski'
+                        email = 'k.skorupski@testify.no'
                     }
                 }
-
             }
         }
     }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
+}
+
+// ----------------------------------------------------------------------------------
+
+test {
+    useJUnitPlatform()
 }
 
 repositories {
