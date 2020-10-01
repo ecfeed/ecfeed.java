@@ -28,9 +28,10 @@ public class JUnit5Test {
     }
 
     static Iterable<Object[]> testProviderNWise() {
-//        Map<String, String> configProvider = new HashMap<>();
-//        configProvider.put("keyStorePath", "src/test/resources/security.p12");
-        TestProvider testProvider = TestProvider.create(model);
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
+        TestProvider testProvider = TestProvider.create(model, configProvider);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateNWise(method, config);
     }
@@ -38,6 +39,7 @@ public class JUnit5Test {
     static Iterable<Object[]> testProviderCartesian() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateCartesian(method, config);
@@ -46,6 +48,7 @@ public class JUnit5Test {
     static Iterable<Object[]> testProviderRandom() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);;
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateRandom(method, config);
@@ -54,6 +57,7 @@ public class JUnit5Test {
     static Iterable<Object[]> testProviderStatic() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
         Map<String, Object> config = new HashMap<>();
         return testProvider.generateStatic(method, config);
@@ -88,6 +92,7 @@ public class JUnit5Test {
     void exportTypeRaw() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -102,6 +107,7 @@ public class JUnit5Test {
     void exportTypeXml() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -116,6 +122,7 @@ public class JUnit5Test {
     void exportTypeJson() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -130,6 +137,7 @@ public class JUnit5Test {
     void exportTypeCsv() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -144,6 +152,7 @@ public class JUnit5Test {
     void exportTypeGherkin() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -158,6 +167,7 @@ public class JUnit5Test {
     void exportNWise() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -182,6 +192,7 @@ public class JUnit5Test {
     void exportCartesian() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -199,6 +210,7 @@ public class JUnit5Test {
     void exportRandom() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -216,6 +228,7 @@ public class JUnit5Test {
     void exportStatic() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();
@@ -236,6 +249,7 @@ public class JUnit5Test {
     void getMethodTypes() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         System.out.println(testProvider.getMethodTypes(method));
@@ -246,6 +260,7 @@ public class JUnit5Test {
     void getMethodNames() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         System.out.println(testProvider.getMethodNames(method));
@@ -256,6 +271,7 @@ public class JUnit5Test {
     void validate() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         testProvider.validateConnection();
@@ -266,6 +282,7 @@ public class JUnit5Test {
     void getModel() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         assertEquals(model, testProvider.getModel(),
@@ -277,6 +294,7 @@ public class JUnit5Test {
     void getModelCustom() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create("testModel", configProvider);
 
         assertEquals("testModel", testProvider.getModel(),
@@ -288,6 +306,7 @@ public class JUnit5Test {
     void getGeneratorAddress() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         assertEquals("https://develop-gen.ecfeed.com", testProvider.getGeneratorAddress(),
@@ -311,6 +330,7 @@ public class JUnit5Test {
     void getKeyStorePath() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         assertEquals("src/test/resources/security.p12", testProvider.getKeyStorePath().toString(),
@@ -335,6 +355,7 @@ public class JUnit5Test {
     void errorModelName() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create("testModel", configProvider);
 
         for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new HashMap<>())) {
@@ -347,6 +368,7 @@ public class JUnit5Test {
     void errorMethodName() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         for (String chunk : testProvider.exportNWise("testMethod", TypeExport.JSON, new HashMap<>())) {
@@ -360,6 +382,7 @@ public class JUnit5Test {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePassword", "testPassword");
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
 
         assertThrows(IllegalArgumentException.class, () -> TestProvider.create(model, configProvider));
     }
@@ -369,6 +392,7 @@ public class JUnit5Test {
     void errorMissingClientCertificate() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/securityNoClient.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
 
         assertThrows(IllegalArgumentException.class, () -> TestProvider.create(model, configProvider));
     }
@@ -378,6 +402,7 @@ public class JUnit5Test {
     void errorMissingServeCertificate() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/securityNoServer.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
 
         assertThrows(IllegalArgumentException.class, () -> TestProvider.create(model, configProvider));
     }
@@ -387,6 +412,7 @@ public class JUnit5Test {
     void errorInvalidUserParameters() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
+        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
         Map<String, Object> config = new HashMap<>();

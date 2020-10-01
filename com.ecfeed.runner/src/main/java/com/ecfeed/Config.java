@@ -21,7 +21,6 @@ public final class Config {
 
         private Value() { }
 
-//        final static String generatorAddress = "https://develop-gen.ecfeed.com";
         final static String generatorAddress = "https://gen.ecfeed.com";
         final static String keyStorePassword = "changeit";
         final static String[] keyStorePath = {

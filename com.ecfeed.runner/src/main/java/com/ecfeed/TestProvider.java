@@ -24,7 +24,7 @@ import java.util.*;
 
 public class TestProvider {
 
-    private static final boolean development = true;
+    private static final boolean development = false;
 
     private String model;
     private String generatorAddress;
