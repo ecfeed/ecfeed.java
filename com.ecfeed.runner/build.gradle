@@ -1,0 +1,109 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group 'com.ecfeed'
+version '2.0.0'
+
+java {
+    modularity.inferModulePath = true
+    withJavadocJar()
+    withSourcesJar()
+}
+
+javadoc {
+    if (JavaVersion.current().isJava8Compatible()) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+publishing {
+    repositories {
+        maven {
+            def releasesRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepo = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = isReleaseVersion ? releasesRepo : snapshotsRepo
+            credentials {
+                username = gradle.sonatypeUsername
+                password = gradle.sonatypePassword
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'ecfeed.runner'
+            from components.java
+
+            pom {
+                name = 'ecFeed'
+                description = 'An open library used to connect to the ecFeed service. It is integrated with Junit5 and generates a stream of test cases using a selected algorithm (e.g. Cartesian, N-Wise).'
+                url = 'https://ecfeed.com/'
+
+                licenses {
+                    license {
+                        name = 'Eclipse Public License - v 1.0'
+                        url = 'https://www.eclipse.org/legal/epl-v10.html'
+                    }
+                }
+
+                scm {
+                    url = 'scm:git@github.com:ecfeed/ecfeed.java.git'
+                    connection = 'scm:git@github.com:ecfeed/ecfeed.java.git'
+                    developerConnection = 'scm:git@github.com:ecfeed/ecfeed.java.git'
+                }
+
+                developers {
+                    developer {
+                        id = 'p.chamuczynski'
+                        name = 'Patryk Chamuczynski'
+                        email = 'p.chamuczynski@testify.no'
+                    }
+                    developer {
+                        id = 'marek'
+                        name = 'Marek Kuczabinski'
+                        email = 'm.kuczabinski@testify.no'
+                    }
+                    developer {
+                        id = 'k.skorupski'
+                        name = 'Krzysztof Skorupski'
+                        email = 'k.skorupski@testify.no'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
+}
+
+// ----------------------------------------------------------------------------------
+
+test {
+    useJUnitPlatform()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.json:json:20200518'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0-M1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0-M1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.0-M1'
+    testImplementation 'org.assertj:assertj-core:3.6.1'
+}
