@@ -26,9 +26,9 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");                            // The model ID.
+        TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");            // The model ID.
         
-        for (String chunk : testProvider.exportNWise("QuickStart.test", TypeExport.CSV, new HashMap<>())) {     // The method name.
+        for (String chunk : testProvider.exportNWise("QuickStart.test", TypeExport.CSV)) {      // The method name.
             System.out.println(chunk);
         }
     }
@@ -48,7 +48,7 @@ public class JUnit5Test {
     
     static Iterable<Object[]> testProviderNWise() {
         TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");
-        return testProvider.generateNWise("QuickStart.test", new HashMap<>());
+        return testProvider.generateNWise("QuickStart.test");
     }
 
     @ParameterizedTest
@@ -75,7 +75,7 @@ public class JUnit5Test {
 
     static Iterable<Object[]> testProviderNWise() {
         TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");
-        return testProvider.generateNWise("com.example.test.LoanDecisionTest2.generateCustomerData", new HashMap<>());
+        return testProvider.generateNWise("com.example.test.LoanDecisionTest2.generateCustomerData");
     }
 
     @ParameterizedTest
@@ -120,9 +120,9 @@ TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL", conf
 
 ## Generator calls
 
-'TestProvider' can invoke four methods to access the ecFeed generator service. They produce data parsed to 'Object[]'. Additional parameters can be included in the configuration map.
+'TestProvider' can invoke five methods to access the ecFeed generator service. They produce data parsed to 'Object[]'. Additional parameters can be included in a configuration object (or a map).
 
-### public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties)
+### public Iterable<Object[]> generateNWise(String method, Param.ParamsNWise config)
 
 Generate test cases using the NWise algorithm.  
 
@@ -132,6 +132,23 @@ Arguments:
 - *coverage* - The percentage of N-tuples that the generator will try to cover. The default is 100.
 - *choices* - A map in which keys are names of method parameters. Their values define a list of choices that should be used during the generation process. If an argument is skipped, all choices are used.
 - *constraints* - An array of constraints used for the generation. If not provided, all constraints are used. Additionally, two String values can be used instead, i.e. "ALL", "NONE".
+
+```java
+String[] constraints = new String[]{ "constraint" };
+
+Map<String, String[]> choices = new HashMap<>();
+choices.put("arg1", new String[]{ "choice1", "choice2" });
+
+Param.ParamsNWise config = new Param.ParamsNWise()
+        .constraints(constraints)
+        .choices(choices)
+        .coverage(100)
+        .n(3);
+
+testProvider.generateNWise("QuickStart.test", config)
+```
+
+Also, additional parameters can be passed using a map.  
 
 ```java
 Map<String, Object> config = new HashMap<>();
@@ -149,7 +166,13 @@ config.put("choices", choices);
 testProvider.generateNWise("QuickStart.test", config)
 ```
 
-### public Iterable<Object[]> generateCartesian(String method, Map<String, Object> properties)
+If the configuration object/map is not provided, default values are used.  
+
+### public Iterable<Object[]> generatePairwise(String method, Param.ParamsPairwise config)
+
+Calls n-wise with n=2. For people that like being explicit. Uses the same arguments as 'generateNWise' excluding 'n'.  
+
+### public Iterable<Object[]> generateCartesian(String method, Param.ParamsCartesian config)
 
 Generate test cases using the Cartesian product.
 
@@ -158,7 +181,7 @@ Arguments:
 - *choices* - See 'generateNWise'.
 - *constraints* - See 'generateNWise'.
 
-### public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties)
+### public Iterable<Object[]> generateRandom(String method, Param.ParamsRandom config)
 
 Generate randomized test cases.
 
@@ -170,7 +193,7 @@ Arguments:
 - *choices* - See 'generateNWise'.
 - *constraints* - See 'generateNWise'.
 
-### public Iterable<Object[]> generateStatic(String method, Map<String, Object> properties)
+### public Iterable<Object[]> generateStatic(String method, Param.ParamsStatic config)
 
 Download generated test cases (do not use the generator).  
 
@@ -183,10 +206,11 @@ Arguments:
 Those methods look similarly to 'generate' methods. However, they return the 'Iterable<String>' interface, do not parse the data, and generate the output using templates. For this reason, they require one more argument, namely 'template'. The predefined values are: 'TypeExport.JSON', 'TypeExport.XML', 'TypeExport.Gherkin', 'TypeExport.CSV', 'TypeExport.Raw'. 
 
 ```java
-public Iterable<String> exportNWise(String method, TypeExport typeExport, Map<String, Object> properties);
-public Iterable<String> exportCartesian(String method, TypeExport typeExport, Map<String, Object> properties);
-public Iterable<String> exportRandom(String method, TypeExport typeExport, Map<String, Object> properties);
-public Iterable<String> exportStatic(String method, TypeExport typeExport, Map<String, Object> properties);
+public Iterable<String> exportNWise(String method, TypeExport typeExport, Param.ParamsNWise config);
+public Iterable<String> exportPairwise(String method, TypeExport typeExport, Param.ParamsPairwise config);
+public Iterable<String> exportCartesian(String method, TypeExport typeExport, Param.ParamsCartesian config);
+public Iterable<String> exportRandom(String method, TypeExport typeExport, Param.ParamsRandom config);
+public Iterable<String> exportStatic(String method, TypeExport typeExport, Param.ParamsStatic config);
 ```
 
 ## Other methods
