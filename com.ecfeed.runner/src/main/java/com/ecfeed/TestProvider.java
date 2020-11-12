@@ -24,8 +24,6 @@ import java.util.*;
 
 public class TestProvider {
 
-    private static final boolean development = true;
-
     private String model;
     private String generatorAddress;
     private String keyStorePassword;
@@ -558,8 +556,6 @@ public class TestProvider {
 
     private void log(String event) {
 
-        if (development) {
-            System.out.println(event);
-        }
+        System.out.println(event);
     }
 }
