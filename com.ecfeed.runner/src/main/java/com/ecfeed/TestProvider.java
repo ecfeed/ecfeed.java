@@ -24,6 +24,8 @@ import java.util.*;
 
 public class TestProvider {
 
+    private final Map<String, Feedback> feedback = new HashMap<>();
+
     private String model;
     private String generatorAddress;
     private String keyStorePassword;
@@ -297,7 +299,11 @@ public class TestProvider {
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
-        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(new ChunkParserStream());
+        Feedback feedback = new Feedback();
+        feedback.setGeneratorType(generator);
+        feedback.setFramework("Java");
+
+        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(new ChunkParserStream(feedback));
         String userData = getUserData(generator, properties);
 
         new Thread(() -> {

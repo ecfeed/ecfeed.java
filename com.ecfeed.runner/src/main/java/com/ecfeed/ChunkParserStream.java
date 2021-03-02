@@ -8,11 +8,22 @@ import java.util.Optional;
 public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     private static final String keyInfo = "info";
     private static final String keyInfoMethod = "method";
+    private static final String keyInfoSession = "id";
     private static final String keyTestCase = "testCase";
     private static final String keyTestCaseValue = "value";
 
     private String[] argumentTypes = null;
     private String[] argumentNames = null;
+
+    private Feedback feedback;
+
+    public ChunkParserStream() {
+
+    }
+    public ChunkParserStream(Feedback feedback) {
+
+        this.feedback = feedback;
+    }
 
     @Override
     public String[] getMethodTypes() {
@@ -41,10 +52,15 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     private Optional<Object[]> parseInfo(JSONObject json) {
 
         if (json.keySet().contains(keyInfo)) {
-            String value = json.getString(keyInfo);
+            JSONObject value = new JSONObject(json.getString(keyInfo));
 
-            if (value.contains(keyInfoMethod)) {
-                parseInfoArgumentTypes(value);
+            if (value.has(keyInfoMethod)) {
+                feedback.setMethodInfo(value.getString(keyInfoMethod));
+                parseInfoArgumentTypes(value.getString(keyInfoMethod));
+            }
+
+            if (value.has(keyInfoSession)) {
+                feedback.setTestSessionId(value.getString(keyInfoSession));
             }
         }
 
@@ -52,10 +68,7 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     }
 
     private void parseInfoArgumentTypes(String method) {
-        String parsedMethod;
-
-        parsedMethod = new JSONObject(method).getString(keyInfoMethod);
-        parsedMethod = parsedMethod.split("[()]")[1];
+        String parsedMethod = method.split("[()]")[1];
         String[] argument = parsedMethod.split(", ");
 
         argumentTypes = new String[argument.length];
@@ -73,11 +86,17 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
 
         if (json.keySet().contains(keyTestCase)) {
             JSONArray value = json.getJSONArray(keyTestCase);
-            response = new Object[argumentTypes.length];
+            response = new Object[argumentTypes.length + 1];
 
             for (int i = 0 ; i < value.length() ; i++) {
                 response[i] = parseType(i, value.getJSONObject(i).getString(keyTestCaseValue));
             }
+
+            FeedbackItem feedbackItem = new FeedbackItem(value.toString());
+
+            response[response.length - 1] = feedbackItem;
+
+            feedback.addResult(feedbackItem);
         }
 
         return Optional.ofNullable(response);
