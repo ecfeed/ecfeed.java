@@ -24,66 +24,66 @@ javadoc {
 
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-publishing {
-    repositories {
-        maven {
-            def releasesRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            def snapshotsRepo = "https://oss.sonatype.org/content/repositories/snapshots"
-            url = isReleaseVersion ? releasesRepo : snapshotsRepo
-            credentials {
-                username = gradle.sonatypeUsername
-                password = gradle.sonatypePassword
-            }
-        }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = 'ecfeed.runner'
-            from components.java
+//publishing {
+//    repositories {
+//        maven {
+//            def releasesRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+//            def snapshotsRepo = "https://oss.sonatype.org/content/repositories/snapshots"
+//            url = isReleaseVersion ? releasesRepo : snapshotsRepo
+//            credentials {
+//                username = gradle.sonatypeUsername
+//                password = gradle.sonatypePassword
+//            }
+//        }
+//    }
+//    publications {
+//        mavenJava(MavenPublication) {
+//            artifactId = 'ecfeed.runner'
+//            from components.java
+//
+//            pom {
+//                name = 'ecFeed'
+//                description = 'An open library used to connect to the ecFeed service. It is integrated with Junit5 and generates a stream of test cases using a selected algorithm (e.g. Cartesian, N-Wise).'
+//                url = 'https://ecfeed.com/'
+//
+//                licenses {
+//                    license {
+//                        name = 'Eclipse Public License - v 1.0'
+//                        url = 'https://www.eclipse.org/legal/epl-v10.html'
+//                    }
+//                }
+//
+//                scm {
+//                    url = 'scm:git@github.com:ecfeed/ecfeed.java.git'
+//                    connection = 'scm:git@github.com:ecfeed/ecfeed.java.git'
+//                    developerConnection = 'scm:git@github.com:ecfeed/ecfeed.java.git'
+//                }
+//
+//                developers {
+//                    developer {
+//                        id = 'p.chamuczynski'
+//                        name = 'Patryk Chamuczynski'
+//                        email = 'p.chamuczynski@testify.no'
+//                    }
+//                    developer {
+//                        id = 'marek'
+//                        name = 'Marek Kuczabinski'
+//                        email = 'm.kuczabinski@testify.no'
+//                    }
+//                    developer {
+//                        id = 'k.skorupski'
+//                        name = 'Krzysztof Skorupski'
+//                        email = 'k.skorupski@testify.no'
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
-            pom {
-                name = 'ecFeed'
-                description = 'An open library used to connect to the ecFeed service. It is integrated with Junit5 and generates a stream of test cases using a selected algorithm (e.g. Cartesian, N-Wise).'
-                url = 'https://ecfeed.com/'
-
-                licenses {
-                    license {
-                        name = 'Eclipse Public License - v 1.0'
-                        url = 'https://www.eclipse.org/legal/epl-v10.html'
-                    }
-                }
-
-                scm {
-                    url = 'scm:git@github.com:ecfeed/ecfeed.java.git'
-                    connection = 'scm:git@github.com:ecfeed/ecfeed.java.git'
-                    developerConnection = 'scm:git@github.com:ecfeed/ecfeed.java.git'
-                }
-
-                developers {
-                    developer {
-                        id = 'p.chamuczynski'
-                        name = 'Patryk Chamuczynski'
-                        email = 'p.chamuczynski@testify.no'
-                    }
-                    developer {
-                        id = 'marek'
-                        name = 'Marek Kuczabinski'
-                        email = 'm.kuczabinski@testify.no'
-                    }
-                    developer {
-                        id = 'k.skorupski'
-                        name = 'Krzysztof Skorupski'
-                        email = 'k.skorupski@testify.no'
-                    }
-                }
-            }
-        }
-    }
-}
-
-signing {
-    sign publishing.publications.mavenJava
-}
+//signing {
+//    sign publishing.publications.mavenJava
+//}
 
 tasks.withType(Sign) {
     onlyIf { isReleaseVersion }
