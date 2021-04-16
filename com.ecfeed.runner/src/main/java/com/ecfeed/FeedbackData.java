@@ -1,13 +1,17 @@
 package com.ecfeed;
 
+import java.util.List;
+
 public class FeedbackData {
 
     private FeedbackSession fFeedbackSession;
-    // TODO add test results
+    FeedbackResults feedbackResults;
     
     public void setSessionConfiguration(FeedbackSession feedbackSession) {
 
         fFeedbackSession = feedbackSession;
+
+
     }
     
 }
