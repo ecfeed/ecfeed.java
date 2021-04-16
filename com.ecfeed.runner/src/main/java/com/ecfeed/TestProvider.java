@@ -524,17 +524,19 @@ public class TestProvider {
                         "'testSessionId': '" + testSessionId + "', " +
                         "'modelId': 'TestUuid11', " +
                         "'methodInfo': 'test.Class1.testMethod(String arg1, String arg2)', " +
-                        "'testResults': " +
-                        "{ " +
-                        "'0:0': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'P', 'duration': 1394}, " +
-                        "'0:1': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'F', 'duration': 1513}, " +
-                        "'0:2': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}, " +
-                        "'0:3': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}" +
-                        "}, " +
                         "'framework': 'Python', " +
                         "'timestamp': 1618401006, " +
                         "'generatorType': 'NWise', " +
-                        "'generatorOptions': 'n=2, coverage=100' " +
+                        "'generatorOptions': 'n=2, coverage=100', " +
+
+                        "'testResults': " +
+                            "{ " +
+                            "'0:0': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'P', 'duration': 1394}, " +
+                            "'0:1': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'F', 'duration': 1513}, " +
+                            "'0:2': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}, " +
+                            "'0:3': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}" +
+                            "} " +
+
                         "}";
 
         requestText = requestText.replace("#", "\\\"");
@@ -553,6 +555,7 @@ public class TestProvider {
     public void setFeedbackResult(boolean isTestPass, long durationInMilliseconds, boolean hasNext) {
 
         if (!hasNext) {
+            System.out.println("Sending feedback.");
             sendFixedFeedback();
         }
     }
