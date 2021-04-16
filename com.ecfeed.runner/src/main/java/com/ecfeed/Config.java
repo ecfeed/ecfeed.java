@@ -73,7 +73,7 @@ public final class Config {
         final static String parRequest = "request";
         final static String parTemplate = "template";
 
-        final static String urlService = "testCaseService";
+        final static String urlService = "testCaseService"; // TODO rename
         final static String urlHealthCheck = "genServiceVersion";
 
         final static String certClient = "connection";

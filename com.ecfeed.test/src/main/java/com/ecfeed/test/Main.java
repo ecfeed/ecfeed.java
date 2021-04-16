@@ -7,7 +7,18 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        exportNwiseFromExampleModel();
+        exportNwiseFromExampleModelWithFeedbackStub();
+    }
+
+    private static void exportNwiseFromExampleModelWithFeedbackStub() {
+        // on test database
+        TestProvider testProvider = TestProvider.create("TestUuid11");
+
+        for (String chunk : testProvider.exportNWise("test.Class1.testMethod(String arg1, String arg2)", TypeExport.CSV, new HashMap<>())) {
+            System.out.println(chunk);
+        }
+
+        testProvider.sendFixedFeedback();
     }
 
     private static void exportNwiseFromExampleModel() {

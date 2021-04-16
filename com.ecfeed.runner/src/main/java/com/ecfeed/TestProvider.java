@@ -3,6 +3,8 @@ package com.ecfeed;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.PrivateKeyStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
@@ -35,9 +37,9 @@ public class TestProvider {
         setup(model, config);
     }
 
-    public static TestProvider create(String model) {
+    public static TestProvider create(String modelUuid) {
 
-        return new TestProvider(model, new HashMap<>());
+        return new TestProvider(modelUuid, new HashMap<>());
     }
 
     public static TestProvider create(String model, Map<String, String> config) {
@@ -45,9 +47,9 @@ public class TestProvider {
         return new TestProvider(model, config);
     }
 
-    private void setup(String model, Map<String, String> config) {
+    private void setup(String modelUuid, Map<String, String> config) {
 
-        this.model = model;
+        this.model = modelUuid;
 
         this.generatorAddress = setupExtractGeneratorAddress(config);
         this.keyStorePassword = setupExtractKeyStorePassword(config);
@@ -442,7 +444,7 @@ public class TestProvider {
         requestBuilder.append("&").append(Config.Key.parClient).append("=").append(Config.Value.parClient);
         requestBuilder.append("&").append(Config.Key.parRequest).append("=");
 
-        JSONObject request = new JSONObject();
+        JSONObject request = new JSONObject(); // TODO - JSON example
         request.put(Config.Key.parModel, this.model);
         request.put(Config.Key.parMethod, method);
         request.put(Config.Key.parUserData, userData);
@@ -505,6 +507,45 @@ public class TestProvider {
         dryChunkStream(iterator);
 
         return chunkParser;
+    }
+
+    public void sendFixedFeedback() {
+
+        StringBuilder requestBuilder = new StringBuilder();
+        requestBuilder.append(this.generatorAddress).append("/").append(Config.Key.urlService).append("?");
+
+        String url = this.generatorAddress + "/" + "streamFeedback"; // TODO - move to config
+
+        long testSessionNumber = System.currentTimeMillis();
+        final String testSessionId = "testSession" + testSessionNumber;
+
+        String requestText =
+                "{" +
+                        "'testSessionId': '" + testSessionId + "', " +
+                        "'modelId': 'TestUuid11', " +
+                        "'methodInfo': 'test.Class1.testMethod(String arg1, String arg2)', " +
+                        "'testResults': " +
+                        "{ " +
+                        "'0:0': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'P', 'duration': 1394}, " +
+                        "'0:1': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}" +
+                        "}, " +
+                        "'framework': 'Python', " +
+                        "'timestamp': 1618401006, " +
+                        "'generatorType': 'NWise', " +
+                        "'generatorOptions': 'n=2, coverage=100' " +
+                        "}";
+
+        requestText = requestText.replace("#", "\\\"");
+        requestText = requestText.replace("'", "\"");
+
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(new StringEntity(requestText));
+            HttpResponse httpResponse = httpClient.execute(httpPost);
+            InputStream inputStream = httpResponse.getEntity().getContent(); // TODO
+        } catch (IOException e) {
+            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous): https://" + this.generatorAddress + "/", e);
+        }
     }
 
     private InputStream getChunkStream(String request) {
