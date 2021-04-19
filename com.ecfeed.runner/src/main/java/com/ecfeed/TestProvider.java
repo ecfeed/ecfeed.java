@@ -31,8 +31,12 @@ public class TestProvider {
     private String keyStorePassword;
     private Path keyStorePath;
     private HttpClient httpClient;
+    private FeedbackData feedbackData;
 
     private TestProvider(String model, Map<String, String> config) {
+
+        this.feedbackData = new FeedbackData();
+        this.feedbackData.setModelId(model);
 
         setup(model, config);
     }
@@ -207,6 +211,8 @@ public class TestProvider {
     }
 
     public Iterable<String> exportNWise(String method, TypeExport typeExport, Map<String, Object> properties) {
+
+        this.feedbackData.setMethodInfo(method);
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
         addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
@@ -511,36 +517,20 @@ public class TestProvider {
 
     public void sendFixedFeedback() {
 
+        long testSessionNumber = System.currentTimeMillis();
+        final String testSessionId = "testSession" + testSessionNumber;
+
+        String requestText = createExampleRequestTest(testSessionId);
+
+        sendFeedback(requestText);
+    }
+
+    public void sendFeedback(String requestText) {
+
         StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append(this.generatorAddress).append("/").append(Config.Key.urlService).append("?");
 
         String url = this.generatorAddress + "/" + "streamFeedback"; // TODO - move to config
-
-        long testSessionNumber = System.currentTimeMillis();
-        final String testSessionId = "testSession" + testSessionNumber;
-
-        String requestText =
-                "{" +
-                        "'testSessionId': '" + testSessionId + "', " +
-                        "'modelId': 'TestUuid11', " +
-                        "'methodInfo': 'test.Class1.testMethod(String arg1, String arg2)', " +
-                        "'framework': 'Python', " +
-                        "'timestamp': 1618401006, " +
-                        "'generatorType': 'NWise', " +
-                        "'generatorOptions': 'n=2, coverage=100', " +
-
-                        "'testResults': " +
-                            "{ " +
-                            "'0:0': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'P', 'duration': 1394}, " +
-                            "'0:1': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'F', 'duration': 1513}, " +
-                            "'0:2': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}, " +
-                            "'0:3': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}" +
-                            "} " +
-
-                        "}";
-
-        requestText = requestText.replace("#", "\\\"");
-        requestText = requestText.replace("'", "\"");
 
         try {
             HttpPost httpPost = new HttpPost(url);
@@ -552,17 +542,78 @@ public class TestProvider {
         }
     }
 
-    public void setFeedbackResult(boolean isTestPass, long durationInMilliseconds, boolean hasNext) {
+    private String createExampleRequestTest(String testSessionId) {
 
-        if (!hasNext) {
-            System.out.println("Sending feedback.");
-            sendFixedFeedback();
-        }
+        String testResults = getTestResulsAsText();
+
+        String requestText =
+                "{" +
+                        "'testSessionId': '" + testSessionId + "', " +
+                        "'modelId': 'TestUuid11', " +
+                        "'methodInfo': 'test.Class1.testMethod(String arg1, String arg2)', " +
+                        "'framework': 'Python', " +
+                        "'timestamp': 1618401006, " +
+                        "'generatorType': 'NWise', " +
+                        "'generatorOptions': 'n=2, coverage=100', " +
+
+                        "'testResults': " + testResults +
+
+                        "}";
+
+        requestText = requestText.replace("#", "\\\"");
+        requestText = requestText.replace("'", "\"");
+
+        return requestText;
     }
 
-    public void initializeFeedback(FeedbackSession feedbackSession) {
+    private String getTestResulsAsText() {
 
-        // TODO initialize object FeedbackData
+        String testResults = "{ " +
+                "'0:0': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'P', 'duration': 1394}, " +
+                "'0:1': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice21#,#value#:#V21#}]}', 'status': 'F', 'duration': 1513}, " +
+                "'0:2': {'data': '{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}, " +
+                "'0:3': {'data': '{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice22#,#value#:#V22#}]}', 'status': 'F', 'duration': 1513}" +
+                "} ";
+        return testResults;
+    }
+
+    private String getTestResultsAsJSONString() {
+
+        String testResults = getTestResulsAsText();
+
+        testResults = testResults.replace("#", "\\\"");
+        testResults = testResults.replace("'", "\"");
+
+        return testResults;
+    }
+
+    public void setFeedbackResult(boolean isTestPass, long durationInMilliseconds, boolean hasNext) {
+
+        if (hasNext) {
+            return;
+        }
+
+        String feedbackText = this.feedbackData.serialize();
+        String testResults = getTestResultsAsJSONString();
+        feedbackText = feedbackText.replace("\"#\"", testResults);
+
+        sendFeedback(feedbackText);
+
+//        System.out.println(feedbackText);
+//        System.out.println("Sending feedback.");
+//
+//        sendFixedFeedback();
+    }
+
+    public void initializeFeedback(FeedbackData feedbackData) {
+
+        // copy values without model id and method info
+
+        this.feedbackData.setTestSessionId(feedbackData.getTestSessionId());
+        this.feedbackData.setFramework(feedbackData.getFramework());
+        this.feedbackData.setTimestamp(feedbackData.getTimestamp());
+        this.feedbackData.setGeneratorType(feedbackData.getGeneratorType());
+        this.feedbackData.setGeneratorOptions(feedbackData.getGeneratorOptions());
     }
 
     private InputStream getChunkStream(String request) {

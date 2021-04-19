@@ -1,6 +1,6 @@
 package com.ecfeed.test;
 
-import com.ecfeed.FeedbackSession;
+import com.ecfeed.FeedbackData;
 import com.ecfeed.TestProvider;
 import com.ecfeed.TypeExport;
 
@@ -17,10 +17,10 @@ public class Main {
 
     private static void exportFeedbackIndividualTestResults() {
 
-        TestProvider testProvider = TestProvider.create("TestUuid11");
+        FeedbackData feedbackData = createFeedbackData();
 
-        FeedbackSession feedbackSession =  new FeedbackSession();
-        testProvider.initializeFeedback(feedbackSession);
+        TestProvider testProvider = TestProvider.create("TestUuid11");
+        testProvider.initializeFeedback(feedbackData);
 
         Iterable<String> testDataChunks =
                 testProvider.exportNWise(
@@ -36,6 +36,25 @@ public class Main {
 
             testProvider.setFeedbackResult(true, 100, it.hasNext());
         }
+
+        System.out.println("End");
+    }
+
+    private static FeedbackData createFeedbackData() {
+
+        FeedbackData feedbackData =  new FeedbackData();
+
+        long currentMilliseconds = System.currentTimeMillis();
+
+        final String testSessionId = "testSession" + currentMilliseconds;
+        feedbackData.setTestSessionId(testSessionId);
+
+        feedbackData.setFramework("Java");
+        feedbackData.setTimestamp(currentMilliseconds);
+        feedbackData.setGeneratorType("NWise");
+        feedbackData.setGeneratorOptions("n=2, coverage=100");
+
+        return feedbackData;
     }
 
     private static void exportNwiseFromExampleModelWithFeedbackStub() {

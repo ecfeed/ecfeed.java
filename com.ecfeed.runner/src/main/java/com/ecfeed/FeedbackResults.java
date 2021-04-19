@@ -6,4 +6,11 @@ public class FeedbackResults {
 
     private List<FeedbackResult> feedbackResults;
 
+    public void FeedbackResults() {
+        // TODO
+    }
+
+    public void addResult(FeedbackResult feedbackResult) {
+        // TODO
+    }
 }
