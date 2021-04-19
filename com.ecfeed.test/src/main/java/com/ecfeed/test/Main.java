@@ -28,16 +28,61 @@ public class Main {
                         TypeExport.CSV,
                         new HashMap<>());
 
+        boolean isFirst = true;
+        int dataIndex = 0;
         Iterator<String> it = testDataChunks.iterator();
 
         while (it.hasNext()) {
+
             String testDataChunk = it.next();
             System.out.println(testDataChunk);
 
-            testProvider.setFeedbackResult(true, 100, it.hasNext());
+            if (isFirst) {
+                isFirst = false;
+                continue; // skip header
+            }
+
+            String id = createTestResultId(dataIndex);
+            String data = createTestResultData(dataIndex);
+            dataIndex++;
+
+            testProvider.setFeedbackResult( id, data, true, 100, it.hasNext());
         }
 
         System.out.println("End");
+    }
+
+    private static String createTestResultId(int dataIndex) {
+
+        String[] arr =
+                {
+                    "0:0",
+                    "0:1",
+                    "0:2",
+                    "0:3"
+                };
+
+        String result = arr[dataIndex];
+
+        return result;
+    }
+
+    private static String createTestResultData(int dataIndex) {
+
+        String[] arr =
+                {
+                    "{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice21#,#value#:#V21#}]}",
+                    "{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice21#,#value#:#V21#}]}",
+                    "{#testCase#:[{#name#:#choice12#,#value#:#V12#},{#name#:#choice22#,#value#:#V22#}]}",
+                    "{#testCase#:[{#name#:#choice11#,#value#:#V11#},{#name#:#choice22#,#value#:#V22#}]}"
+
+                };
+
+        String result = arr[dataIndex];
+
+        result = result.replace("#", "\"");
+
+        return result;
     }
 
     private static FeedbackData createFeedbackData() {

@@ -18,6 +18,12 @@ public class FeedbackData {
     // getTestSuites
     // getCustom
 
+    private FeedbackResults feedbackResults;
+
+    public FeedbackData() {
+
+        feedbackResults = new FeedbackResults();
+    }
 
     public void setTestSessionId(String testSessionId) {
         this.testSessionId = testSessionId;
@@ -75,24 +81,14 @@ public class FeedbackData {
         return generatorOptions;
     }
 
-    FeedbackResults feedbackResults;
-    
-    public void addFeedbackResult(FeedbackResult feedbackResult) {
+    public void addFeedbackResult(String id, FeedbackResult feedbackResult) {
 
+        this.feedbackResults.addResult(id, feedbackResult);
     }
 
     public String serialize() {
 
-        JSONObject feedbackObject = new JSONObject();
-
-        feedbackObject.put("testSessionId", this.testSessionId);
-        feedbackObject.put("modelId", this.modelId);
-        feedbackObject.put("methodInfo", this.methodInfo);
-        feedbackObject.put("framework", this.framework);
-        feedbackObject.put("timestamp", this.timestamp);
-        feedbackObject.put("generatorType", this.generatorType);
-        feedbackObject.put("generatorOptions", this.generatorOptions);
-        feedbackObject.put("testResults", "#");
+        JSONObject feedbackObject = createJsonObject();
 
         String feedbackString = feedbackObject.toString();
 
@@ -116,5 +112,23 @@ public class FeedbackData {
 //
 //                "}";
     }
-    
+
+    public JSONObject createJsonObject() {
+
+        JSONObject feedbackObject = new JSONObject();
+
+        feedbackObject.put("testSessionId", this.testSessionId);
+        feedbackObject.put("modelId", this.modelId);
+        feedbackObject.put("methodInfo", this.methodInfo);
+        feedbackObject.put("framework", this.framework);
+        feedbackObject.put("timestamp", this.timestamp);
+        feedbackObject.put("generatorType", this.generatorType);
+        feedbackObject.put("generatorOptions", this.generatorOptions);
+
+        JSONObject testResultsObject = this.feedbackResults.createJsonObject();
+        feedbackObject.put("testResults", testResultsObject);
+
+        return feedbackObject;
+    }
+
 }

@@ -587,15 +587,25 @@ public class TestProvider {
         return testResults;
     }
 
-    public void setFeedbackResult(boolean isTestPass, long durationInMilliseconds, boolean hasNext) {
+    public void setFeedbackResult(String testId, String data, boolean isTestPass, long durationInMilliseconds, boolean hasNext) {
+
+        FeedbackResult feedbackResult = new FeedbackResult();
+        feedbackResult.setData(data);
+        feedbackResult.setStatus(isTestPass);
+        feedbackResult.setDuration(durationInMilliseconds);
+
+        this.feedbackData.addFeedbackResult(testId, feedbackResult);
 
         if (hasNext) {
             return;
         }
 
-        String feedbackText = this.feedbackData.serialize();
-        String testResults = getTestResultsAsJSONString();
-        feedbackText = feedbackText.replace("\"#\"", testResults);
+        JSONObject jsonObject = this.feedbackData.createJsonObject();
+        String feedbackText = jsonObject.toString();
+
+//        String feedbackText = this.feedbackData.serialize();
+//        String testResults = getTestResultsAsJSONString();
+//        feedbackText = feedbackText.replace("\"#\"", testResults);
 
         sendFeedback(feedbackText);
 
