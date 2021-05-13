@@ -1,31 +1,19 @@
 package com.ecfeed;
 
-import com.ecfeed.dto.SessionData;
-import com.ecfeed.helper.RequestHelper;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.PrivateKeyStrategy;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.SSLContexts;
-import org.apache.http.ssl.TrustStrategy;
+import com.ecfeed.data.ConnectionData;
+import com.ecfeed.data.SessionData;
+import com.ecfeed.helper.ConnectionHelper;
 
-import javax.net.ssl.SSLContext;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.*;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.util.*;
 
 public class TestProvider {
 
     private String model;
-    private String address;
-    private String keyStorePassword;
-    private Path keyStorePath;
-    private HttpClient httpClient;
+    private ConnectionData connectionData;
 
     private TestProvider(String model, Map<String, String> config) {
 
@@ -45,11 +33,12 @@ public class TestProvider {
     private void setup(String model, Map<String, String> config) {
 
         this.model = model;
+        this.connectionData = ConnectionData.create(
+                setupExtractGeneratorAddress(config),
+                setupExtractKeyStorePath(config),
+                setupExtractKeyStorePassword(config)
+        );
 
-        this.address = setupExtractGeneratorAddress(config);
-        this.keyStorePassword = setupExtractKeyStorePassword(config);
-        this.keyStorePath = setupExtractKeyStorePath(config);
-        this.httpClient = setupGetHTTPClient(getKeyStoreInstance(this.keyStorePath));
     }
 
     private String setupExtractGeneratorAddress(Map<String, String> config) {
@@ -109,66 +98,6 @@ public class TestProvider {
         return keyStorePath;
     }
 
-    private KeyStore getKeyStoreInstance(Path path) {
-
-        try (InputStream keyStoreInputStream = Files.newInputStream(path)) {
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(keyStoreInputStream, keyStorePassword.toCharArray());
-            return keyStore;
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgumentException("The algorithm for checking the keystore integrity could not be found.", e);
-        } catch (CertificateException e) {
-            throw new IllegalArgumentException("At least one of the certificates included in the keystore could not be loaded.", e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("The keystore password is incorrect. Store path: " + path, e);
-        } catch (KeyStoreException e) {
-            throw new IllegalArgumentException("The keystore could not be accessed.", e);
-        }
-    }
-
-    private HttpClient setupGetHTTPClient(KeyStore keyStore) {
-
-        return HttpClients.custom().setSSLContext(getSSLContext(keyStore)).build();
-    }
-
-    private SSLContext getSSLContext(KeyStore keyStore) {
-
-        try {
-            return getKeyMaterial(getTrustMaterial(SSLContexts.custom(), keyStore), keyStore).build();
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new IllegalArgumentException("KeyStore certificates could not be loaded.", e);
-        }
-    }
-
-    private SSLContextBuilder getKeyMaterial(SSLContextBuilder context, KeyStore keyStore) {
-
-        try {
-            if (!keyStore.containsAlias(Config.Key.certClient)) {
-                throw new IllegalArgumentException("The client certificate could not be found: " + keyStorePath.toAbsolutePath());
-            }
-
-            PrivateKeyStrategy strategy = (aliases, socket) -> Config.Key.certClient;
-            return context.loadKeyMaterial(keyStore, keyStorePassword.toCharArray(), strategy);
-        } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException e) {
-            throw new IllegalArgumentException("The client certificate could not be accessed.", e);
-        }
-    }
-
-    private SSLContextBuilder getTrustMaterial(SSLContextBuilder context, KeyStore keyStore) {
-
-        try {
-            if (!keyStore.containsAlias(Config.Key.certServer)) {
-                throw new IllegalArgumentException("The server certificate could not be found: " + keyStorePath.toAbsolutePath());
-            }
-
-            Certificate cert = keyStore.getCertificate(Config.Key.certServer);
-            TrustStrategy strategy = (chain, authType) -> Arrays.asList((Certificate[]) chain).contains(cert);
-            return context.loadTrustMaterial(strategy);
-        } catch (NoSuchAlgorithmException | KeyStoreException e) {
-            throw new IllegalArgumentException("The server certificate could not be accessed.", e);
-        }
-    }
-
     public String getModel() {
 
         return model;
@@ -176,12 +105,12 @@ public class TestProvider {
 
     public String getAddress() {
 
-        return address;
+        return this.connectionData.getHttpAddress();
     }
 
     public Path getKeyStorePath() {
 
-        return keyStorePath;
+        return this.connectionData.getKeyStorePath();
     }
 
     public Iterable<String> export(String method, String generatorType, TypeExport typeExport, Map<String, Object> userProperties) {
@@ -189,14 +118,14 @@ public class TestProvider {
 
         IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
 
-        SessionData sessionData = SessionData.create(this.httpClient, this.address, this.model);
+        SessionData sessionData = SessionData.create(this.connectionData, this.model);
         sessionData.updateRequestData(method, generatorType);
         sessionData.updateRequestProperties(userProperties);
         sessionData.updateRequestTemplate(typeExport);
 
         new Thread(() -> {
             try {
-                processChunkStream(iterator, RequestHelper.getChunkStreamForTestData(sessionData));
+                processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
             } finally {
                 iterator.terminate();
             }
@@ -300,13 +229,13 @@ public class TestProvider {
 
         IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(new ChunkParserStream());
 
-        SessionData sessionData = SessionData.create(this.httpClient, this.address, this.model);
+        SessionData sessionData = SessionData.create(this.connectionData, this.model);
         sessionData.updateRequestData(method, generator);
         sessionData.updateRequestProperties(properties);
 
         new Thread(() -> {
             try {
-                processChunkStream(iterator, RequestHelper.getChunkStreamForTestData(sessionData));
+                processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
             } finally {
                 iterator.terminate();
             }
@@ -419,10 +348,10 @@ public class TestProvider {
     public void validateConnection() {
         IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
 
-        SessionData sessionData = SessionData.create(this.httpClient, this.address, this.model);
+        SessionData sessionData = SessionData.create(this.connectionData, this.model);
 
         try {
-            processChunkStream(iterator, RequestHelper.getChunkStreamForHealthCheck(sessionData));
+            processChunkStream(iterator, ConnectionHelper.getChunkStreamForHealthCheck(sessionData));
             dryChunkStream(iterator);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("The connection could not be established", e);
@@ -448,12 +377,11 @@ public class TestProvider {
         ChunkParser<Optional<Object[]>> chunkParser = new ChunkParserStream();
         IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(chunkParser);
 
-        SessionData sessionData = SessionData.create(this.httpClient, this.address, this.model);
+        SessionData sessionData = SessionData.create(this.connectionData, this.model);
         sessionData.updateRequestData(method, Config.Value.parGenRandom);
         sessionData.updateRequestProperties(userProperties);
 
-        processChunkStream(iterator, RequestHelper.getChunkStreamForTestData(sessionData));
-
+        processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
         dryChunkStream(iterator);
 
         return chunkParser;
@@ -495,8 +423,4 @@ public class TestProvider {
         System.out.println(chunk);
     }
 
-    private void log(String event) {
-
-        System.out.println(event);
-    }
 }

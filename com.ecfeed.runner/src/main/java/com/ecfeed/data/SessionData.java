@@ -1,4 +1,4 @@
-package com.ecfeed.dto;
+package com.ecfeed.data;
 
 import com.ecfeed.Config;
 import com.ecfeed.TypeExport;
@@ -12,8 +12,7 @@ public class SessionData {
 
     private final static String FRAMEWORK = "Java";
 
-    private final HttpClient httpClient;
-    private final String generatorAddress;
+    private final ConnectionData connectionData;
 
     private boolean feedbackCollect = false;
     private boolean feedbackFinished = false;
@@ -39,14 +38,13 @@ public class SessionData {
 
 //-------------------------------------------------------------------------------------
 
-    private SessionData(HttpClient client, String address, String model) {
-        this.generatorAddress = address;
-        this.httpClient = client;
+    private SessionData(ConnectionData connectionData, String model) {
+        this.connectionData = connectionData;
         this.model = model;
     }
 
-    public static SessionData create(HttpClient client, String address, String model) {
-        return new SessionData(client, address, model);
+    public static SessionData create(ConnectionData connectionData, String model) {
+        return new SessionData(connectionData, model);
     }
 
 //-------------------------------------------------------------------------------------
@@ -85,10 +83,10 @@ public class SessionData {
 //-------------------------------------------------------------------------------------
 
     public String getGeneratorAddress() {
-        return generatorAddress;
+        return connectionData.getHttpAddress();
     }
 
-    public String getMethod() {
+    public String getMethodName() {
         return methodName;
     }
 
@@ -109,6 +107,6 @@ public class SessionData {
     }
 
     public HttpClient getHttpClient() {
-        return httpClient;
+        return connectionData.getHttpClient();
     }
 }

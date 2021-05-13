@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JUnit5Test {
 
-    private static final String model = "IMHL-K0DU-2U0I-J532-25J9";
+    private static final String model = "LRXC-015K-GJB0-2A9F-CGA2";
     private static final String method = "com.example.test.LoanDecisionTest2.generateCustomerData";
 
     enum Gender {

@@ -1,10 +1,8 @@
 package com.ecfeed.helper;
 
-import com.ecfeed.ChunkParserStream;
 import com.ecfeed.Config;
-import com.ecfeed.IterableTestQueue;
 import com.ecfeed.TypeExport;
-import com.ecfeed.dto.SessionData;
+import com.ecfeed.data.SessionData;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -17,18 +15,30 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-public final class RequestHelper {
+public final class ConnectionHelper {
 
-    private RequestHelper() {
+    private ConnectionHelper() {
         throw new RuntimeException("The helper class cannot be instantiated");
     }
 
-    public static String generateURLForHealthCheck(SessionData sessionData) {
+    public static InputStream getChunkStreamForHealthCheck(SessionData sessionData) {
+        String request = generateURLForHealthCheck(sessionData);
+
+        return getChunkStream(sessionData.getHttpClient(), request);
+    }
+
+    public static InputStream getChunkStreamForTestData(SessionData sessionData) {
+        String request = generateURLForTestData(sessionData);
+
+        return getChunkStream(sessionData.getHttpClient(), request);
+    }
+
+    private static String generateURLForHealthCheck(SessionData sessionData) {
 
         return sessionData.getGeneratorAddress() + "/" + Config.Key.urlHealthCheck;
     }
 
-    public static String generateURLForTestData(SessionData sessionData) {
+    private static String generateURLForTestData(SessionData sessionData) {
         Optional<TypeExport> template = sessionData.getTemplate();
 
         StringBuilder requestBuilder = new StringBuilder();
@@ -45,7 +55,7 @@ public final class RequestHelper {
 
         JSONObject request = new JSONObject();
         request.put(Config.Key.parModel, sessionData.getModel());
-        request.put(Config.Key.parMethod, sessionData.getMethod());
+        request.put(Config.Key.parMethod, sessionData.getMethodName());
 
         JSONObject userData = new JSONObject();
         userData.put(Config.Key.parDataSource, sessionData.getGeneratorType());
@@ -65,18 +75,6 @@ public final class RequestHelper {
 
     }
 
-    public static InputStream getChunkStreamForHealthCheck(SessionData sessionData) {
-        String request = RequestHelper.generateURLForHealthCheck(sessionData);
-
-        return RequestHelper.getChunkStream(sessionData.getHttpClient(), request);
-    }
-
-    public static InputStream getChunkStreamForTestData(SessionData sessionData) {
-        String request = RequestHelper.generateURLForTestData(sessionData);
-
-        return RequestHelper.getChunkStream(sessionData.getHttpClient(), request);
-    }
-
     private static InputStream getChunkStream(HttpClient httpClient, String request) {
 
         try {
@@ -87,4 +85,5 @@ public final class RequestHelper {
             throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous).", e);
         }
     }
+
 }
