@@ -1,5 +1,7 @@
 package com.ecfeed;
 
+import com.ecfeed.parser.ChunkParser;
+
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
@@ -52,7 +54,7 @@ public class IterableTestQueue<T> implements Iterator<T>, Iterable<T> {
         return response;
     }
 
-    void append(String chunk) {
+    public void append(String chunk) {
 
         chunkParser.parse(chunk).ifPresent(this::appendParsedTest);
     }
@@ -66,7 +68,7 @@ public class IterableTestQueue<T> implements Iterator<T>, Iterable<T> {
         }
     }
 
-    void terminate() {
+    public void terminate() {
 
         try {
             parsedTestBuffer.put(Optional.empty());

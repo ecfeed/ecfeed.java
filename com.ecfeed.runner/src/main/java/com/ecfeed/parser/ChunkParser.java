@@ -1,4 +1,4 @@
-package com.ecfeed;
+package com.ecfeed.parser;
 
 public interface ChunkParser<T> {
 

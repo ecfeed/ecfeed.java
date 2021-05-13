@@ -26,19 +26,7 @@ public class ConnectionData {
     private String keyStorePassword;
     private Path keyStorePath;
 
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    public String getHttpAddress() {
-        return httpAddress;
-    }
-
-    public Path getKeyStorePath() {
-        return keyStorePath;
-    }
-
-    public ConnectionData(String httpAddress, Path keyStorePath, String keyStorePassword) {
+    private ConnectionData(String httpAddress, Path keyStorePath, String keyStorePassword) {
         this.httpAddress = httpAddress;
         this.keyStorePath = keyStorePath;
         this.keyStorePassword = keyStorePassword;
@@ -50,6 +38,18 @@ public class ConnectionData {
     public static ConnectionData create(String httpAddress, Path keyStorePath, String keyStorePassword) {
 
         return new ConnectionData(httpAddress, keyStorePath, keyStorePassword);
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public String getHttpAddress() {
+        return httpAddress;
+    }
+
+    public Path getKeyStorePath() {
+        return keyStorePath;
     }
 
     private KeyStore getKeyStoreInstance() {

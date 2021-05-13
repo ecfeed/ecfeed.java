@@ -4,4 +4,5 @@ module com.ecfeed {
     requires org.json;
     exports com.ecfeed;
     exports com.ecfeed.helper;
+    exports com.ecfeed.parser;
 }

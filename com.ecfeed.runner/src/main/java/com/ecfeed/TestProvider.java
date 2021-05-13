@@ -2,9 +2,11 @@ package com.ecfeed;
 
 import com.ecfeed.data.ConnectionData;
 import com.ecfeed.data.SessionData;
+import com.ecfeed.helper.CollectionHelper;
 import com.ecfeed.helper.ConnectionHelper;
+import com.ecfeed.parser.ChunkParserExport;
+import com.ecfeed.parser.ChunkParserStream;
 
-import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,7 +15,7 @@ import java.util.*;
 public class TestProvider {
 
     private String model;
-    private ConnectionData connectionData;
+    private ConnectionData connection;
 
     private TestProvider(String model, Map<String, String> config) {
 
@@ -33,7 +35,7 @@ public class TestProvider {
     private void setup(String model, Map<String, String> config) {
 
         this.model = model;
-        this.connectionData = ConnectionData.create(
+        this.connection = ConnectionData.create(
                 setupExtractGeneratorAddress(config),
                 setupExtractKeyStorePath(config),
                 setupExtractKeyStorePassword(config)
@@ -105,27 +107,26 @@ public class TestProvider {
 
     public String getAddress() {
 
-        return this.connectionData.getHttpAddress();
+        return this.connection.getHttpAddress();
     }
 
     public Path getKeyStorePath() {
 
-        return this.connectionData.getKeyStorePath();
+        return this.connection.getKeyStorePath();
     }
 
-    public Iterable<String> export(String method, String generatorType, TypeExport typeExport, Map<String, Object> userProperties) {
-        Config.validateUserParameters(userProperties);
+    public Iterable<String> export(String method, String generatorType, TypeExport typeExport, Map<String, Object> properties) {
+        Config.validateUserParameters(properties);
 
-        IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
+        IterableTestQueue<String> iterator = new IterableTestQueue<>(ChunkParserExport.create());
 
-        SessionData sessionData = SessionData.create(this.connectionData, this.model);
-        sessionData.updateRequestData(method, generatorType);
-        sessionData.updateRequestProperties(userProperties);
-        sessionData.updateRequestTemplate(typeExport);
+        SessionData sessionData = SessionData.create(this.connection, this.model, method, generatorType);
+        sessionData.setProperties(properties);
+        sessionData.setTemplate(typeExport);
 
         new Thread(() -> {
             try {
-                processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
+                ConnectionHelper.processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
             } finally {
                 iterator.terminate();
             }
@@ -137,8 +138,8 @@ public class TestProvider {
     public Iterable<String> exportNWise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
         return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
     }
@@ -156,8 +157,8 @@ public class TestProvider {
     public Iterable<String> exportPairwise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
         return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
     }
@@ -191,9 +192,9 @@ public class TestProvider {
     public Iterable<String> exportRandom(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
-        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
-        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
 
         return export(method, Config.Value.parGenRandom, typeExport, updatedProperties);
     }
@@ -227,15 +228,14 @@ public class TestProvider {
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
-        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(new ChunkParserStream());
+        SessionData sessionData = SessionData.create(this.connection, this.model, method, generator);
+        sessionData.setProperties(properties);
 
-        SessionData sessionData = SessionData.create(this.connectionData, this.model);
-        sessionData.updateRequestData(method, generator);
-        sessionData.updateRequestProperties(properties);
+        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(ChunkParserStream.create(sessionData));
 
         new Thread(() -> {
             try {
-                processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
+                ConnectionHelper.processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
             } finally {
                 iterator.terminate();
             }
@@ -247,8 +247,8 @@ public class TestProvider {
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
         return generate(method, Config.Value.parGenNWise, updatedProperties);
     }
@@ -266,8 +266,8 @@ public class TestProvider {
     public Iterable<Object[]> generatePairwise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        CollectionHelper. addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
         return generate(method, Config.Value.parGenNWise, updatedProperties);
     }
@@ -301,9 +301,9 @@ public class TestProvider {
     public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
-        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
-        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
+        CollectionHelper.addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
 
         return generate(method, Config.Value.parGenRandom, updatedProperties);
     }
@@ -334,93 +334,19 @@ public class TestProvider {
         return generateStatic(method, new Param.ParamsStatic());
     }
 
-    private void addProperty(Map<String, Object> map, String key, String value) {
-
-        if (!map.containsKey(key)) {
-            map.put(key, value);
-        }
-    }
-
-
-
-
-
     public void validateConnection() {
-        IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
 
-        SessionData sessionData = SessionData.create(this.connectionData, this.model);
-
-        try {
-            processChunkStream(iterator, ConnectionHelper.getChunkStreamForHealthCheck(sessionData));
-            dryChunkStream(iterator);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("The connection could not be established", e);
-        }
+        ConnectionHelper.validateConnection(this.connection);
     }
 
+    public List<String> getMethodNames(String method) {
 
-
-    public List<String> getMethodNames(String methodName) {
-
-        return Arrays.asList(sendMockRequest(methodName).getMethodNames());
+        return Arrays.asList(ConnectionHelper.sendMockRequest(this.connection, this.model, method).getMethodNames());
     }
 
-    public List<String> getMethodTypes(String methodName) {
+    public List<String> getMethodTypes(String method) {
 
-        return Arrays.asList(sendMockRequest(methodName).getMethodTypes());
-    }
-
-    private ChunkParser<Optional<Object[]>> sendMockRequest(String method) {
-        Map<String, Object> userProperties = new HashMap<>();
-        addProperty(userProperties, Config.Key.parLength, "0");
-
-        ChunkParser<Optional<Object[]>> chunkParser = new ChunkParserStream();
-        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(chunkParser);
-
-        SessionData sessionData = SessionData.create(this.connectionData, this.model);
-        sessionData.updateRequestData(method, Config.Value.parGenRandom);
-        sessionData.updateRequestProperties(userProperties);
-
-        processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
-        dryChunkStream(iterator);
-
-        return chunkParser;
-    }
-
-    private void processChunkStream(IterableTestQueue<?> iterator, InputStream chunkInputStream) {
-        String chunk;
-
-        try(BufferedReader responseReader = new BufferedReader(new InputStreamReader(chunkInputStream))) {
-            while((chunk = responseReader.readLine()) != null) {
-                processChunk(iterator, chunk);
-            }
-        } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was interrupted", e);
-        }
-
-        cleanup(iterator);
-    }
-
-    private void processChunk(IterableTestQueue<?> iterator, String chunk) {
-
-        iterator.append(chunk);
-    }
-
-    private void cleanup(IterableTestQueue<?> iterator) {
-
-        iterator.terminate();
-    }
-
-    private void dryChunkStream(IterableTestQueue<?> iterator) {
-
-        for (Object ignored : iterator) {
-            nop(ignored);
-        }
-    }
-
-    private void nop(Object chunk) {
-
-        System.out.println(chunk);
+        return Arrays.asList(ConnectionHelper.sendMockRequest(this.connection, this.model, method).getMethodTypes());
     }
 
 }

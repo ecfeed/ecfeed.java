@@ -58,6 +58,7 @@ public final class Config {
         final public static String parConstraints = "constraints";
         final public static String parChoices = "choices";
         final public static String parTestSuites = "testSuites";
+        final public static String parFeedback = "feedback";
 
         final public static String parDataSource = "dataSource";
         final public static String parProperties = "properties";
