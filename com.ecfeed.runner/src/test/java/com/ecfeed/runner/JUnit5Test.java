@@ -399,7 +399,7 @@ public class JUnit5Test {
     void getGeneratorAddress() {
         TestProvider testProvider = TestProvider.create(model);
 
-        assertEquals("https://gen.ecfeed.com", testProvider.getGeneratorAddress(),
+        assertEquals("https://gen.ecfeed.com", testProvider.getAddress(),
                 "The default generator address is erroneous");
     }
 
@@ -410,7 +410,7 @@ public class JUnit5Test {
         configProvider.put("generatorAddress", "testAddress");
         TestProvider testProvider = TestProvider.create(model, configProvider);
 
-        assertEquals("testAddress", testProvider.getGeneratorAddress(),
+        assertEquals("testAddress", testProvider.getAddress(),
                 "The custom generator address is erroneous");
     }
 

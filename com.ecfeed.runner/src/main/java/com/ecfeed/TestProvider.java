@@ -1,19 +1,16 @@
 package com.ecfeed;
 
-import org.apache.http.HttpResponse;
+import com.ecfeed.dto.SessionData;
+import com.ecfeed.helper.RequestHelper;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.PrivateKeyStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
-import org.json.JSONObject;
 
 import javax.net.ssl.SSLContext;
 import java.io.*;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +22,7 @@ import java.util.*;
 public class TestProvider {
 
     private String model;
-    private String generatorAddress;
+    private String address;
     private String keyStorePassword;
     private Path keyStorePath;
     private HttpClient httpClient;
@@ -49,7 +46,7 @@ public class TestProvider {
 
         this.model = model;
 
-        this.generatorAddress = setupExtractGeneratorAddress(config);
+        this.address = setupExtractGeneratorAddress(config);
         this.keyStorePassword = setupExtractKeyStorePassword(config);
         this.keyStorePath = setupExtractKeyStorePath(config);
         this.httpClient = setupGetHTTPClient(getKeyStoreInstance(this.keyStorePath));
@@ -177,9 +174,9 @@ public class TestProvider {
         return model;
     }
 
-    public String getGeneratorAddress() {
+    public String getAddress() {
 
-        return generatorAddress;
+        return address;
     }
 
     public Path getKeyStorePath() {
@@ -187,15 +184,19 @@ public class TestProvider {
         return keyStorePath;
     }
 
-    public Iterable<String> export(String method, String generator, TypeExport typeExport, Map<String, Object> properties) {
-        Config.validateUserParameters(properties);
+    public Iterable<String> export(String method, String generatorType, TypeExport typeExport, Map<String, Object> userProperties) {
+        Config.validateUserParameters(userProperties);
 
         IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
-        String userData = getUserData(generator, properties);
+
+        SessionData sessionData = SessionData.create(this.httpClient, this.address, this.model);
+        sessionData.updateRequestData(method, generatorType);
+        sessionData.updateRequestProperties(userProperties);
+        sessionData.updateRequestTemplate(typeExport);
 
         new Thread(() -> {
             try {
-                processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.of(typeExport.toString()))));
+                processChunkStream(iterator, RequestHelper.getChunkStreamForTestData(sessionData));
             } finally {
                 iterator.terminate();
             }
@@ -298,11 +299,14 @@ public class TestProvider {
         Config.validateUserParameters(properties);
 
         IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(new ChunkParserStream());
-        String userData = getUserData(generator, properties);
+
+        SessionData sessionData = SessionData.create(this.httpClient, this.address, this.model);
+        sessionData.updateRequestData(method, generator);
+        sessionData.updateRequestProperties(properties);
 
         new Thread(() -> {
             try {
-                processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.empty())));
+                processChunkStream(iterator, RequestHelper.getChunkStreamForTestData(sessionData));
             } finally {
                 iterator.terminate();
             }
@@ -408,78 +412,24 @@ public class TestProvider {
         }
     }
 
-    private String getUserData(String generator, Map<String, Object> properties) {
-        JSONObject userData = new JSONObject();
-
-        transferProperty(Config.Key.parConstraints, userData, properties);
-        transferProperty(Config.Key.parChoices, userData, properties);
-        transferProperty(Config.Key.parTestSuites, userData, properties);
-
-        userData.put(Config.Key.parDataSource, generator);
-        userData.put(Config.Key.parProperties, properties);
-
-        return userData.toString().replaceAll("\"", "'");
-    }
-
-    private void transferProperty(String propertyName, JSONObject userData, Map<String, Object> properties) {
-
-        if (properties.containsKey(propertyName)) {
-            userData.put(propertyName, properties.get(propertyName));
-            properties.remove(propertyName);
-        }
-    }
-
-    private String generateRequestURL(String method, String userData, Optional<String> template) {
-        StringBuilder requestBuilder = new StringBuilder();
-        requestBuilder.append(this.generatorAddress).append("/").append(Config.Key.urlService).append("?");
-
-        if (template.isPresent() && !template.get().equals(TypeExport.Raw.toString())) {
-            requestBuilder.append(Config.Key.parRequestType).append("=").append(Config.Value.parRequestTypeExport);
-        } else {
-            requestBuilder.append(Config.Key.parRequestType).append("=").append(Config.Value.parRequestTypeStream);
-        }
-
-        requestBuilder.append("&").append(Config.Key.parClient).append("=").append(Config.Value.parClient);
-        requestBuilder.append("&").append(Config.Key.parRequest).append("=");
-
-        JSONObject request = new JSONObject();
-        request.put(Config.Key.parModel, this.model);
-        request.put(Config.Key.parMethod, method);
-        request.put(Config.Key.parUserData, userData);
-
-        if (template.isPresent() && !template.get().equals(TypeExport.Raw.toString())) {
-            request.put(Config.Key.parTemplate, template.get());
-        }
-
-        String result = request.toString();
-
-        log(result);
-
-        try {
-            result = URLEncoder.encode(result, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("The URL request could not be built");
-        }
 
 
-        return requestBuilder.toString() + result;
-    }
+
 
     public void validateConnection() {
         IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
 
+        SessionData sessionData = SessionData.create(this.httpClient, this.address, this.model);
+
         try {
-            processChunkStream(iterator, getChunkStream(generateHealthCheckURL()));
+            processChunkStream(iterator, RequestHelper.getChunkStreamForHealthCheck(sessionData));
             dryChunkStream(iterator);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("The connection could not be established", e);
         }
     }
 
-    private String generateHealthCheckURL() {
 
-        return this.generatorAddress + "/" + Config.Key.urlHealthCheck;
-    }
 
     public List<String> getMethodNames(String methodName) {
 
@@ -491,31 +441,22 @@ public class TestProvider {
         return Arrays.asList(sendMockRequest(methodName).getMethodTypes());
     }
 
-    private ChunkParser<Optional<Object[]>> sendMockRequest(String methodName) {
-        Map<String, Object> properties = new HashMap<>();
-        addProperty(properties, Config.Key.parLength, "0");
+    private ChunkParser<Optional<Object[]>> sendMockRequest(String method) {
+        Map<String, Object> userProperties = new HashMap<>();
+        addProperty(userProperties, Config.Key.parLength, "0");
 
         ChunkParser<Optional<Object[]>> chunkParser = new ChunkParserStream();
         IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(chunkParser);
 
-        String userData = getUserData(Config.Value.parGenRandom, properties);
+        SessionData sessionData = SessionData.create(this.httpClient, this.address, this.model);
+        sessionData.updateRequestData(method, Config.Value.parGenRandom);
+        sessionData.updateRequestProperties(userProperties);
 
-        processChunkStream(iterator, getChunkStream(generateRequestURL(methodName, userData, Optional.empty())));
+        processChunkStream(iterator, RequestHelper.getChunkStreamForTestData(sessionData));
 
         dryChunkStream(iterator);
 
         return chunkParser;
-    }
-
-    private InputStream getChunkStream(String request) {
-
-        try {
-            HttpGet httpRequest = new HttpGet(request);
-            HttpResponse httpResponse = httpClient.execute(httpRequest);
-            return httpResponse.getEntity().getContent();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous): https://" + this.generatorAddress + "/", e);
-        }
     }
 
     private void processChunkStream(IterableTestQueue<?> iterator, InputStream chunkInputStream) {

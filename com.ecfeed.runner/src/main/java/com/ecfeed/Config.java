@@ -17,66 +17,66 @@ public final class Config {
 
     private Config() { }
 
-    final static class Value {
+    final public static class Value {
 
         private Value() { }
 
-        final static String generatorAddress = "https://gen.ecfeed.com";
-        final static String keyStorePassword = "changeit";
-        final static String[] keyStorePath = {
+        final public static String generatorAddress = "https://develop-gen.ecfeed.com";
+        final public static String keyStorePassword = "changeit";
+        final public static String[] keyStorePath = {
                 ".ecfeed/security.p12", "ecfeed/security.p12",
                 homeUser + "/.ecfeed/security.p12", homeUser + "/ecfeed/security.p12",
                 homeJava + "/lib/security/cacerts"
         };
 
-        final static String parN = "2";
-        final static String parCoverage = "100";
-        final static String parLength = "10";
-        final static String parDuplicates = "false";
-        final static String parAdaptive = "true";
+        final public static String parN = "2";
+        final public static String parCoverage = "100";
+        final public static String parLength = "10";
+        final public static String parDuplicates = "false";
+        final public static String parAdaptive = "true";
 
-        final static String parGenNWise = "genNWise";
-        final static String parGenCartesian = "genCartesian";
-        final static String parGenRandom = "genRandom";
-        final static String parGenStatic = "static";
+        final public static String parGenNWise = "genNWise";
+        final public static String parGenCartesian = "genCartesian";
+        final public static String parGenRandom = "genRandom";
+        final public static String parGenStatic = "static";
 
-        final static String parRequestTypeExport = "requestExport";
-        final static String parRequestTypeStream = "requestData";
+        final public static String parRequestTypeExport = "requestExport";
+        final public static String parRequestTypeStream = "requestData";
 
-        final static String parClient = "java";
+        final public static String parClient = "java";
     }
 
-    final static class Key {
+    final public static class Key {
 
         private Key() { }
 
-        final static String parN = "n";
-        final static String parCoverage = "coverage";
-        final static String parLength = "length";
-        final static String parDuplicates = "duplicates";
-        final static String parAdaptive = "adaptive";
-        final static String parConstraints = "constraints";
-        final static String parChoices = "choices";
-        final static String parTestSuites = "testSuites";
+        final public static String parN = "n";
+        final public static String parCoverage = "coverage";
+        final public static String parLength = "length";
+        final public static String parDuplicates = "duplicates";
+        final public static String parAdaptive = "adaptive";
+        final public static String parConstraints = "constraints";
+        final public static String parChoices = "choices";
+        final public static String parTestSuites = "testSuites";
 
-        final static String parDataSource = "dataSource";
-        final static String parProperties = "properties";
+        final public static String parDataSource = "dataSource";
+        final public static String parProperties = "properties";
 
-        final static String parModel = "model";
-        final static String parMethod = "method";
-        final static String parUserData = "userData";
-        final static String parRequestType = "requestType";
-        final static String parClient = "client";
-        final static String parRequest = "request";
-        final static String parTemplate = "template";
+        final public static String parModel = "model";
+        final public static String parMethod = "method";
+        final public static String parUserData = "userData";
+        final public static String parRequestType = "requestType";
+        final public static String parClient = "client";
+        final public static String parRequest = "request";
+        final public static String parTemplate = "template";
 
-        final static String urlService = "testCaseService";
-        final static String urlHealthCheck = "genServiceVersion";
+        final public static String urlService = "testCaseService";
+        final public static String urlHealthCheck = "genServiceVersion";
 
-        final static String certClient = "connection";
-        final static String certServer = "ca";
+        final public static String certClient = "connection";
+        final public static String certServer = "ca";
 
-        final static List<String> userAllowedKeys = Arrays.asList(
+        final public static List<String> userAllowedKeys = Arrays.asList(
                 parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites
         );
     }
