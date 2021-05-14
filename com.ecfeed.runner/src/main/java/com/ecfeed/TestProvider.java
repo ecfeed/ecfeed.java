@@ -1,6 +1,6 @@
 package com.ecfeed;
 
-import com.ecfeed.data.ConnectionData;
+import com.ecfeed.data.Connection;
 import com.ecfeed.data.SessionData;
 import com.ecfeed.helper.CollectionHelper;
 import com.ecfeed.helper.ConnectionHelper;
@@ -15,7 +15,7 @@ import java.util.*;
 public class TestProvider {
 
     private String model;
-    private ConnectionData connection;
+    private Connection connection;
 
     private TestProvider(String model, Map<String, String> config) {
 
@@ -35,7 +35,7 @@ public class TestProvider {
     private void setup(String model, Map<String, String> config) {
 
         this.model = model;
-        this.connection = ConnectionData.create(
+        this.connection = Connection.create(
                 setupExtractGeneratorAddress(config),
                 setupExtractKeyStorePath(config),
                 setupExtractKeyStorePassword(config)
@@ -121,7 +121,7 @@ public class TestProvider {
         IterableTestQueue<String> iterator = new IterableTestQueue<>(ChunkParserExport.create());
 
         SessionData sessionData = SessionData.create(this.connection, this.model, method, generatorType);
-        sessionData.setProperties(properties);
+        sessionData.setGeneratorOptions(properties);
         sessionData.setTemplate(typeExport);
 
         new Thread(() -> {
@@ -229,7 +229,7 @@ public class TestProvider {
         Config.validateUserParameters(properties);
 
         SessionData sessionData = SessionData.create(this.connection, this.model, method, generator);
-        sessionData.setProperties(properties);
+        sessionData.setGeneratorOptions(properties);
 
         IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(ChunkParserStream.create(sessionData));
 

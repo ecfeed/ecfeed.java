@@ -5,102 +5,151 @@ import com.ecfeed.TypeExport;
 import org.apache.http.client.HttpClient;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class SessionData {
 
-    private final static String FRAMEWORK = "Java";
+    private final Feedback feedback = Feedback.create(this);
 
-    private final ConnectionData connectionData;
-
-    private final String model;
-    private final String method;
+    private final Connection connection;
     private final String generatorType;
+    private final String method;
+    private final String model;
 
     private Map<String, Object> generatorOptions = new HashMap<>();
+    private Map<String, String> custom = new HashMap<>();
+    private TypeExport template = null;
+    private String methodNameQualified = "";
+    private String testSessionId = "";
+    private String testSessionLabel = "";
+    private Object constraints = "ALL";
+    private Object testSuites = "ALL";
+    private Object choices = "ALL";
+    private int timestamp = -1;
 
-    private Optional<FeedbackData> feedbackData = Optional.empty();
-
-    private String[] argumentTypes;
-    private String[] argumentNames;
-
-    private String methodNameQualified;
-    private String testSessionId;
-    private int timestamp;
-
-    private Optional<Map<String, String>> custom = Optional.empty();
-    private Optional<TypeExport> template = Optional.empty();
-    private Optional<Object> constraints = Optional.empty();
-    private Optional<Object> testSuites = Optional.empty();
-    private Optional<Object> choices = Optional.empty();
-    private Optional<String> testSessionLabel = Optional.empty();
-
-    private SessionData(ConnectionData connectionData, String model, String method, String generatorType) {
-        this.connectionData = connectionData;
+    private SessionData(Connection connection, String model, String method, String generatorType) {
+        this.connection = connection;
         this.model = model;
         this.method = method;
         this.generatorType = generatorType;
     }
 
-    public static SessionData create(ConnectionData connectionData, String model, String method, String generatorType) {
-        return new SessionData(connectionData, model, method, generatorType);
+    public static SessionData create(Connection connection, String model, String method, String generatorType) {
+
+        return new SessionData(connection, model, method, generatorType);
     }
 
-    public String getMethod() {
+    public String generateURLForTestData() {
+        StringBuilder requestBuilder = new StringBuilder();
+
+        generateURLForTestDataCore(requestBuilder);
+        generateURLForTestDataParameters(requestBuilder);
+
+        return requestBuilder.toString();
+    }
+
+    private StringBuilder generateURLForTestDataCore(StringBuilder builder) {
+
+        return builder.append(getHttpAddress()).append("/").append(Config.Key.urlService);
+    }
+
+    private StringBuilder generateURLForTestDataParameters(StringBuilder builder) {
+        String type = getTemplate().isPresent() ? Config.Value.parRequestTypeExport : Config.Value.parRequestTypeStream;
+
+        builder.append("?");
+        builder.append(Config.Key.parRequestType).append("=").append(type);
+        builder.append("&");
+        builder.append(Config.Key.parClient).append("=").append(Config.Value.parClient);
+        builder.append("&");
+        builder.append(Config.Key.parRequest).append("=").append(generateURLForTestDataRequest());
+
+        return builder;
+    }
+
+    private String generateURLForTestDataRequest() {
+        JSONObject request = new JSONObject();
+
+        request.put(Config.Key.parModel, getModel());
+        request.put(Config.Key.parMethod, getMethodName());
+        request.put(Config.Key.parUserData, generateURLForTestDataRequestUserData());
+
+        getTemplate().ifPresent(e -> request.put(Config.Key.parTemplate, e));
+
+        try {
+            return URLEncoder.encode(request.toString(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("The request could not be generated.");
+        }
+    }
+
+    private String generateURLForTestDataRequestUserData() {
+        JSONObject requestUserData = new JSONObject();
+
+        requestUserData.put(Config.Key.parDataSource, getGeneratorType());
+        requestUserData.put(Config.Key.parProperties, getGeneratorOptions());
+
+        return requestUserData.toString().replaceAll("\"", "'");
+    }
+
+    private String getHttpAddress() {
+        String httpAddress = connection.getHttpAddress();
+
+        if (httpAddress == null) {
+            throw new RuntimeException("The generator address is not defined");
+        }
+
+        if (!httpAddress.startsWith("https://")) {
+            throw new RuntimeException("The generator address should start with http://");
+        }
+
+        return httpAddress;
+    }
+
+    private Optional<TypeExport> getTemplate() {
+
+        if (this.template == null || this.template.equals(TypeExport.Raw)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(template);
+    }
+
+    private String getMethodName() {
+
         return method;
     }
 
-    public String getModel() {
-        return model;
-    }
+    private String getMethodNameQualified() {
 
-    public String getGeneratorType() {
-        return generatorType;
-    }
-
-    public String[] getArgumentTypes() {
-        return argumentTypes;
-    }
-
-    public void setArgumentTypes(String[] argumentTypes) {
-        this.argumentTypes = argumentTypes;
-    }
-
-    public String[] getArgumentNames() {
-        return argumentNames;
-    }
-
-    public void setArgumentNames(String[] argumentNames) {
-        this.argumentNames = argumentNames;
-    }
-
-    public void setTestSessionId(String testSessionId) {
-        this.testSessionId = testSessionId;
-    }
-
-    public void setTimestamp(int timestamp) {
-        this.timestamp = timestamp;
+        return methodNameQualified;
     }
 
     public void setMethodNameQualified(String methodNameQualified) {
+
         this.methodNameQualified = methodNameQualified;
     }
 
-    public Optional<TypeExport> getTemplate() {
-        return template;
+    private String getModel() {
+
+        return model;
     }
 
-    public void setTemplate(TypeExport template) {
-        this.template = Optional.ofNullable(template);
+    private String getGeneratorType() {
+
+        return generatorType;
     }
 
-    public Map<String, Object> getProperties() {
+    private Map<String, Object> getGeneratorOptions() {
+
         return generatorOptions;
     }
 
-    public void setProperties(Map<String, Object> properties) {
+    public void setGeneratorOptions(Map<String, Object> properties) {
         this.generatorOptions = new HashMap<>();
 
         properties.entrySet().stream().forEach(e -> {
@@ -110,8 +159,10 @@ public class SessionData {
                 this.testSuites = Optional.of(e.getValue());
             } else if (e.getKey().equalsIgnoreCase(Config.Key.parChoices)) {
                 this.choices = Optional.of(e.getValue());
-            } else if(e.getKey().equalsIgnoreCase(Config.Key.parFeedback)) {
-                this.feedbackData = Optional.of(FeedbackData.create(this));
+            } else if (e.getKey().equalsIgnoreCase(Config.Key.parFeedback)) {
+                if (e.getValue().toString().equalsIgnoreCase("true")) {
+                    this.feedback.enable();
+                }
             } else {
                 this.generatorOptions.put(e.getKey(), e.getValue());
             }
@@ -119,30 +170,35 @@ public class SessionData {
 
     }
 
+    public void setTestSessionId(String testSessionId) {
+
+        this.testSessionId = testSessionId;
+    }
+
+    public void setTimestamp(int timestamp) {
+
+        this.timestamp = timestamp;
+    }
+
+    public void setTemplate(TypeExport template) {
+
+        this.template = template;
+    }
+
 //-------------------------------------------------------------------------------------
 
-    public String getGeneratorAddress() {
-        return connectionData.getHttpAddress();
-    }
-
     public HttpClient getHttpClient() {
-        return connectionData.getHttpClient();
+        return connection.getHttpClient();
     }
 
-    public Optional<FeedbackTestData> getFeedback(String data) {
+    public void transmissionFinished() {
 
-        if (feedbackData.isPresent()) {
-            return Optional.of(feedbackData.get().createFeedback(data));
-        }
-
-        return Optional.empty();
+        feedback.complete();
     }
 
-    public void addFeedback(String id, JSONObject feedback) {
+    public Optional<FeedbackHandle> createFeedbackHandle(String data) {
 
-        if (feedbackData.isPresent()) {
-            feedbackData.get().addFeedback(id, feedback);
-        }
+        return feedback.createFeedbackHandle(data);
     }
 
 

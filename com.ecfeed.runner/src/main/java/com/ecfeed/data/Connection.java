@@ -18,7 +18,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 
-public class ConnectionData {
+public class Connection {
 
     private HttpClient httpClient;
     private String httpAddress;
@@ -26,7 +26,7 @@ public class ConnectionData {
     private String keyStorePassword;
     private Path keyStorePath;
 
-    private ConnectionData(String httpAddress, Path keyStorePath, String keyStorePassword) {
+    private Connection(String httpAddress, Path keyStorePath, String keyStorePassword) {
         this.httpAddress = httpAddress;
         this.keyStorePath = keyStorePath;
         this.keyStorePassword = keyStorePassword;
@@ -35,20 +35,23 @@ public class ConnectionData {
         this.httpClient = setupGetHTTPClient();
     }
 
-    public static ConnectionData create(String httpAddress, Path keyStorePath, String keyStorePassword) {
+    public static Connection create(String httpAddress, Path keyStorePath, String keyStorePassword) {
 
-        return new ConnectionData(httpAddress, keyStorePath, keyStorePassword);
+        return new Connection(httpAddress, keyStorePath, keyStorePassword);
     }
 
     public HttpClient getHttpClient() {
+
         return httpClient;
     }
 
     public String getHttpAddress() {
+
         return httpAddress;
     }
 
     public Path getKeyStorePath() {
+
         return keyStorePath;
     }
 

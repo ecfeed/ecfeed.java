@@ -29,6 +29,8 @@ public final class Config {
                 homeJava + "/lib/security/cacerts"
         };
 
+        final public static String parFeedback = "false";
+
         final public static String parN = "2";
         final public static String parCoverage = "100";
         final public static String parLength = "10";
@@ -78,7 +80,7 @@ public final class Config {
         final public static String certServer = "ca";
 
         final public static List<String> userAllowedKeys = Arrays.asList(
-                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites
+                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback
         );
     }
 

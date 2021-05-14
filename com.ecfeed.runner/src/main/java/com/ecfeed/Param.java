@@ -8,6 +8,7 @@ public class Param{
     private static abstract class ParamsCommon<T extends ParamsCommon> {
         private Object constraints;
         private Object choices;
+        private String feedback;
 
         public Object getConstraints() {
 
@@ -17,6 +18,11 @@ public class Param{
         public Object getChoices() {
 
             return choices;
+        }
+
+        public boolean getFeedback() {
+
+            return Boolean.parseBoolean(feedback);
         }
 
         public T constraints(String[] constraints) {
@@ -43,6 +49,12 @@ public class Param{
             return self();
         }
 
+        public T feedback(boolean feedback) {
+
+            this.feedback = feedback + "";
+            return self();
+        }
+
         protected Map<String, Object> getParamMap() {
             Map<String, Object> paramMap = new HashMap<>();
 
@@ -53,6 +65,8 @@ public class Param{
             if (choices != null) {
                 paramMap.put(Config.Key.parChoices, choices);
             }
+
+            paramMap.put(Config.Key.parFeedback, feedback);
 
 
             return paramMap;

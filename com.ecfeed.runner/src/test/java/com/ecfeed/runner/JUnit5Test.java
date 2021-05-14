@@ -3,6 +3,7 @@ package com.ecfeed.runner;
 import com.ecfeed.Param;
 import com.ecfeed.TestProvider;
 import com.ecfeed.TypeExport;
+import com.ecfeed.data.FeedbackHandle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,6 +29,11 @@ public class JUnit5Test {
         PASSPORT, DRIVERS_LICENSE, PERSONAL_ID
     }
 
+
+    static Iterable<Object[]> testProviderNWiseFeedback() {
+        return TestProvider.create(model).generateNWise(method, new Param.ParamsNWise().feedback(true));
+    }
+
     static Iterable<Object[]> testProviderNWise() {
         return TestProvider.create(model).generateNWise(method);
     }
@@ -46,6 +52,13 @@ public class JUnit5Test {
 
     static Iterable<Object[]> testProviderStatic() {
         return TestProvider.create(model).generateStatic(method);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testProviderNWiseFeedback")
+    void testProviderNWiseFeedback(String name, String firstName, Gender gender, int age, String id, ID type, FeedbackHandle feedbackHandle) {
+        feedbackHandle.addFeedback(true);
+        System.out.println("name = " + name + ", firstName = " + firstName + ", gender = " + gender + ", age = " + age + ", id = " + id + ", type = " + type);
     }
 
     @ParameterizedTest
