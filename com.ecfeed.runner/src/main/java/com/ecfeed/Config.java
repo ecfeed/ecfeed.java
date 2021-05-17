@@ -61,6 +61,8 @@ public final class Config {
         final public static String parChoices = "choices";
         final public static String parTestSuites = "testSuites";
         final public static String parFeedback = "feedback";
+        final public static String parCustom = "custom";
+        final public static String parTestSessionLabel = "testSessionLabel";
 
         final public static String parDataSource = "dataSource";
         final public static String parProperties = "properties";
@@ -75,12 +77,13 @@ public final class Config {
 
         final public static String urlService = "testCaseService";
         final public static String urlHealthCheck = "genServiceVersion";
+        final public static String urlFeedback = "streamFeedback";
 
         final public static String certClient = "connection";
         final public static String certServer = "ca";
 
         final public static List<String> userAllowedKeys = Arrays.asList(
-                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback
+                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback, parTestSessionLabel, parCustom
         );
     }
 

@@ -8,9 +8,11 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SessionData {
 
@@ -23,6 +25,7 @@ public class SessionData {
 
     private Map<String, Object> generatorOptions = new HashMap<>();
     private Map<String, String> custom = new HashMap<>();
+    private JSONObject testResults = new JSONObject();
     private TypeExport template = null;
     private String methodNameQualified = "";
     private String testSessionId = "";
@@ -69,6 +72,79 @@ public class SessionData {
         builder.append(Config.Key.parRequest).append("=").append(generateURLForTestDataRequest());
 
         return builder;
+    }
+
+    public String generateBodyForTestData() {
+
+        return "";
+    }
+
+    public String generateURLForFeedback() {
+        StringBuilder requestBuilder = new StringBuilder();
+
+        generateURLForFeedbackCore(requestBuilder);
+        generateURLForFeedbackParameters(requestBuilder);
+
+        return requestBuilder.toString();
+    }
+
+    private StringBuilder generateURLForFeedbackCore(StringBuilder builder) {
+
+        return builder.append(getHttpAddress()).append("/").append(Config.Key.urlFeedback);
+    }
+
+    private StringBuilder generateURLForFeedbackParameters(StringBuilder builder) {
+
+        return builder;
+    }
+
+    public String generateBodyForFeedback() {
+        JSONObject json = new JSONObject();
+
+        generateFeedbackBodyElement(json, "modelId", getModel());
+        generateFeedbackBodyElement(json, "methodInfo", getMethodNameQualified());
+        generateFeedbackBodyElement(json, "testSessionId", getTestSessionId());
+        generateFeedbackBodyElement(json, "testSessionLabel", getTestSessionLabel());
+        generateFeedbackBodyElement(json, "framework", Config.Value.parClient);
+        generateFeedbackBodyElement(json, "timestamp", getTimestamp());
+        generateFeedbackBodyElement(json, "custom", getCustom());
+        generateFeedbackBodyElement(json, "testSuites", getTestSuites());
+        generateFeedbackBodyElement(json, "constraints", getConstraints());
+        generateFeedbackBodyElement(json, "choices", getChoices());
+        generateFeedbackBodyElement(json, "testResults", getTestResults());
+        generateFeedbackBodyElement(json, "generatorType", getGeneratorType());
+        generateFeedbackBodyElement(json, "generatorOptions", getGeneratorOptions().entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining(", ")));
+
+        return json.toString();
+    }
+
+    private void generateFeedbackBodyElement(JSONObject json, String key, Object value) {
+
+        if (value == null) {
+            return;
+        }
+
+        if (value instanceof String) {
+            if (value.toString().equalsIgnoreCase("") || value.toString().equalsIgnoreCase("ALL")) {
+                return;
+            }
+        }
+
+        if (value instanceof Map<?,?>) {
+            if (((Map<?, ?>) value).size() == 0) {
+                return;
+            }
+        }
+
+        if (value instanceof Collection<?>) {
+            if (((Collection<?>) value).size() == 0) {
+                return;
+            }
+        }
+
+        json.put(key, value);
     }
 
     private String generateURLForTestDataRequest() {
@@ -154,13 +230,17 @@ public class SessionData {
 
         properties.entrySet().stream().forEach(e -> {
             if (e.getKey().equalsIgnoreCase(Config.Key.parConstraints)) {
-                this.constraints = Optional.of(e.getValue());
+                setConstraints(e.getValue());
             } else if (e.getKey().equalsIgnoreCase(Config.Key.parTestSuites)) {
-                this.testSuites = Optional.of(e.getValue());
+                setTestSuites(e.getValue());
             } else if (e.getKey().equalsIgnoreCase(Config.Key.parChoices)) {
-                this.choices = Optional.of(e.getValue());
+                setChoices(e.getValue());
+            } else if (e.getKey().equalsIgnoreCase(Config.Key.parTestSessionLabel)) {
+                setTestSessionLabel(e.getValue().toString());
+            } else if (e.getKey().equalsIgnoreCase(Config.Key.parCustom)) {
+                setCustom((Map<String, String>)e.getValue());
             } else if (e.getKey().equalsIgnoreCase(Config.Key.parFeedback)) {
-                if (e.getValue().toString().equalsIgnoreCase("true")) {
+                if (e.getValue().equals(true) || e.getValue().toString().equalsIgnoreCase("true")) {
                     this.feedback.enable();
                 }
             } else {
@@ -170,9 +250,29 @@ public class SessionData {
 
     }
 
+    public String getTestSessionId() {
+
+        return this.testSessionId;
+    }
+
     public void setTestSessionId(String testSessionId) {
 
         this.testSessionId = testSessionId;
+    }
+
+    public String getTestSessionLabel() {
+
+        return this.testSessionLabel;
+    }
+
+    public void setTestSessionLabel(String testSessionLabel) {
+
+        this.testSessionLabel = testSessionLabel;
+    }
+
+    public int getTimestamp() {
+
+        return this.timestamp;
     }
 
     public void setTimestamp(int timestamp) {
@@ -183,6 +283,50 @@ public class SessionData {
     public void setTemplate(TypeExport template) {
 
         this.template = template;
+    }
+
+    public Map<String, String> getCustom() {
+
+        return custom;
+    }
+
+    public void setCustom(Map<String, String> custom) {
+
+        this.custom = custom;
+    }
+
+    public Object getConstraints() {
+
+        return constraints;
+    }
+
+    public void setConstraints(Object constraints) {
+
+        this.constraints = constraints;
+    }
+
+    public Object getTestSuites() {
+
+        return testSuites;
+    }
+
+    public void setTestSuites(Object testSuites) {
+
+        this.testSuites = testSuites;
+    }
+
+    public Object getChoices() {
+
+        return choices;
+    }
+
+    public void setChoices(Object choices) {
+
+        this.choices = choices;
+    }
+
+    public JSONObject getTestResults() {
+        return testResults;
     }
 
 //-------------------------------------------------------------------------------------
@@ -201,7 +345,10 @@ public class SessionData {
         return feedback.createFeedbackHandle(data);
     }
 
+    void registerFeedbackHandle(String id, JSONObject feedback) {
 
+        testResults.put(id, feedback);
+    }
 
 
 }

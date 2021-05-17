@@ -1,5 +1,6 @@
 package com.ecfeed.data;
 
+import com.ecfeed.helper.ConnectionHelper;
 import org.json.JSONObject;
 
 import java.util.Optional;
@@ -7,8 +8,6 @@ import java.util.Optional;
 public final class Feedback {
 
     private final SessionData sessionData;
-
-    private JSONObject testResults = new JSONObject();
 
     private boolean enabled = false;
     private boolean completed = false;
@@ -55,7 +54,7 @@ public final class Feedback {
 
         testCasesParsed++;
 
-        testResults.put(id, feedback);
+        this.sessionData.registerFeedbackHandle(id, feedback);
 
         if (testCasesParsed == testCasesTotal && completed) {
             sendFeedback();
@@ -68,6 +67,7 @@ public final class Feedback {
             return;
         }
 
+        ConnectionHelper.getChunkStreamForFeedback(this.sessionData);
         System.out.println("send");
     }
 

@@ -10,6 +10,8 @@ import com.ecfeed.parser.ChunkParserStream;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,24 +30,40 @@ public final class ConnectionHelper {
     public static InputStream getChunkStreamForHealthCheck(Connection connection) {
         String request = generateURLForHealthCheck(connection.getHttpAddress());
 
-        return getChunkStream(connection.getHttpClient(), request);
+        return createChunkStreamGet(connection.getHttpClient(), request);
     }
 
     public static InputStream getChunkStreamForTestData(SessionData sessionData) {
 
-        return getChunkStream(sessionData.getHttpClient(), sessionData.generateURLForTestData());
+        return createChunkStreamGet(sessionData.getHttpClient(), sessionData.generateURLForTestData());
     }
 
+    public static InputStream getChunkStreamForFeedback(SessionData sessionData) {
+
+        return createChunkStreamPost(sessionData.getHttpClient(), sessionData.generateURLForFeedback(), sessionData.generateBodyForFeedback());
+    }
     private static String generateURLForHealthCheck(String generatorAddress) {
 
         return generatorAddress + "/" + Config.Key.urlHealthCheck;
     }
 
-    private static InputStream getChunkStream(HttpClient httpClient, String request) {
+    private static InputStream createChunkStreamGet(HttpClient httpClient, String request) {
 
         try {
-            HttpGet httpRequest = new HttpGet(request);
-            HttpResponse httpResponse = httpClient.execute(httpRequest);
+            HttpGet httpGet = new HttpGet(request);
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            return httpResponse.getEntity().getContent();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous).", e);
+        }
+    }
+
+    private static InputStream createChunkStreamPost(HttpClient httpClient, String request, String body) {
+        System.out.println(request);
+        try {
+            HttpPost httpPost = new HttpPost(request);
+            httpPost.setEntity(new StringEntity(body));
+            HttpResponse httpResponse = httpClient.execute(httpPost);
             return httpResponse.getEntity().getContent();
         } catch (IOException e) {
             throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous).", e);
