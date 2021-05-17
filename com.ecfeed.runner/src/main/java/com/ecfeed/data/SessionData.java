@@ -2,6 +2,7 @@ package com.ecfeed.data;
 
 import com.ecfeed.Config;
 import com.ecfeed.TypeExport;
+import com.ecfeed.helper.ConnectionHelper;
 import org.apache.http.client.HttpClient;
 import org.json.JSONObject;
 
@@ -16,16 +17,15 @@ import java.util.stream.Collectors;
 
 public class SessionData {
 
-    private final Feedback feedback = Feedback.create(this);
+    private final JSONObject testResults = new JSONObject();
 
-    private final Connection connection;
+    private final ConnectionData connection;
     private final String generatorType;
     private final String method;
     private final String model;
 
     private Map<String, Object> generatorOptions = new HashMap<>();
     private Map<String, String> custom = new HashMap<>();
-    private JSONObject testResults = new JSONObject();
     private TypeExport template = null;
     private String methodNameQualified = "";
     private String testSessionId = "";
@@ -35,14 +35,19 @@ public class SessionData {
     private Object choices = Config.Value.parAll;
     private int timestamp = -1;
 
-    private SessionData(Connection connection, String model, String method, String generatorType) {
+    private boolean enabled = false;
+    private boolean completed = false;
+    private int testCasesTotal = 0;
+    private int testCasesParsed = 0;
+
+    private SessionData(ConnectionData connection, String model, String method, String generatorType) {
         this.connection = connection;
         this.model = model;
         this.method = method;
         this.generatorType = generatorType;
     }
 
-    public static SessionData create(Connection connection, String model, String method, String generatorType) {
+    public static SessionData create(ConnectionData connection, String model, String method, String generatorType) {
 
         return new SessionData(connection, model, method, generatorType);
     }
@@ -56,12 +61,12 @@ public class SessionData {
         return requestBuilder.toString();
     }
 
-    private StringBuilder generateURLForTestDataCore(StringBuilder builder) {
+    private void generateURLForTestDataCore(StringBuilder builder) {
 
-        return builder.append(getHttpAddress()).append("/").append(Config.Key.urlService);
+        builder.append(getHttpAddress()).append("/").append(Config.Key.urlService);
     }
 
-    private StringBuilder generateURLForTestDataParameters(StringBuilder builder) {
+    private void generateURLForTestDataParameters(StringBuilder builder) {
         String type = getTemplate().isPresent() ? Config.Value.parRequestTypeExport : Config.Value.parRequestTypeStream;
 
         builder.append("?");
@@ -70,8 +75,6 @@ public class SessionData {
         builder.append(Config.Key.reqDataClient).append("=").append(Config.Value.parClient);
         builder.append("&");
         builder.append(Config.Key.reqDataRequest).append("=").append(generateURLForTestDataRequest());
-
-        return builder;
     }
 
     private String generateURLForTestDataRequest() {
@@ -113,15 +116,12 @@ public class SessionData {
         return requestBuilder.toString();
     }
 
-    private StringBuilder generateURLForFeedbackCore(StringBuilder builder) {
+    private void generateURLForFeedbackCore(StringBuilder builder) {
 
-        return builder.append(getHttpAddress()).append("/").append(Config.Key.urlFeedback);
+        builder.append(getHttpAddress()).append("/").append(Config.Key.urlFeedback);
     }
 
-    private StringBuilder generateURLForFeedbackParameters(StringBuilder builder) {
-
-        return builder;
-    }
+    private void generateURLForFeedbackParameters(StringBuilder builder) { }
 
     public String generateBodyForFeedback() {
         JSONObject json = new JSONObject();
@@ -224,23 +224,23 @@ public class SessionData {
     public void setGeneratorOptions(Map<String, Object> properties) {
         this.generatorOptions = new HashMap<>();
 
-        properties.entrySet().stream().forEach(e -> {
-            if (e.getKey().equalsIgnoreCase(Config.Key.parConstraints)) {
-                setConstraints(e.getValue());
-            } else if (e.getKey().equalsIgnoreCase(Config.Key.parTestSuites)) {
-                setTestSuites(e.getValue());
-            } else if (e.getKey().equalsIgnoreCase(Config.Key.parChoices)) {
-                setChoices(e.getValue());
-            } else if (e.getKey().equalsIgnoreCase(Config.Key.parTestSessionLabel)) {
-                setTestSessionLabel(e.getValue().toString());
-            } else if (e.getKey().equalsIgnoreCase(Config.Key.parCustom)) {
-                setCustom((Map<String, String>)e.getValue());
-            } else if (e.getKey().equalsIgnoreCase(Config.Key.parFeedback)) {
-                if (e.getValue().equals(true) || e.getValue().toString().equalsIgnoreCase("true")) {
+        properties.forEach((key, value) -> {
+            if (key.equalsIgnoreCase(Config.Key.parConstraints)) {
+                setConstraints(value);
+            } else if (key.equalsIgnoreCase(Config.Key.parTestSuites)) {
+                setTestSuites(value);
+            } else if (key.equalsIgnoreCase(Config.Key.parChoices)) {
+                setChoices(value);
+            } else if (key.equalsIgnoreCase(Config.Key.parTestSessionLabel)) {
+                setTestSessionLabel(value.toString());
+            } else if (key.equalsIgnoreCase(Config.Key.parCustom)) {
+                setCustom((Map<String, String>) value);
+            } else if (key.equalsIgnoreCase(Config.Key.parFeedback)) {
+                if (value.equals(true) || value.toString().equalsIgnoreCase("true")) {
                     feedbackSetEnable();
                 }
             } else {
-                this.generatorOptions.put(e.getKey(), e.getValue());
+                this.generatorOptions.put(key, value);
             }
         });
 
@@ -335,24 +335,53 @@ public class SessionData {
         return connection.getHttpClient();
     }
 
+    //---------------------------------------------
+
     private void feedbackSetEnable() {
 
-        feedback.enable();
+        this.enabled = true;
     }
 
     public void feedbackSetComplete() {
 
-        feedback.complete();
+        this.completed = true;
+
+        if (testCasesParsed == testCasesTotal) {
+            sendFeedback();
+        }
     }
 
     public Optional<FeedbackHandle> feedbackHandleCreate(String data) {
 
-        return feedback.createFeedbackHandle(data);
+        if (!this.enabled) {
+            return Optional.empty();
+        }
+
+        return Optional.of(FeedbackHandle.create(this, data, "0:" + testCasesTotal++));
     }
 
     public void feedbackHandleRegister(String id, JSONObject feedback) {
 
+        if (!this.enabled) {
+            return;
+        }
+
+        testCasesParsed++;
+
         testResults.put(id, feedback);
+
+        if (testCasesParsed == testCasesTotal && completed) {
+            sendFeedback();
+        }
+    }
+
+    private void sendFeedback() {
+
+        if (!this.enabled) {
+            return;
+        }
+
+        ConnectionHelper.getChunkStreamForFeedback(this);
     }
 
 }

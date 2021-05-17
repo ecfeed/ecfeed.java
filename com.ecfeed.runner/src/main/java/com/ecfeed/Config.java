@@ -54,6 +54,10 @@ public final class Config {
 
         private Key() { }
 
+        final public static String setupGeneratorAddress = "generatorAddress";
+        final public static String setupKeyStorePassword = "keyStorePassword";
+        final public static String setupKeyStorePath = "keyStorePath";
+
         final public static String parN = "n";
         final public static String parCoverage = "coverage";
         final public static String parLength = "length";
@@ -77,9 +81,18 @@ public final class Config {
         final public static String reqDataRequest = "request";
         final public static String reqDataTemplate = "template";
 
+        final public static String reqTestStatus = "status";
+        final public static String reqTestStatusEnd = "END_DATA";
+        final public static String reqTestInfo = "info";
+        final public static String reqTestInfoMethod = "method";
+        final public static String reqTestInfoSessionId = "testSessionId";
+        final public static String reqTestInfoTimestamp = "timestamp";
+        final public static String reqTestInfoCase = "testCase";
+        final public static String reqTestInfoCaseValue = "value";
+
         final public static String reqFeedbackModel = "modelId";
         final public static String reqFeedbackMethod = "methodInfo";
-        final public static String reqFeedbackTestSessionId = "testSessionId'";
+        final public static String reqFeedbackTestSessionId = "testSessionId";
         final public static String reqFeedbackTestSessionLabel = "testSessionLabel";
         final public static String reqFeedbackFramework = "framework";
         final public static String reqFeedbackTimestamp = "timestamp";

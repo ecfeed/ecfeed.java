@@ -1,8 +1,7 @@
 package com.ecfeed;
 
-import com.ecfeed.data.Connection;
+import com.ecfeed.data.ConnectionData;
 import com.ecfeed.data.SessionData;
-import com.ecfeed.helper.CollectionHelper;
 import com.ecfeed.helper.ConnectionHelper;
 import com.ecfeed.parser.ChunkParserExport;
 import com.ecfeed.parser.ChunkParserStream;
@@ -15,7 +14,7 @@ import java.util.*;
 public class TestProvider {
 
     private String model;
-    private Connection connection;
+    private ConnectionData connection;
 
     private TestProvider(String model, Map<String, String> config) {
 
@@ -35,7 +34,7 @@ public class TestProvider {
     private void setup(String model, Map<String, String> config) {
 
         this.model = model;
-        this.connection = Connection.create(
+        this.connection = ConnectionData.create(
                 setupExtractGeneratorAddress(config),
                 setupExtractKeyStorePath(config),
                 setupExtractKeyStorePassword(config)
@@ -44,19 +43,19 @@ public class TestProvider {
     }
 
     private String setupExtractGeneratorAddress(Map<String, String> config) {
-        String value = config.get("generatorAddress");
+        String value = config.get(Config.Key.setupGeneratorAddress);
 
         return value != null ? value : Config.Value.generatorAddress;
     }
 
     private String setupExtractKeyStorePassword(Map<String, String> config) {
-        String value = config.get("keyStorePassword");
+        String value = config.get(Config.Key.setupKeyStorePassword);
 
         return value != null ? value : Config.Value.keyStorePassword;
     }
 
     private Path setupExtractKeyStorePath(Map<String, String> config) {
-        String value = config.get("keyStorePath");
+        String value = config.get(Config.Key.setupKeyStorePath);
 
         if (value != null) {
             return getKeyStore(value);
@@ -138,8 +137,8 @@ public class TestProvider {
     public Iterable<String> exportNWise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
         return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
     }
@@ -157,8 +156,8 @@ public class TestProvider {
     public Iterable<String> exportPairwise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
         return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
     }
@@ -192,9 +191,9 @@ public class TestProvider {
     public Iterable<String> exportRandom(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
+        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
+        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
+        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
 
         return export(method, Config.Value.parGenRandom, typeExport, updatedProperties);
     }
@@ -247,8 +246,8 @@ public class TestProvider {
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
         return generate(method, Config.Value.parGenNWise, updatedProperties);
     }
@@ -266,8 +265,8 @@ public class TestProvider {
     public Iterable<Object[]> generatePairwise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        CollectionHelper. addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
 
         return generate(method, Config.Value.parGenNWise, updatedProperties);
     }
@@ -301,9 +300,9 @@ public class TestProvider {
     public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
-        CollectionHelper.addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
+        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
+        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
+        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
 
         return generate(method, Config.Value.parGenRandom, updatedProperties);
     }
@@ -348,5 +347,12 @@ public class TestProvider {
 
         return Arrays.asList(ConnectionHelper.sendMockRequest(this.connection, this.model, method).getMethodTypes());
     }
+    private void addProperty(Map<String, Object> map, String key, String value) {
+
+        if (!map.containsKey(key)) {
+            map.put(key, value);
+        }
+    }
+
 
 }

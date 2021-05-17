@@ -3,7 +3,7 @@ package com.ecfeed;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Param{
+public class Param {
 
     private static abstract class ParamsCommon<T extends ParamsCommon> {
         private Object constraints;

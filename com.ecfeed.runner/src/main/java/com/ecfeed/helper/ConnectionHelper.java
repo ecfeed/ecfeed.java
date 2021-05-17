@@ -2,7 +2,7 @@ package com.ecfeed.helper;
 
 import com.ecfeed.Config;
 import com.ecfeed.IterableTestQueue;
-import com.ecfeed.data.Connection;
+import com.ecfeed.data.ConnectionData;
 import com.ecfeed.data.SessionData;
 import com.ecfeed.parser.ChunkParser;
 import com.ecfeed.parser.ChunkParserExport;
@@ -24,10 +24,11 @@ import java.util.Optional;
 public final class ConnectionHelper {
 
     private ConnectionHelper() {
+
         throw new RuntimeException("The helper class cannot be instantiated");
     }
 
-    public static InputStream getChunkStreamForHealthCheck(Connection connection) {
+    public static InputStream getChunkStreamForHealthCheck(ConnectionData connection) {
         String request = generateURLForHealthCheck(connection.getHttpAddress());
 
         return createChunkStreamGet(connection.getHttpClient(), request);
@@ -42,6 +43,7 @@ public final class ConnectionHelper {
 
         return createChunkStreamPost(sessionData.getHttpClient(), sessionData.generateURLForFeedback(), sessionData.generateBodyForFeedback());
     }
+
     private static String generateURLForHealthCheck(String generatorAddress) {
 
         return generatorAddress + "/" + Config.Key.urlHealthCheck;
@@ -59,7 +61,7 @@ public final class ConnectionHelper {
     }
 
     private static InputStream createChunkStreamPost(HttpClient httpClient, String request, String body) {
-        System.out.println(request);
+
         try {
             HttpPost httpPost = new HttpPost(request);
             httpPost.setEntity(new StringEntity(body));
@@ -70,7 +72,7 @@ public final class ConnectionHelper {
         }
     }
 
-    public static void validateConnection(Connection connection) {
+    public static void validateConnection(ConnectionData connection) {
         IterableTestQueue<String> iterator = new IterableTestQueue<>(ChunkParserExport.create());
 
         try {
@@ -81,10 +83,11 @@ public final class ConnectionHelper {
         }
     }
 
-    public static ChunkParser<Optional<Object[]>> sendMockRequest(Connection connection, String model, String method) {
+    public static ChunkParser<Optional<Object[]>> sendMockRequest(ConnectionData connection, String model, String method) {
         Map<String, Object> userProperties = new HashMap<>();
-        CollectionHelper.addProperty(userProperties, Config.Key.parLength, "0");
-        
+
+        userProperties.put(Config.Key.parLength, "0");
+
         SessionData sessionData = SessionData.create(connection, model, method, Config.Value.parGenRandom);
         sessionData.setGeneratorOptions(userProperties);
 

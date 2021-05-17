@@ -9,7 +9,7 @@ public final class FeedbackHandle {
 
     private final String id;
     private final String data;
-    private final Feedback feedback;
+    private final SessionData sessionData;
 
     private String status;
 
@@ -19,14 +19,14 @@ public final class FeedbackHandle {
 
     private boolean pending = true;
 
-    private FeedbackHandle(Feedback feedback, String data, String id) {
+    private FeedbackHandle(SessionData sessionData, String data, String id) {
 
-        this.feedback = feedback;
+        this.sessionData = sessionData;
         this.data = data;
         this.id = id;
     }
 
-    static FeedbackHandle create(Feedback feedback, String data, String id) {
+    static FeedbackHandle create(SessionData feedback, String data, String id) {
 
         return new FeedbackHandle(feedback, data, id);
     }
@@ -124,7 +124,7 @@ public final class FeedbackHandle {
     private String register() {
         JSONObject data = toJSONObject();
 
-        this.feedback.registerFeedbackHandle(this.id, data);
+        this.sessionData.feedbackHandleRegister(this.id, data);
 
         return data.toString();
     }
