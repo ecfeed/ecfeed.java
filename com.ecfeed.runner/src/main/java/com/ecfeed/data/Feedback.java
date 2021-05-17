@@ -54,7 +54,7 @@ public final class Feedback {
 
         testCasesParsed++;
 
-        this.sessionData.registerFeedbackHandle(id, feedback);
+        this.sessionData.feedbackHandleRegister(id, feedback);
 
         if (testCasesParsed == testCasesTotal && completed) {
             sendFeedback();

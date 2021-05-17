@@ -45,7 +45,9 @@ public final class Config {
         final public static String parRequestTypeExport = "requestExport";
         final public static String parRequestTypeStream = "requestData";
 
-        final public static String parClient = "java";
+        final public static String parClient = "Java";
+
+        final public static String parAll = "ALL";
     }
 
     final public static class Key {
@@ -67,13 +69,27 @@ public final class Config {
         final public static String parDataSource = "dataSource";
         final public static String parProperties = "properties";
 
-        final public static String parModel = "model";
-        final public static String parMethod = "method";
-        final public static String parUserData = "userData";
-        final public static String parRequestType = "requestType";
-        final public static String parClient = "client";
-        final public static String parRequest = "request";
-        final public static String parTemplate = "template";
+        final public static String reqDataMode = "model";
+        final public static String reqDataMethod = "method";
+        final public static String reqDataUserData = "userData";
+        final public static String reqDataRequestType = "requestType";
+        final public static String reqDataClient = "client";
+        final public static String reqDataRequest = "request";
+        final public static String reqDataTemplate = "template";
+
+        final public static String reqFeedbackModel = "modelId";
+        final public static String reqFeedbackMethod = "methodInfo";
+        final public static String reqFeedbackTestSessionId = "testSessionId'";
+        final public static String reqFeedbackTestSessionLabel = "testSessionLabel";
+        final public static String reqFeedbackFramework = "framework";
+        final public static String reqFeedbackTimestamp = "timestamp";
+        final public static String reqFeedbackCustom = "custom";
+        final public static String reqFeedbackTestSuites = "testSuites";
+        final public static String reqFeedbackConstraints = "constraints";
+        final public static String reqFeedbackChoices = "choices";
+        final public static String reqFeedbackTestResults = "testResults";
+        final public static String reqFeedbackGeneratorType = "generatorType";
+        final public static String reqFeedbackGeneratorOptions = "generatorOptions";
 
         final public static String urlService = "testCaseService";
         final public static String urlHealthCheck = "genServiceVersion";
@@ -83,7 +99,7 @@ public final class Config {
         final public static String certServer = "ca";
 
         final public static List<String> userAllowedKeys = Arrays.asList(
-                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback, parTestSessionLabel, parCustom
+                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback, parCustom, parTestSessionLabel
         );
     }
 

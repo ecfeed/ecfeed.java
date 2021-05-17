@@ -30,9 +30,9 @@ public class SessionData {
     private String methodNameQualified = "";
     private String testSessionId = "";
     private String testSessionLabel = "";
-    private Object constraints = "ALL";
-    private Object testSuites = "ALL";
-    private Object choices = "ALL";
+    private Object constraints = Config.Value.parAll;
+    private Object testSuites = Config.Value.parAll;
+    private Object choices = Config.Value.parAll;
     private int timestamp = -1;
 
     private SessionData(Connection connection, String model, String method, String generatorType) {
@@ -65,13 +65,38 @@ public class SessionData {
         String type = getTemplate().isPresent() ? Config.Value.parRequestTypeExport : Config.Value.parRequestTypeStream;
 
         builder.append("?");
-        builder.append(Config.Key.parRequestType).append("=").append(type);
+        builder.append(Config.Key.reqDataRequestType).append("=").append(type);
         builder.append("&");
-        builder.append(Config.Key.parClient).append("=").append(Config.Value.parClient);
+        builder.append(Config.Key.reqDataClient).append("=").append(Config.Value.parClient);
         builder.append("&");
-        builder.append(Config.Key.parRequest).append("=").append(generateURLForTestDataRequest());
+        builder.append(Config.Key.reqDataRequest).append("=").append(generateURLForTestDataRequest());
 
         return builder;
+    }
+
+    private String generateURLForTestDataRequest() {
+        JSONObject request = new JSONObject();
+
+        request.put(Config.Key.reqDataMode, getModel());
+        request.put(Config.Key.reqDataMethod, getMethodName());
+        request.put(Config.Key.reqDataUserData, generateURLForTestDataRequestUserData());
+
+        getTemplate().ifPresent(e -> request.put(Config.Key.reqDataTemplate, e));
+
+        try {
+            return URLEncoder.encode(request.toString(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("The request could not be generated.");
+        }
+    }
+
+    private String generateURLForTestDataRequestUserData() {
+        JSONObject requestUserData = new JSONObject();
+
+        requestUserData.put(Config.Key.parDataSource, getGeneratorType());
+        requestUserData.put(Config.Key.parProperties, getGeneratorOptions());
+
+        return requestUserData.toString().replaceAll("\"", "'");
     }
 
     public String generateBodyForTestData() {
@@ -101,33 +126,33 @@ public class SessionData {
     public String generateBodyForFeedback() {
         JSONObject json = new JSONObject();
 
-        generateFeedbackBodyElement(json, "modelId", getModel());
-        generateFeedbackBodyElement(json, "methodInfo", getMethodNameQualified());
-        generateFeedbackBodyElement(json, "testSessionId", getTestSessionId());
-        generateFeedbackBodyElement(json, "testSessionLabel", getTestSessionLabel());
-        generateFeedbackBodyElement(json, "framework", Config.Value.parClient);
-        generateFeedbackBodyElement(json, "timestamp", getTimestamp());
-        generateFeedbackBodyElement(json, "custom", getCustom());
-        generateFeedbackBodyElement(json, "testSuites", getTestSuites());
-        generateFeedbackBodyElement(json, "constraints", getConstraints());
-        generateFeedbackBodyElement(json, "choices", getChoices());
-        generateFeedbackBodyElement(json, "testResults", getTestResults());
-        generateFeedbackBodyElement(json, "generatorType", getGeneratorType());
-        generateFeedbackBodyElement(json, "generatorOptions", getGeneratorOptions().entrySet().stream()
+        parseFeedbackElement(json, Config.Key.reqFeedbackModel, getModel());
+        parseFeedbackElement(json, Config.Key.reqFeedbackMethod, getMethodNameQualified());
+        parseFeedbackElement(json, Config.Key.reqFeedbackTestSessionId, getTestSessionId());
+        parseFeedbackElement(json, Config.Key.reqFeedbackTestSessionLabel, getTestSessionLabel());
+        parseFeedbackElement(json, Config.Key.reqFeedbackFramework, Config.Value.parClient);
+        parseFeedbackElement(json, Config.Key.reqFeedbackTimestamp, getTimestamp());
+        parseFeedbackElement(json, Config.Key.reqFeedbackCustom, getCustom());
+        parseFeedbackElement(json, Config.Key.reqFeedbackTestSuites, getTestSuites());
+        parseFeedbackElement(json, Config.Key.reqFeedbackConstraints, getConstraints());
+        parseFeedbackElement(json, Config.Key.reqFeedbackChoices, getChoices());
+        parseFeedbackElement(json, Config.Key.reqFeedbackTestResults, getTestResults());
+        parseFeedbackElement(json, Config.Key.reqFeedbackGeneratorType, getGeneratorType());
+        parseFeedbackElement(json, Config.Key.reqFeedbackGeneratorOptions, getGeneratorOptions().entrySet().stream()
                 .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining(", ")));
 
         return json.toString();
     }
 
-    private void generateFeedbackBodyElement(JSONObject json, String key, Object value) {
+    private void parseFeedbackElement(JSONObject json, String key, Object value) {
 
         if (value == null) {
             return;
         }
 
         if (value instanceof String) {
-            if (value.toString().equalsIgnoreCase("") || value.toString().equalsIgnoreCase("ALL")) {
+            if (value.toString().equalsIgnoreCase("") || value.toString().equalsIgnoreCase(Config.Value.parAll)) {
                 return;
             }
         }
@@ -147,43 +172,24 @@ public class SessionData {
         json.put(key, value);
     }
 
-    private String generateURLForTestDataRequest() {
-        JSONObject request = new JSONObject();
+    private String getGeneratorType() {
 
-        request.put(Config.Key.parModel, getModel());
-        request.put(Config.Key.parMethod, getMethodName());
-        request.put(Config.Key.parUserData, generateURLForTestDataRequestUserData());
-
-        getTemplate().ifPresent(e -> request.put(Config.Key.parTemplate, e));
-
-        try {
-            return URLEncoder.encode(request.toString(), StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("The request could not be generated.");
-        }
+        return generatorType;
     }
 
-    private String generateURLForTestDataRequestUserData() {
-        JSONObject requestUserData = new JSONObject();
+    private String getMethodName() {
 
-        requestUserData.put(Config.Key.parDataSource, getGeneratorType());
-        requestUserData.put(Config.Key.parProperties, getGeneratorOptions());
-
-        return requestUserData.toString().replaceAll("\"", "'");
+        return method;
     }
 
-    private String getHttpAddress() {
-        String httpAddress = connection.getHttpAddress();
+    private String getModel() {
 
-        if (httpAddress == null) {
-            throw new RuntimeException("The generator address is not defined");
-        }
+        return model;
+    }
 
-        if (!httpAddress.startsWith("https://")) {
-            throw new RuntimeException("The generator address should start with http://");
-        }
+    private JSONObject getTestResults() {
 
-        return httpAddress;
+        return testResults;
     }
 
     private Optional<TypeExport> getTemplate() {
@@ -195,9 +201,9 @@ public class SessionData {
         return Optional.of(template);
     }
 
-    private String getMethodName() {
+    public void setTemplate(TypeExport template) {
 
-        return method;
+        this.template = template;
     }
 
     private String getMethodNameQualified() {
@@ -208,16 +214,6 @@ public class SessionData {
     public void setMethodNameQualified(String methodNameQualified) {
 
         this.methodNameQualified = methodNameQualified;
-    }
-
-    private String getModel() {
-
-        return model;
-    }
-
-    private String getGeneratorType() {
-
-        return generatorType;
     }
 
     private Map<String, Object> getGeneratorOptions() {
@@ -241,7 +237,7 @@ public class SessionData {
                 setCustom((Map<String, String>)e.getValue());
             } else if (e.getKey().equalsIgnoreCase(Config.Key.parFeedback)) {
                 if (e.getValue().equals(true) || e.getValue().toString().equalsIgnoreCase("true")) {
-                    this.feedback.enable();
+                    feedbackSetEnable();
                 }
             } else {
                 this.generatorOptions.put(e.getKey(), e.getValue());
@@ -250,7 +246,7 @@ public class SessionData {
 
     }
 
-    public String getTestSessionId() {
+    private String getTestSessionId() {
 
         return this.testSessionId;
     }
@@ -260,17 +256,17 @@ public class SessionData {
         this.testSessionId = testSessionId;
     }
 
-    public String getTestSessionLabel() {
+    private String getTestSessionLabel() {
 
         return this.testSessionLabel;
     }
 
-    public void setTestSessionLabel(String testSessionLabel) {
+    private void setTestSessionLabel(String testSessionLabel) {
 
         this.testSessionLabel = testSessionLabel;
     }
 
-    public int getTimestamp() {
+    private int getTimestamp() {
 
         return this.timestamp;
     }
@@ -280,75 +276,83 @@ public class SessionData {
         this.timestamp = timestamp;
     }
 
-    public void setTemplate(TypeExport template) {
-
-        this.template = template;
-    }
-
-    public Map<String, String> getCustom() {
+    private Map<String, String> getCustom() {
 
         return custom;
     }
 
-    public void setCustom(Map<String, String> custom) {
+    private void setCustom(Map<String, String> custom) {
 
         this.custom = custom;
     }
 
-    public Object getConstraints() {
+    private Object getConstraints() {
 
         return constraints;
     }
 
-    public void setConstraints(Object constraints) {
+    private void setConstraints(Object constraints) {
 
         this.constraints = constraints;
     }
 
-    public Object getTestSuites() {
+    private Object getTestSuites() {
 
         return testSuites;
     }
 
-    public void setTestSuites(Object testSuites) {
+    private void setTestSuites(Object testSuites) {
 
         this.testSuites = testSuites;
     }
 
-    public Object getChoices() {
+    private Object getChoices() {
 
         return choices;
     }
 
-    public void setChoices(Object choices) {
+    private void setChoices(Object choices) {
 
         this.choices = choices;
     }
 
-    public JSONObject getTestResults() {
-        return testResults;
+    private String getHttpAddress() {
+        String httpAddress = connection.getHttpAddress();
+
+        if (httpAddress == null) {
+            throw new RuntimeException("The generator address is not defined");
+        }
+
+        if (!httpAddress.startsWith("https://")) {
+            throw new RuntimeException("The generator address should start with http://");
+        }
+
+        return httpAddress;
     }
 
-//-------------------------------------------------------------------------------------
-
     public HttpClient getHttpClient() {
+
         return connection.getHttpClient();
     }
 
-    public void transmissionFinished() {
+    private void feedbackSetEnable() {
+
+        feedback.enable();
+    }
+
+    public void feedbackSetComplete() {
 
         feedback.complete();
     }
 
-    public Optional<FeedbackHandle> createFeedbackHandle(String data) {
+    public Optional<FeedbackHandle> feedbackHandleCreate(String data) {
 
         return feedback.createFeedbackHandle(data);
     }
 
-    void registerFeedbackHandle(String id, JSONObject feedback) {
+    public void feedbackHandleRegister(String id, JSONObject feedback) {
 
         testResults.put(id, feedback);
     }
-
 
 }

@@ -79,7 +79,7 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
         String value = json.getString(keyStatus);
 
         if (value.contains(keyStatusEnd)) {
-            sessionData.transmissionFinished();
+            sessionData.feedbackSetComplete();
         }
 
         return Optional.empty();
@@ -126,7 +126,7 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     private Optional<Object[]> parseTestCase(JSONObject json) {
 
         if (json.keySet().contains(keyTestCase)) {
-            Optional<FeedbackHandle> feedbackHandle = sessionData.createFeedbackHandle(json.toString());
+            Optional<FeedbackHandle> feedbackHandle = sessionData.feedbackHandleCreate(json.toString());
             JSONArray arguments = json.getJSONArray(keyTestCase);
 
             if (feedbackHandle.isPresent()) {
