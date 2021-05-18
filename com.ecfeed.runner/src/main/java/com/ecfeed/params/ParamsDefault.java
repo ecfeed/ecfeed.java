@@ -1,16 +1,23 @@
 package com.ecfeed.params;
 
-import com.ecfeed.Config;
+import com.ecfeed.config.ConfigDefault;
 
 import java.util.Map;
 
 public class ParamsDefault extends ParamsAbstract<ParamsDefault> {
-    private int n = Config.Value.parN;
-    private int coverage = Config.Value.parCoverage;
-    private int length = Config.Value.parLength;
-    private boolean adaptive = Config.Value.parAdaptive;
-    private boolean duplicates = Config.Value.parDuplicates;
-    private Object testSuites = Config.Value.parAll;
+    private int n = ConfigDefault.Value.parN;
+    private int coverage = ConfigDefault.Value.parCoverage;
+    private int length = ConfigDefault.Value.parLength;
+    private boolean adaptive = ConfigDefault.Value.parAdaptive;
+    private boolean duplicates = ConfigDefault.Value.parDuplicates;
+    private Object testSuites = ConfigDefault.Value.parAll;
+
+    private ParamsDefault() { }
+
+    public static ParamsDefault create() {
+
+        return new ParamsDefault();
+    }
 
     public int getN() {
 
@@ -88,12 +95,12 @@ public class ParamsDefault extends ParamsAbstract<ParamsDefault> {
     public Map<String, Object> getParamsMap() {
         Map<String, Object> paramMap = super.getParamsMap();
 
-        paramMap.put(Config.Key.parN, n + "");
-        paramMap.put(Config.Key.parCoverage, coverage + "");
-        paramMap.put(Config.Key.parLength, length + "");
-        paramMap.put(Config.Key.parAdaptive, adaptive + "");
-        paramMap.put(Config.Key.parDuplicates, duplicates + "");
-        paramMap.put(Config.Key.parTestSuites, testSuites);
+        paramMap.put(ConfigDefault.Key.parN, n + "");
+        paramMap.put(ConfigDefault.Key.parCoverage, coverage + "");
+        paramMap.put(ConfigDefault.Key.parLength, length + "");
+        paramMap.put(ConfigDefault.Key.parAdaptive, adaptive + "");
+        paramMap.put(ConfigDefault.Key.parDuplicates, duplicates + "");
+        paramMap.put(ConfigDefault.Key.parTestSuites, testSuites);
 
         return paramMap;
     }

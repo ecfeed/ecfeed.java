@@ -1,11 +1,14 @@
 package com.ecfeed;
 
-import com.ecfeed.data.ConnectionData;
-import com.ecfeed.data.SessionData;
-import com.ecfeed.helper.ConnectionHelper;
+import com.ecfeed.config.ConfigDefault;
+import com.ecfeed.data.DataConnection;
+import com.ecfeed.data.DataSession;
+import com.ecfeed.helper.HelperConnection;
 import com.ecfeed.params.*;
-import com.ecfeed.parser.ChunkParserExport;
-import com.ecfeed.parser.ChunkParserStream;
+import com.ecfeed.chunk.parser.ChunkParserExport;
+import com.ecfeed.chunk.parser.ChunkParserStream;
+import com.ecfeed.queue.IterableTestQueue;
+import com.ecfeed.type.TypeExport;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,7 +18,7 @@ import java.util.*;
 public class TestProvider {
 
     private String model;
-    private ConnectionData connection;
+    private DataConnection connection;
 
     private TestProvider(String model, Map<String, String> config) {
 
@@ -35,7 +38,7 @@ public class TestProvider {
     private void setup(String model, Map<String, String> config) {
 
         this.model = model;
-        this.connection = ConnectionData.create(
+        this.connection = DataConnection.create(
                 setupExtractGeneratorAddress(config),
                 setupExtractKeyStorePath(config),
                 setupExtractKeyStorePassword(config)
@@ -44,19 +47,19 @@ public class TestProvider {
     }
 
     private String setupExtractGeneratorAddress(Map<String, String> config) {
-        String value = config.get(Config.Key.setupGeneratorAddress);
+        String value = config.get(ConfigDefault.Key.setupGeneratorAddress);
 
-        return value != null ? value : Config.Value.generatorAddress;
+        return value != null ? value : ConfigDefault.Value.generatorAddress;
     }
 
     private String setupExtractKeyStorePassword(Map<String, String> config) {
-        String value = config.get(Config.Key.setupKeyStorePassword);
+        String value = config.get(ConfigDefault.Key.setupKeyStorePassword);
 
-        return value != null ? value : Config.Value.keyStorePassword;
+        return value != null ? value : ConfigDefault.Value.keyStorePassword;
     }
 
     private Path setupExtractKeyStorePath(Map<String, String> config) {
-        String value = config.get(Config.Key.setupKeyStorePath);
+        String value = config.get(ConfigDefault.Key.setupKeyStorePath);
 
         if (value != null) {
             return getKeyStore(value);
@@ -72,7 +75,7 @@ public class TestProvider {
 
     private Path getKeyStoreDefault() {
 
-        for (String address : Config.Value.keyStorePath) {
+        for (String address : ConfigDefault.Value.keyStorePath) {
             try {
                 return getKeyStore(address);
             } catch (IllegalArgumentException ignored) {
@@ -116,17 +119,17 @@ public class TestProvider {
     }
 
     public Iterable<String> export(String method, String generatorType, TypeExport typeExport, Map<String, Object> properties) {
-        Config.validateUserParameters(properties);
+        ConfigDefault.validateUserParameters(properties);
 
         IterableTestQueue<String> iterator = new IterableTestQueue<>(ChunkParserExport.create());
 
-        SessionData sessionData = SessionData.create(this.connection, this.model, method, generatorType);
-        sessionData.setGeneratorOptions(properties);
-        sessionData.setTemplate(typeExport);
+        DataSession dataSession = DataSession.create(this.connection, this.model, method, generatorType);
+        dataSession.setGeneratorOptions(properties);
+        dataSession.setTemplate(typeExport);
 
         new Thread(() -> {
             try {
-                ConnectionHelper.processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
+                HelperConnection.processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
             } finally {
                 iterator.terminate();
             }
@@ -138,10 +141,10 @@ public class TestProvider {
     public Iterable<String> exportNWise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN + "");
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parN, ConfigDefault.Value.parN + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parCoverage, ConfigDefault.Value.parCoverage + "");
 
-        return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
+        return export(method, ConfigDefault.Value.parGenNWise, typeExport, updatedProperties);
     }
 
     public Iterable<String> exportNWise(String method, TypeExport typeExport, ParamsNWise properties) {
@@ -151,16 +154,16 @@ public class TestProvider {
 
     public Iterable<String> exportNWise(String method, TypeExport typeExport) {
 
-        return exportNWise(method, typeExport, new ParamsNWise());
+        return exportNWise(method, typeExport, ParamsNWise.create());
     }
 
     public Iterable<String> exportPairwise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN + "");
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parN, ConfigDefault.Value.parN + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parCoverage, ConfigDefault.Value.parCoverage + "");
 
-        return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
+        return export(method, ConfigDefault.Value.parGenNWise, typeExport, updatedProperties);
     }
 
     public Iterable<String> exportPairwise(String method, TypeExport typeExport, ParamsPairwise properties) {
@@ -170,13 +173,13 @@ public class TestProvider {
 
     public Iterable<String> exportPairwise(String method, TypeExport typeExport) {
 
-        return exportPairwise(method, typeExport, new ParamsPairwise());
+        return exportPairwise(method, typeExport, ParamsPairwise.create());
     }
 
     public Iterable<String> exportCartesian(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return export(method, Config.Value.parGenCartesian, typeExport, updatedProperties);
+        return export(method, ConfigDefault.Value.parGenCartesian, typeExport, updatedProperties);
     }
 
     public Iterable<String> exportCartesian(String method, TypeExport typeExport, ParamsCartesian properties) {
@@ -186,17 +189,17 @@ public class TestProvider {
 
     public Iterable<String> exportCartesian(String method, TypeExport typeExport) {
 
-        return exportCartesian(method, typeExport, new ParamsCartesian());
+        return exportCartesian(method, typeExport, ParamsCartesian.create());
     }
 
     public Iterable<String> exportRandom(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength + "");
-        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive + "");
-        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parLength, ConfigDefault.Value.parLength + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parAdaptive, ConfigDefault.Value.parAdaptive + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parDuplicates, ConfigDefault.Value.parDuplicates + "");
 
-        return export(method, Config.Value.parGenRandom, typeExport, updatedProperties);
+        return export(method, ConfigDefault.Value.parGenRandom, typeExport, updatedProperties);
     }
 
     public Iterable<String> exportRandom(String method, TypeExport typeExport, ParamsRandom properties) {
@@ -206,13 +209,13 @@ public class TestProvider {
 
     public Iterable<String> exportRandom(String method, TypeExport typeExport) {
 
-        return exportRandom(method, typeExport, new ParamsRandom());
+        return exportRandom(method, typeExport, ParamsRandom.create());
     }
 
     public Iterable<String> exportStatic(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return export(method, Config.Value.parGenStatic, typeExport, updatedProperties);
+        return export(method, ConfigDefault.Value.parGenStatic, typeExport, updatedProperties);
     }
 
     public Iterable<String> exportStatic(String method, TypeExport typeExport, ParamsStatic properties) {
@@ -222,20 +225,20 @@ public class TestProvider {
 
     public Iterable<String> exportStatic(String method, TypeExport typeExport) {
 
-        return exportStatic(method, typeExport, new ParamsStatic());
+        return exportStatic(method, typeExport, ParamsStatic.create());
     }
 
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
-        Config.validateUserParameters(properties);
+        ConfigDefault.validateUserParameters(properties);
 
-        SessionData sessionData = SessionData.create(this.connection, this.model, method, generator);
-        sessionData.setGeneratorOptions(properties);
+        DataSession dataSession = DataSession.create(this.connection, this.model, method, generator);
+        dataSession.setGeneratorOptions(properties);
 
-        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(ChunkParserStream.create(sessionData));
+        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(ChunkParserStream.create(dataSession));
 
         new Thread(() -> {
             try {
-                ConnectionHelper.processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
+                HelperConnection.processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
             } finally {
                 iterator.terminate();
             }
@@ -247,10 +250,10 @@ public class TestProvider {
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN + "");
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parN, ConfigDefault.Value.parN + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parCoverage, ConfigDefault.Value.parCoverage + "");
 
-        return generate(method, Config.Value.parGenNWise, updatedProperties);
+        return generate(method, ConfigDefault.Value.parGenNWise, updatedProperties);
     }
 
     public Iterable<Object[]> generateNWise(String method, ParamsNWise properties) {
@@ -260,16 +263,16 @@ public class TestProvider {
 
     public Iterable<Object[]> generateNWise(String method) {
 
-        return generateNWise(method, new ParamsNWise());
+        return generateNWise(method, ParamsNWise.create());
     }
 
     public Iterable<Object[]> generatePairwise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN + "");
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parN, ConfigDefault.Value.parN + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parCoverage, ConfigDefault.Value.parCoverage + "");
 
-        return generate(method, Config.Value.parGenNWise, updatedProperties);
+        return generate(method, ConfigDefault.Value.parGenNWise, updatedProperties);
     }
 
     public Iterable<Object[]> generatePairwise(String method, ParamsPairwise properties) {
@@ -279,13 +282,13 @@ public class TestProvider {
 
     public Iterable<Object[]> generatePairwise(String method) {
 
-        return generatePairwise(method, new ParamsPairwise());
+        return generatePairwise(method, ParamsPairwise.create());
     }
 
     public Iterable<Object[]> generateCartesian(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return generate(method, Config.Value.parGenCartesian, updatedProperties);
+        return generate(method, ConfigDefault.Value.parGenCartesian, updatedProperties);
     }
 
     public Iterable<Object[]> generateCartesian(String method, ParamsCartesian properties) {
@@ -295,17 +298,17 @@ public class TestProvider {
 
     public Iterable<Object[]> generateCartesian(String method) {
 
-        return generateCartesian(method, new ParamsCartesian());
+        return generateCartesian(method, ParamsCartesian.create());
     }
 
     public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength + "");
-        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive + "");
-        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parLength, ConfigDefault.Value.parLength + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parAdaptive, ConfigDefault.Value.parAdaptive + "");
+        addProperty(updatedProperties, ConfigDefault.Key.parDuplicates, ConfigDefault.Value.parDuplicates + "");
 
-        return generate(method, Config.Value.parGenRandom, updatedProperties);
+        return generate(method, ConfigDefault.Value.parGenRandom, updatedProperties);
     }
 
     public Iterable<Object[]> generateRandom(String method, ParamsRandom properties) {
@@ -315,13 +318,13 @@ public class TestProvider {
 
     public Iterable<Object[]> generateRandom(String method) {
 
-        return generateRandom(method, new ParamsRandom());
+        return generateRandom(method, ParamsRandom.create());
     }
 
     public Iterable<Object[]> generateStatic(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        return generate(method, Config.Value.parGenStatic, updatedProperties);
+        return generate(method, ConfigDefault.Value.parGenStatic, updatedProperties);
     }
 
     public Iterable<Object[]> generateStatic(String method, ParamsStatic properties) {
@@ -331,22 +334,22 @@ public class TestProvider {
 
     public Iterable<Object[]> generateStatic(String method) {
 
-        return generateStatic(method, new ParamsStatic());
+        return generateStatic(method, ParamsStatic.create());
     }
 
     public void validateConnection() {
 
-        ConnectionHelper.validateConnection(this.connection);
+        HelperConnection.validateConnection(this.connection);
     }
 
     public List<String> getMethodNames(String method) {
 
-        return Arrays.asList(ConnectionHelper.sendMockRequest(this.connection, this.model, method).getMethodNames());
+        return Arrays.asList(HelperConnection.sendMockRequest(this.connection, this.model, method).getMethodNames());
     }
 
     public List<String> getMethodTypes(String method) {
 
-        return Arrays.asList(ConnectionHelper.sendMockRequest(this.connection, this.model, method).getMethodTypes());
+        return Arrays.asList(HelperConnection.sendMockRequest(this.connection, this.model, method).getMethodTypes());
     }
     private void addProperty(Map<String, Object> map, String key, String value) {
 

@@ -1,5 +1,6 @@
-package com.ecfeed.data;
+package com.ecfeed;
 
+import com.ecfeed.data.DataSession;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -9,7 +10,7 @@ public final class FeedbackHandle {
 
     private final String id;
     private final String data;
-    private final SessionData sessionData;
+    private final DataSession dataSession;
 
     private String status;
 
@@ -19,14 +20,14 @@ public final class FeedbackHandle {
 
     private boolean pending = true;
 
-    private FeedbackHandle(SessionData sessionData, String data, String id) {
+    private FeedbackHandle(DataSession dataSession, String data, String id) {
 
-        this.sessionData = sessionData;
+        this.dataSession = dataSession;
         this.data = data;
         this.id = id;
     }
 
-    static FeedbackHandle create(SessionData feedback, String data, String id) {
+    public static FeedbackHandle create(DataSession feedback, String data, String id) {
 
         return new FeedbackHandle(feedback, data, id);
     }
@@ -124,7 +125,7 @@ public final class FeedbackHandle {
     private String register() {
         JSONObject data = toJSONObject();
 
-        this.sessionData.feedbackHandleRegister(this.id, data);
+        this.dataSession.feedbackHandleRegister(this.id, data);
 
         return data.toString();
     }

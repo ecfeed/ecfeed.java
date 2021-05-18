@@ -1,11 +1,18 @@
 package com.ecfeed.params;
 
-import com.ecfeed.Config;
+import com.ecfeed.config.ConfigDefault;
 
 import java.util.Map;
 
 public final class ParamsStatic extends ParamsAbstract<ParamsStatic> {
-    private Object testSuites = Config.Value.parAll;
+    private Object testSuites = ConfigDefault.Value.parAll;
+
+    private ParamsStatic() { }
+
+    public static ParamsStatic create() {
+
+        return new ParamsStatic();
+    }
 
     public Object getTestSuites() {
 
@@ -28,7 +35,7 @@ public final class ParamsStatic extends ParamsAbstract<ParamsStatic> {
     public Map<String, Object> getParamsMap() {
         Map<String, Object> paramMap = super.getParamsMap();
 
-        paramMap.put(Config.Key.parTestSuites, testSuites);
+        paramMap.put(ConfigDefault.Key.parTestSuites, testSuites);
 
         return paramMap;
     }

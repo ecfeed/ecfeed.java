@@ -1,12 +1,19 @@
 package com.ecfeed.params;
 
-import com.ecfeed.Config;
+import com.ecfeed.config.ConfigDefault;
 
 import java.util.Map;
 
 public final class ParamsNWise extends ParamsAbstract<ParamsNWise> {
-    private int n = Config.Value.parN;
-    private int coverage = Config.Value.parCoverage;
+    private int n = ConfigDefault.Value.parN;
+    private int coverage = ConfigDefault.Value.parCoverage;
+
+    private ParamsNWise() { }
+
+    public static ParamsNWise create() {
+
+        return new ParamsNWise();
+    }
 
     public int getN() {
 
@@ -34,8 +41,8 @@ public final class ParamsNWise extends ParamsAbstract<ParamsNWise> {
     public Map<String, Object> getParamsMap() {
         Map<String, Object> paramMap = super.getParamsMap();
 
-        paramMap.put(Config.Key.parN, n + "");
-        paramMap.put(Config.Key.parCoverage, coverage + "");
+        paramMap.put(ConfigDefault.Key.parN, n + "");
+        paramMap.put(ConfigDefault.Key.parCoverage, coverage + "");
 
         return paramMap;
     }

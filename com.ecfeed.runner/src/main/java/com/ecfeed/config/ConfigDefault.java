@@ -1,11 +1,11 @@
-package com.ecfeed;
+package com.ecfeed.config;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class Config {
+public final class ConfigDefault {
 
     final static String homeUser;
     final static String homeJava;
@@ -15,7 +15,7 @@ public final class Config {
         homeJava = System.getProperty("java.home");
     }
 
-    private Config() { }
+    private ConfigDefault() { }
 
     final public static class Value {
 
@@ -116,7 +116,7 @@ public final class Config {
         );
     }
 
-    static void validateUserParameters(Map<String, Object> config) {
+    public static void validateUserParameters(Map<String, Object> config) {
         List<String> incorrectKeys = config.keySet().stream()
                 .filter( k -> !Key.userAllowedKeys.contains(k)).collect(Collectors.toList());
 

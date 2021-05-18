@@ -1,14 +1,14 @@
 package com.ecfeed.params;
 
-import com.ecfeed.Config;
+import com.ecfeed.config.ConfigDefault;
 
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class ParamsAbstract<T extends ParamsAbstract> {
-    private Object constraints = Config.Value.parAll;
-    private Object choices = Config.Value.parAll;
-    private boolean feedback = Config.Value.parFeedback;
+abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
+    private Object constraints = ConfigDefault.Value.parAll;
+    private Object choices = ConfigDefault.Value.parAll;
+    private boolean feedback = ConfigDefault.Value.parFeedback;
     private String testSessionLabel = "";
     private Map<String, String> custom = new HashMap<>();
 
@@ -79,27 +79,28 @@ abstract class ParamsAbstract<T extends ParamsAbstract> {
         return self();
     }
 
-    protected Map<String, Object> getParamsMap() {
+    @Override
+    public Map<String, Object> getParamsMap() {
         Map<String, Object> paramMap = new HashMap<>();
 
-        if (this.constraints != null && !this.constraints.toString().equalsIgnoreCase(Config.Value.parAll)) {
-            paramMap.put(Config.Key.parConstraints, this.constraints);
+        if (this.constraints != null && !this.constraints.toString().equalsIgnoreCase(ConfigDefault.Value.parAll)) {
+            paramMap.put(ConfigDefault.Key.parConstraints, this.constraints);
         }
 
-        if (this.choices != null && !this.choices.toString().equalsIgnoreCase(Config.Value.parAll)) {
-            paramMap.put(Config.Key.parChoices, this.choices);
+        if (this.choices != null && !this.choices.toString().equalsIgnoreCase(ConfigDefault.Value.parAll)) {
+            paramMap.put(ConfigDefault.Key.parChoices, this.choices);
         }
 
         if (this.feedback) {
-            paramMap.put(Config.Key.parFeedback, "true");
+            paramMap.put(ConfigDefault.Key.parFeedback, "true");
         }
 
         if (this.testSessionLabel != null && !this.testSessionLabel.equalsIgnoreCase("")) {
-            paramMap.put(Config.Key.parTestSessionLabel, this.testSessionLabel);
+            paramMap.put(ConfigDefault.Key.parTestSessionLabel, this.testSessionLabel);
         }
 
         if (this.custom != null && this.custom.size() > 0) {
-            paramMap.put(Config.Key.parCustom, this.custom);
+            paramMap.put(ConfigDefault.Key.parCustom, this.custom);
         }
 
         return paramMap;

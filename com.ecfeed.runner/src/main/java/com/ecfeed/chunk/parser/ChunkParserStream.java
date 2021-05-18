@@ -1,8 +1,8 @@
-package com.ecfeed.parser;
+package com.ecfeed.chunk.parser;
 
-import com.ecfeed.Config;
-import com.ecfeed.data.FeedbackHandle;
-import com.ecfeed.data.SessionData;
+import com.ecfeed.config.ConfigDefault;
+import com.ecfeed.FeedbackHandle;
+import com.ecfeed.data.DataSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,19 +10,19 @@ import org.json.JSONObject;
 import java.util.Optional;
 
 public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
-    private SessionData sessionData;
+    private DataSession dataSession;
 
     private String[] argumentTypes;
     private String[] argumentNames;
 
-    private ChunkParserStream(SessionData sessionData) {
+    private ChunkParserStream(DataSession dataSession) {
 
-        this.sessionData = sessionData;
+        this.dataSession = dataSession;
     }
 
-    public static ChunkParserStream create(SessionData sessionData) {
+    public static ChunkParserStream create(DataSession dataSession) {
 
-        return new ChunkParserStream(sessionData);
+        return new ChunkParserStream(dataSession);
     }
 
     @Override
@@ -52,15 +52,15 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
             throw new RuntimeException("The data received from the generator is erroneous");
         }
 
-        if (json.keySet().contains(Config.Key.reqTestInfoCase)) {
+        if (json.keySet().contains(ConfigDefault.Key.reqTestInfoCase)) {
             return parseTestCase(json);
         }
 
-        if (json.keySet().contains(Config.Key.reqTestStatus)) {
+        if (json.keySet().contains(ConfigDefault.Key.reqTestStatus)) {
             return parseStatus(json);
         }
 
-        if (json.keySet().contains(Config.Key.reqTestInfo)) {
+        if (json.keySet().contains(ConfigDefault.Key.reqTestInfo)) {
             return parseInfo(json);
         }
 
@@ -68,28 +68,28 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     }
 
     private Optional<Object[]> parseStatus(JSONObject json) {
-        String value = json.getString(Config.Key.reqTestStatus);
+        String value = json.getString(ConfigDefault.Key.reqTestStatus);
 
-        if (value.contains(Config.Key.reqTestStatusEnd)) {
-            sessionData.feedbackSetComplete();
+        if (value.contains(ConfigDefault.Key.reqTestStatusEnd)) {
+            dataSession.feedbackSetComplete();
         }
 
         return Optional.empty();
     }
 
     private Optional<Object[]> parseInfo(JSONObject json) {
-        String value = json.getString(Config.Key.reqTestInfo);
+        String value = json.getString(ConfigDefault.Key.reqTestInfo);
 
-        if (value.contains(Config.Key.reqTestInfoMethod)) {
+        if (value.contains(ConfigDefault.Key.reqTestInfoMethod)) {
             parseInfoArgumentTypes(value);
         }
 
-        if (value.contains(Config.Key.reqTestInfoTimestamp)) {
-            sessionData.setTimestamp(new JSONObject(value).getInt(Config.Key.reqTestInfoTimestamp));
+        if (value.contains(ConfigDefault.Key.reqTestInfoTimestamp)) {
+            dataSession.setTimestamp(new JSONObject(value).getInt(ConfigDefault.Key.reqTestInfoTimestamp));
         }
 
-        if (value.contains(Config.Key.reqTestInfoSessionId)) {
-            sessionData.setTestSessionId(new JSONObject(value).getString(Config.Key.reqTestInfoSessionId));
+        if (value.contains(ConfigDefault.Key.reqTestInfoSessionId)) {
+            dataSession.setTestSessionId(new JSONObject(value).getString(ConfigDefault.Key.reqTestInfoSessionId));
         }
 
         return Optional.empty();
@@ -98,9 +98,9 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     private void parseInfoArgumentTypes(String method) {
         String parsedMethod;
 
-        parsedMethod = new JSONObject(method).getString(Config.Key.reqTestInfoMethod);
+        parsedMethod = new JSONObject(method).getString(ConfigDefault.Key.reqTestInfoMethod);
 
-        sessionData.setMethodNameQualified(parsedMethod);
+        dataSession.setMethodNameQualified(parsedMethod);
 
         parsedMethod = parsedMethod.split("[()]")[1];
         String[] argument = parsedMethod.split(", ");
@@ -117,9 +117,9 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
 
     private Optional<Object[]> parseTestCase(JSONObject json) {
 
-        if (json.keySet().contains(Config.Key.reqTestInfoCase)) {
-            Optional<FeedbackHandle> feedbackHandle = sessionData.feedbackHandleCreate(json.toString());
-            JSONArray arguments = json.getJSONArray(Config.Key.reqTestInfoCase);
+        if (json.keySet().contains(ConfigDefault.Key.reqTestInfoCase)) {
+            Optional<FeedbackHandle> feedbackHandle = dataSession.feedbackHandleCreate(json.toString());
+            JSONArray arguments = json.getJSONArray(ConfigDefault.Key.reqTestInfoCase);
 
             if (feedbackHandle.isPresent()) {
                 return parseTestCaseFeedback(arguments, feedbackHandle.get());
@@ -135,7 +135,7 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
         Object[] response = new Object[argumentTypes.length];
 
         for (int i = 0 ; i < json.length() ; i++) {
-            response[i] = parseType(i, json.getJSONObject(i).getString(Config.Key.reqTestInfoCaseValue));
+            response[i] = parseType(i, json.getJSONObject(i).getString(ConfigDefault.Key.reqTestInfoCaseValue));
         }
 
         return Optional.of(response);
@@ -145,7 +145,7 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
         Object[] response = new Object[argumentTypes.length + 1];
 
         for (int i = 0 ; i < json.length() ; i++) {
-            response[i] = parseType(i, json.getJSONObject(i).getString(Config.Key.reqTestInfoCaseValue));
+            response[i] = parseType(i, json.getJSONObject(i).getString(ConfigDefault.Key.reqTestInfoCaseValue));
         }
 
         response[response.length - 1] = feedbackHandle;

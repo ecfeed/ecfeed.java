@@ -1,7 +1,7 @@
 package com.ecfeed.test;
 
 import com.ecfeed.TestProvider;
-import com.ecfeed.TypeExport;
+import com.ecfeed.type.TypeExport;
 
 import java.util.HashMap;
 

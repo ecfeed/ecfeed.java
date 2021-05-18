@@ -1,13 +1,20 @@
 package com.ecfeed.params;
 
-import com.ecfeed.Config;
+import com.ecfeed.config.ConfigDefault;
 
 import java.util.Map;
 
 public final class ParamsRandom extends ParamsAbstract<ParamsRandom> {
-    private int length = Config.Value.parLength;
-    private boolean adaptive = Config.Value.parAdaptive;
-    private boolean duplicates = Config.Value.parDuplicates;
+    private int length = ConfigDefault.Value.parLength;
+    private boolean adaptive = ConfigDefault.Value.parAdaptive;
+    private boolean duplicates = ConfigDefault.Value.parDuplicates;
+
+    private ParamsRandom() { }
+
+    public static ParamsRandom create() {
+
+        return new ParamsRandom();
+    }
 
     public int getLength() {
 
@@ -46,9 +53,9 @@ public final class ParamsRandom extends ParamsAbstract<ParamsRandom> {
     public Map<String, Object> getParamsMap() {
         Map<String, Object> paramMap = super.getParamsMap();
 
-        paramMap.put(Config.Key.parLength, length + "");
-        paramMap.put(Config.Key.parAdaptive, adaptive + "");
-        paramMap.put(Config.Key.parDuplicates, duplicates + "");
+        paramMap.put(ConfigDefault.Key.parLength, length + "");
+        paramMap.put(ConfigDefault.Key.parAdaptive, adaptive + "");
+        paramMap.put(ConfigDefault.Key.parDuplicates, duplicates + "");
 
         return paramMap;
     }

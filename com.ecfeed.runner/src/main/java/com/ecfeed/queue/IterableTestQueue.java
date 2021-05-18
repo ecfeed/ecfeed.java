@@ -1,6 +1,6 @@
-package com.ecfeed;
+package com.ecfeed.queue;
 
-import com.ecfeed.parser.ChunkParser;
+import com.ecfeed.chunk.parser.ChunkParser;
 
 import java.util.Iterator;
 import java.util.Optional;

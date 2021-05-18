@@ -1,12 +1,12 @@
 package com.ecfeed.helper;
 
-import com.ecfeed.Config;
-import com.ecfeed.IterableTestQueue;
-import com.ecfeed.data.ConnectionData;
-import com.ecfeed.data.SessionData;
-import com.ecfeed.parser.ChunkParser;
-import com.ecfeed.parser.ChunkParserExport;
-import com.ecfeed.parser.ChunkParserStream;
+import com.ecfeed.config.ConfigDefault;
+import com.ecfeed.queue.IterableTestQueue;
+import com.ecfeed.data.DataConnection;
+import com.ecfeed.data.DataSession;
+import com.ecfeed.chunk.parser.ChunkParser;
+import com.ecfeed.chunk.parser.ChunkParserExport;
+import com.ecfeed.chunk.parser.ChunkParserStream;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -21,32 +21,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public final class ConnectionHelper {
+public final class HelperConnection {
 
-    private ConnectionHelper() {
+    private HelperConnection() {
 
         throw new RuntimeException("The helper class cannot be instantiated");
     }
 
-    public static InputStream getChunkStreamForHealthCheck(ConnectionData connection) {
+    public static InputStream getChunkStreamForHealthCheck(DataConnection connection) {
         String request = generateURLForHealthCheck(connection.getHttpAddress());
 
         return createChunkStreamGet(connection.getHttpClient(), request);
     }
 
-    public static InputStream getChunkStreamForTestData(SessionData sessionData) {
+    public static InputStream getChunkStreamForTestData(DataSession dataSession) {
 
-        return createChunkStreamGet(sessionData.getHttpClient(), sessionData.generateURLForTestData());
+        return createChunkStreamGet(dataSession.getHttpClient(), dataSession.generateURLForTestData());
     }
 
-    public static InputStream getChunkStreamForFeedback(SessionData sessionData) {
+    public static InputStream getChunkStreamForFeedback(DataSession dataSession) {
 
-        return createChunkStreamPost(sessionData.getHttpClient(), sessionData.generateURLForFeedback(), sessionData.generateBodyForFeedback());
+        return createChunkStreamPost(dataSession.getHttpClient(), dataSession.generateURLForFeedback(), dataSession.generateBodyForFeedback());
     }
 
     private static String generateURLForHealthCheck(String generatorAddress) {
 
-        return generatorAddress + "/" + Config.Key.urlHealthCheck;
+        return generatorAddress + "/" + ConfigDefault.Key.urlHealthCheck;
     }
 
     private static InputStream createChunkStreamGet(HttpClient httpClient, String request) {
@@ -72,30 +72,30 @@ public final class ConnectionHelper {
         }
     }
 
-    public static void validateConnection(ConnectionData connection) {
+    public static void validateConnection(DataConnection connection) {
         IterableTestQueue<String> iterator = new IterableTestQueue<>(ChunkParserExport.create());
 
         try {
-            processChunkStream(iterator, ConnectionHelper.getChunkStreamForHealthCheck(connection));
+            processChunkStream(iterator, HelperConnection.getChunkStreamForHealthCheck(connection));
             dryChunkStream(iterator);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("The connection could not be established", e);
         }
     }
 
-    public static ChunkParser<Optional<Object[]>> sendMockRequest(ConnectionData connection, String model, String method) {
+    public static ChunkParser<Optional<Object[]>> sendMockRequest(DataConnection connection, String model, String method) {
         Map<String, Object> userProperties = new HashMap<>();
 
-        userProperties.put(Config.Key.parLength, "0");
+        userProperties.put(ConfigDefault.Key.parLength, "0");
 
-        SessionData sessionData = SessionData.create(connection, model, method, Config.Value.parGenRandom);
-        sessionData.setGeneratorOptions(userProperties);
+        DataSession dataSession = DataSession.create(connection, model, method, ConfigDefault.Value.parGenRandom);
+        dataSession.setGeneratorOptions(userProperties);
 
-        ChunkParser<Optional<Object[]>> chunkParser = ChunkParserStream.create(sessionData);
+        ChunkParser<Optional<Object[]>> chunkParser = ChunkParserStream.create(dataSession);
         
         IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(chunkParser);
         
-        processChunkStream(iterator, ConnectionHelper.getChunkStreamForTestData(sessionData));
+        processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
         dryChunkStream(iterator);
 
         return chunkParser;

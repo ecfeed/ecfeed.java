@@ -1,6 +1,6 @@
 package com.ecfeed.data;
 
-import com.ecfeed.Config;
+import com.ecfeed.config.ConfigDefault;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.PrivateKeyStrategy;
@@ -18,7 +18,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 
-public class ConnectionData {
+public class DataConnection {
 
     private HttpClient httpClient;
     private String httpAddress;
@@ -26,7 +26,7 @@ public class ConnectionData {
     private String keyStorePassword;
     private Path keyStorePath;
 
-    private ConnectionData(String httpAddress, Path keyStorePath, String keyStorePassword) {
+    private DataConnection(String httpAddress, Path keyStorePath, String keyStorePassword) {
         this.httpAddress = httpAddress;
         this.keyStorePath = keyStorePath;
         this.keyStorePassword = keyStorePassword;
@@ -35,9 +35,9 @@ public class ConnectionData {
         this.httpClient = setupGetHTTPClient();
     }
 
-    public static ConnectionData create(String httpAddress, Path keyStorePath, String keyStorePassword) {
+    public static DataConnection create(String httpAddress, Path keyStorePath, String keyStorePassword) {
 
-        return new ConnectionData(httpAddress, keyStorePath, keyStorePassword);
+        return new DataConnection(httpAddress, keyStorePath, keyStorePassword);
     }
 
     public HttpClient getHttpClient() {
@@ -89,11 +89,11 @@ public class ConnectionData {
     private SSLContextBuilder getKeyMaterial(SSLContextBuilder context) {
 
         try {
-            if (!this.keyStoreInstance.containsAlias(Config.Key.certClient)) {
+            if (!this.keyStoreInstance.containsAlias(ConfigDefault.Key.certClient)) {
                 throw new IllegalArgumentException("The client certificate could not be found: " + keyStorePath.toAbsolutePath());
             }
 
-            PrivateKeyStrategy strategy = (aliases, socket) -> Config.Key.certClient;
+            PrivateKeyStrategy strategy = (aliases, socket) -> ConfigDefault.Key.certClient;
             return context.loadKeyMaterial(this.keyStoreInstance, keyStorePassword.toCharArray(), strategy);
         } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException e) {
             throw new IllegalArgumentException("The client certificate could not be accessed.", e);
@@ -103,11 +103,11 @@ public class ConnectionData {
     private SSLContextBuilder getTrustMaterial(SSLContextBuilder context) {
 
         try {
-            if (!this.keyStoreInstance.containsAlias(Config.Key.certServer)) {
+            if (!this.keyStoreInstance.containsAlias(ConfigDefault.Key.certServer)) {
                 throw new IllegalArgumentException("The server certificate could not be found: " + this.keyStorePath.toAbsolutePath());
             }
 
-            java.security.cert.Certificate cert = this.keyStoreInstance.getCertificate(Config.Key.certServer);
+            java.security.cert.Certificate cert = this.keyStoreInstance.getCertificate(ConfigDefault.Key.certServer);
             TrustStrategy strategy = (chain, authType) -> Arrays.asList((Certificate[]) chain).contains(cert);
             return context.loadTrustMaterial(strategy);
         } catch (NoSuchAlgorithmException | KeyStoreException e) {

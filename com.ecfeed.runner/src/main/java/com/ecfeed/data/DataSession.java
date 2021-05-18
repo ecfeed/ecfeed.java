@@ -1,8 +1,9 @@
 package com.ecfeed.data;
 
-import com.ecfeed.Config;
-import com.ecfeed.TypeExport;
-import com.ecfeed.helper.ConnectionHelper;
+import com.ecfeed.config.ConfigDefault;
+import com.ecfeed.FeedbackHandle;
+import com.ecfeed.type.TypeExport;
+import com.ecfeed.helper.HelperConnection;
 import org.apache.http.client.HttpClient;
 import org.json.JSONObject;
 
@@ -15,11 +16,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class SessionData {
+public class DataSession {
 
     private final JSONObject testResults = new JSONObject();
 
-    private final ConnectionData connection;
+    private final DataConnection connection;
     private final String generatorType;
     private final String method;
     private final String model;
@@ -30,9 +31,9 @@ public class SessionData {
     private String methodNameQualified = "";
     private String testSessionId = "";
     private String testSessionLabel = "";
-    private Object constraints = Config.Value.parAll;
-    private Object testSuites = Config.Value.parAll;
-    private Object choices = Config.Value.parAll;
+    private Object constraints = ConfigDefault.Value.parAll;
+    private Object testSuites = ConfigDefault.Value.parAll;
+    private Object choices = ConfigDefault.Value.parAll;
     private int timestamp = -1;
 
     private boolean enabled = false;
@@ -40,16 +41,16 @@ public class SessionData {
     private int testCasesTotal = 0;
     private int testCasesParsed = 0;
 
-    private SessionData(ConnectionData connection, String model, String method, String generatorType) {
+    private DataSession(DataConnection connection, String model, String method, String generatorType) {
         this.connection = connection;
         this.model = model;
         this.method = method;
         this.generatorType = generatorType;
     }
 
-    public static SessionData create(ConnectionData connection, String model, String method, String generatorType) {
+    public static DataSession create(DataConnection connection, String model, String method, String generatorType) {
 
-        return new SessionData(connection, model, method, generatorType);
+        return new DataSession(connection, model, method, generatorType);
     }
 
     public String generateURLForTestData() {
@@ -63,28 +64,28 @@ public class SessionData {
 
     private void generateURLForTestDataCore(StringBuilder builder) {
 
-        builder.append(getHttpAddress()).append("/").append(Config.Key.urlService);
+        builder.append(getHttpAddress()).append("/").append(ConfigDefault.Key.urlService);
     }
 
     private void generateURLForTestDataParameters(StringBuilder builder) {
-        String type = getTemplate().isPresent() ? Config.Value.parRequestTypeExport : Config.Value.parRequestTypeStream;
+        String type = getTemplate().isPresent() ? ConfigDefault.Value.parRequestTypeExport : ConfigDefault.Value.parRequestTypeStream;
 
         builder.append("?");
-        builder.append(Config.Key.reqDataRequestType).append("=").append(type);
+        builder.append(ConfigDefault.Key.reqDataRequestType).append("=").append(type);
         builder.append("&");
-        builder.append(Config.Key.reqDataClient).append("=").append(Config.Value.parClient);
+        builder.append(ConfigDefault.Key.reqDataClient).append("=").append(ConfigDefault.Value.parClient);
         builder.append("&");
-        builder.append(Config.Key.reqDataRequest).append("=").append(generateURLForTestDataRequest());
+        builder.append(ConfigDefault.Key.reqDataRequest).append("=").append(generateURLForTestDataRequest());
     }
 
     private String generateURLForTestDataRequest() {
         JSONObject request = new JSONObject();
 
-        request.put(Config.Key.reqDataMode, getModel());
-        request.put(Config.Key.reqDataMethod, getMethodName());
-        request.put(Config.Key.reqDataUserData, generateURLForTestDataRequestUserData());
+        request.put(ConfigDefault.Key.reqDataMode, getModel());
+        request.put(ConfigDefault.Key.reqDataMethod, getMethodName());
+        request.put(ConfigDefault.Key.reqDataUserData, generateURLForTestDataRequestUserData());
 
-        getTemplate().ifPresent(e -> request.put(Config.Key.reqDataTemplate, e));
+        getTemplate().ifPresent(e -> request.put(ConfigDefault.Key.reqDataTemplate, e));
 
         try {
             return URLEncoder.encode(request.toString(), StandardCharsets.UTF_8.toString());
@@ -96,8 +97,8 @@ public class SessionData {
     private String generateURLForTestDataRequestUserData() {
         JSONObject requestUserData = new JSONObject();
 
-        requestUserData.put(Config.Key.parDataSource, getGeneratorType());
-        requestUserData.put(Config.Key.parProperties, getGeneratorOptions());
+        requestUserData.put(ConfigDefault.Key.parDataSource, getGeneratorType());
+        requestUserData.put(ConfigDefault.Key.parProperties, getGeneratorOptions());
 
         return requestUserData.toString().replaceAll("\"", "'");
     }
@@ -118,7 +119,7 @@ public class SessionData {
 
     private void generateURLForFeedbackCore(StringBuilder builder) {
 
-        builder.append(getHttpAddress()).append("/").append(Config.Key.urlFeedback);
+        builder.append(getHttpAddress()).append("/").append(ConfigDefault.Key.urlFeedback);
     }
 
     private void generateURLForFeedbackParameters(StringBuilder builder) { }
@@ -126,19 +127,19 @@ public class SessionData {
     public String generateBodyForFeedback() {
         JSONObject json = new JSONObject();
 
-        parseFeedbackElement(json, Config.Key.reqFeedbackModel, getModel());
-        parseFeedbackElement(json, Config.Key.reqFeedbackMethod, getMethodNameQualified());
-        parseFeedbackElement(json, Config.Key.reqFeedbackTestSessionId, getTestSessionId());
-        parseFeedbackElement(json, Config.Key.reqFeedbackTestSessionLabel, getTestSessionLabel());
-        parseFeedbackElement(json, Config.Key.reqFeedbackFramework, Config.Value.parClient);
-        parseFeedbackElement(json, Config.Key.reqFeedbackTimestamp, getTimestamp());
-        parseFeedbackElement(json, Config.Key.reqFeedbackCustom, getCustom());
-        parseFeedbackElement(json, Config.Key.reqFeedbackTestSuites, getTestSuites());
-        parseFeedbackElement(json, Config.Key.reqFeedbackConstraints, getConstraints());
-        parseFeedbackElement(json, Config.Key.reqFeedbackChoices, getChoices());
-        parseFeedbackElement(json, Config.Key.reqFeedbackTestResults, getTestResults());
-        parseFeedbackElement(json, Config.Key.reqFeedbackGeneratorType, getGeneratorType());
-        parseFeedbackElement(json, Config.Key.reqFeedbackGeneratorOptions, getGeneratorOptions().entrySet().stream()
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackModel, getModel());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackMethod, getMethodNameQualified());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionId, getTestSessionId());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionLabel, getTestSessionLabel());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackFramework, ConfigDefault.Value.parClient);
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTimestamp, getTimestamp());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackCustom, getCustom());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSuites, getTestSuites());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackConstraints, getConstraints());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackChoices, getChoices());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestResults, getTestResults());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorType, getGeneratorType());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorOptions, getGeneratorOptions().entrySet().stream()
                 .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining(", ")));
 
@@ -152,7 +153,7 @@ public class SessionData {
         }
 
         if (value instanceof String) {
-            if (value.toString().equalsIgnoreCase("") || value.toString().equalsIgnoreCase(Config.Value.parAll)) {
+            if (value.toString().equalsIgnoreCase("") || value.toString().equalsIgnoreCase(ConfigDefault.Value.parAll)) {
                 return;
             }
         }
@@ -225,17 +226,17 @@ public class SessionData {
         this.generatorOptions = new HashMap<>();
 
         properties.forEach((key, value) -> {
-            if (key.equalsIgnoreCase(Config.Key.parConstraints)) {
+            if (key.equalsIgnoreCase(ConfigDefault.Key.parConstraints)) {
                 setConstraints(value);
-            } else if (key.equalsIgnoreCase(Config.Key.parTestSuites)) {
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSuites)) {
                 setTestSuites(value);
-            } else if (key.equalsIgnoreCase(Config.Key.parChoices)) {
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parChoices)) {
                 setChoices(value);
-            } else if (key.equalsIgnoreCase(Config.Key.parTestSessionLabel)) {
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSessionLabel)) {
                 setTestSessionLabel(value.toString());
-            } else if (key.equalsIgnoreCase(Config.Key.parCustom)) {
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parCustom)) {
                 setCustom((Map<String, String>) value);
-            } else if (key.equalsIgnoreCase(Config.Key.parFeedback)) {
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parFeedback)) {
                 if (value.equals(true) || value.toString().equalsIgnoreCase("true")) {
                     feedbackSetEnable();
                 }
@@ -335,8 +336,6 @@ public class SessionData {
         return connection.getHttpClient();
     }
 
-    //---------------------------------------------
-
     private void feedbackSetEnable() {
 
         this.enabled = true;
@@ -381,7 +380,7 @@ public class SessionData {
             return;
         }
 
-        ConnectionHelper.getChunkStreamForFeedback(this);
+        HelperConnection.getChunkStreamForFeedback(this);
     }
 
 }
