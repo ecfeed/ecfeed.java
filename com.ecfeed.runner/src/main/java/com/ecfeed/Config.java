@@ -29,13 +29,13 @@ public final class Config {
                 homeJava + "/lib/security/cacerts"
         };
 
-        final public static String parFeedback = "false";
+        final public static boolean parFeedback = false;
 
-        final public static String parN = "2";
-        final public static String parCoverage = "100";
-        final public static String parLength = "10";
-        final public static String parDuplicates = "false";
-        final public static String parAdaptive = "true";
+        final public static int parN = 2;
+        final public static int parCoverage = 100;
+        final public static int parLength = 10;
+        final public static boolean parDuplicates = false;
+        final public static boolean parAdaptive = true;
 
         final public static String parGenNWise = "genNWise";
         final public static String parGenCartesian = "genCartesian";

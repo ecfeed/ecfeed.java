@@ -3,6 +3,7 @@ package com.ecfeed;
 import com.ecfeed.data.ConnectionData;
 import com.ecfeed.data.SessionData;
 import com.ecfeed.helper.ConnectionHelper;
+import com.ecfeed.params.*;
 import com.ecfeed.parser.ChunkParserExport;
 import com.ecfeed.parser.ChunkParserStream;
 
@@ -137,39 +138,39 @@ public class TestProvider {
     public Iterable<String> exportNWise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN + "");
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage + "");
 
         return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
     }
 
-    public Iterable<String> exportNWise(String method, TypeExport typeExport, Param.ParamsNWise properties) {
+    public Iterable<String> exportNWise(String method, TypeExport typeExport, ParamsNWise properties) {
 
-        return exportNWise(method, typeExport, properties.getParamMap());
+        return exportNWise(method, typeExport, properties.getParamsMap());
     }
 
     public Iterable<String> exportNWise(String method, TypeExport typeExport) {
 
-        return exportNWise(method, typeExport, new Param.ParamsNWise());
+        return exportNWise(method, typeExport, new ParamsNWise());
     }
 
     public Iterable<String> exportPairwise(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN + "");
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage + "");
 
         return export(method, Config.Value.parGenNWise, typeExport, updatedProperties);
     }
 
-    public Iterable<String> exportPairwise(String method, TypeExport typeExport, Param.ParamsPairwise properties) {
+    public Iterable<String> exportPairwise(String method, TypeExport typeExport, ParamsPairwise properties) {
 
-        return exportPairwise(method, typeExport, properties.getParamMap());
+        return exportPairwise(method, typeExport, properties.getParamsMap());
     }
 
     public Iterable<String> exportPairwise(String method, TypeExport typeExport) {
 
-        return exportPairwise(method, typeExport, new Param.ParamsPairwise());
+        return exportPairwise(method, typeExport, new ParamsPairwise());
     }
 
     public Iterable<String> exportCartesian(String method, TypeExport typeExport, Map<String, Object> properties) {
@@ -178,34 +179,34 @@ public class TestProvider {
         return export(method, Config.Value.parGenCartesian, typeExport, updatedProperties);
     }
 
-    public Iterable<String> exportCartesian(String method, TypeExport typeExport, Param.ParamsCartesian properties) {
+    public Iterable<String> exportCartesian(String method, TypeExport typeExport, ParamsCartesian properties) {
 
-        return exportCartesian(method, typeExport, properties.getParamMap());
+        return exportCartesian(method, typeExport, properties.getParamsMap());
     }
 
     public Iterable<String> exportCartesian(String method, TypeExport typeExport) {
 
-        return exportCartesian(method, typeExport, new Param.ParamsCartesian());
+        return exportCartesian(method, typeExport, new ParamsCartesian());
     }
 
     public Iterable<String> exportRandom(String method, TypeExport typeExport, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
-        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
-        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
+        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength + "");
+        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive + "");
+        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates + "");
 
         return export(method, Config.Value.parGenRandom, typeExport, updatedProperties);
     }
 
-    public Iterable<String> exportRandom(String method, TypeExport typeExport, Param.ParamsRandom properties) {
+    public Iterable<String> exportRandom(String method, TypeExport typeExport, ParamsRandom properties) {
 
-        return exportRandom(method, typeExport, properties.getParamMap());
+        return exportRandom(method, typeExport, properties.getParamsMap());
     }
 
     public Iterable<String> exportRandom(String method, TypeExport typeExport) {
 
-        return exportRandom(method, typeExport, new Param.ParamsRandom());
+        return exportRandom(method, typeExport, new ParamsRandom());
     }
 
     public Iterable<String> exportStatic(String method, TypeExport typeExport, Map<String, Object> properties) {
@@ -214,14 +215,14 @@ public class TestProvider {
         return export(method, Config.Value.parGenStatic, typeExport, updatedProperties);
     }
 
-    public Iterable<String> exportStatic(String method, TypeExport typeExport, Param.ParamsStatic properties) {
+    public Iterable<String> exportStatic(String method, TypeExport typeExport, ParamsStatic properties) {
 
-        return exportStatic(method, typeExport, properties.getParamMap());
+        return exportStatic(method, typeExport, properties.getParamsMap());
     }
 
     public Iterable<String> exportStatic(String method, TypeExport typeExport) {
 
-        return exportStatic(method, typeExport, new Param.ParamsStatic());
+        return exportStatic(method, typeExport, new ParamsStatic());
     }
 
     public Iterable<Object[]> generate(String method, String generator, Map<String, Object> properties) {
@@ -246,39 +247,39 @@ public class TestProvider {
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN + "");
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage + "");
 
         return generate(method, Config.Value.parGenNWise, updatedProperties);
     }
 
-    public Iterable<Object[]> generateNWise(String method, Param.ParamsNWise properties) {
+    public Iterable<Object[]> generateNWise(String method, ParamsNWise properties) {
 
-        return generateNWise(method, properties.getParamMap());
+        return generateNWise(method, properties.getParamsMap());
     }
 
     public Iterable<Object[]> generateNWise(String method) {
 
-        return generateNWise(method, new Param.ParamsNWise());
+        return generateNWise(method, new ParamsNWise());
     }
 
     public Iterable<Object[]> generatePairwise(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN);
-        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage);
+        addProperty(updatedProperties, Config.Key.parN, Config.Value.parN + "");
+        addProperty(updatedProperties, Config.Key.parCoverage, Config.Value.parCoverage + "");
 
         return generate(method, Config.Value.parGenNWise, updatedProperties);
     }
 
-    public Iterable<Object[]> generatePairwise(String method, Param.ParamsPairwise properties) {
+    public Iterable<Object[]> generatePairwise(String method, ParamsPairwise properties) {
 
-        return generatePairwise(method, properties.getParamMap());
+        return generatePairwise(method, properties.getParamsMap());
     }
 
     public Iterable<Object[]> generatePairwise(String method) {
 
-        return generatePairwise(method, new Param.ParamsPairwise());
+        return generatePairwise(method, new ParamsPairwise());
     }
 
     public Iterable<Object[]> generateCartesian(String method, Map<String, Object> properties) {
@@ -287,34 +288,34 @@ public class TestProvider {
         return generate(method, Config.Value.parGenCartesian, updatedProperties);
     }
 
-    public Iterable<Object[]> generateCartesian(String method, Param.ParamsCartesian properties) {
+    public Iterable<Object[]> generateCartesian(String method, ParamsCartesian properties) {
 
-        return generateCartesian(method, properties.getParamMap());
+        return generateCartesian(method, properties.getParamsMap());
     }
 
     public Iterable<Object[]> generateCartesian(String method) {
 
-        return generateCartesian(method, new Param.ParamsCartesian());
+        return generateCartesian(method, new ParamsCartesian());
     }
 
     public Iterable<Object[]> generateRandom(String method, Map<String, Object> properties) {
         Map<String, Object> updatedProperties = new HashMap<>(properties);
 
-        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength);
-        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive);
-        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates);
+        addProperty(updatedProperties, Config.Key.parLength, Config.Value.parLength + "");
+        addProperty(updatedProperties, Config.Key.parAdaptive, Config.Value.parAdaptive + "");
+        addProperty(updatedProperties, Config.Key.parDuplicates, Config.Value.parDuplicates + "");
 
         return generate(method, Config.Value.parGenRandom, updatedProperties);
     }
 
-    public Iterable<Object[]> generateRandom(String method, Param.ParamsRandom properties) {
+    public Iterable<Object[]> generateRandom(String method, ParamsRandom properties) {
 
-        return generateRandom(method, properties.getParamMap());
+        return generateRandom(method, properties.getParamsMap());
     }
 
     public Iterable<Object[]> generateRandom(String method) {
 
-        return generateRandom(method, new Param.ParamsRandom());
+        return generateRandom(method, new ParamsRandom());
     }
 
     public Iterable<Object[]> generateStatic(String method, Map<String, Object> properties) {
@@ -323,14 +324,14 @@ public class TestProvider {
         return generate(method, Config.Value.parGenStatic, updatedProperties);
     }
 
-    public Iterable<Object[]> generateStatic(String method, Param.ParamsStatic properties) {
+    public Iterable<Object[]> generateStatic(String method, ParamsStatic properties) {
 
-        return generateStatic(method, properties.getParamMap());
+        return generateStatic(method, properties.getParamsMap());
     }
 
     public Iterable<Object[]> generateStatic(String method) {
 
-        return generateStatic(method, new Param.ParamsStatic());
+        return generateStatic(method, new ParamsStatic());
     }
 
     public void validateConnection() {

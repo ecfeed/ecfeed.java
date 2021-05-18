@@ -5,4 +5,5 @@ module com.ecfeed {
     exports com.ecfeed;
     exports com.ecfeed.helper;
     exports com.ecfeed.parser;
+    exports com.ecfeed.params;
 }

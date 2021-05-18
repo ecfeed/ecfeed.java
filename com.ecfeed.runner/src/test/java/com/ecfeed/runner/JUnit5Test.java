@@ -1,6 +1,6 @@
 package com.ecfeed.runner;
 
-import com.ecfeed.Param;
+import com.ecfeed.params.*;
 import com.ecfeed.TestProvider;
 import com.ecfeed.TypeExport;
 import com.ecfeed.data.FeedbackHandle;
@@ -31,7 +31,7 @@ public class JUnit5Test {
 
 
     static Iterable<Object[]> testProviderNWiseFeedback() {
-        return TestProvider.create(model).generateNWise(method, new Param.ParamsNWise().feedback(true));
+        return TestProvider.create(model).generateNWise(method, new ParamsNWise().feedback());
     }
 
     static Iterable<Object[]> testProviderNWise() {
@@ -96,7 +96,7 @@ public class JUnit5Test {
     void exportTypeRaw() {
         TestProvider testProvider = TestProvider.create(model);
 
-        for (String chunk : testProvider.exportNWise(method, TypeExport.Raw, new Param.ParamsNWise())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.Raw, new ParamsNWise())) {
             System.out.println(chunk);
         }
     }
@@ -106,7 +106,7 @@ public class JUnit5Test {
     void exportTypeXml() {
         TestProvider testProvider = TestProvider.create(model);
 
-        for (String chunk : testProvider.exportNWise(method, TypeExport.XML, new Param.ParamsNWise())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.XML, new ParamsNWise())) {
             System.out.println(chunk);
         }
     }
@@ -116,7 +116,7 @@ public class JUnit5Test {
     void exportTypeJson() {
         TestProvider testProvider = TestProvider.create(model);
 
-        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new Param.ParamsNWise())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.JSON, new ParamsNWise())) {
             System.out.println(chunk);
         }
     }
@@ -126,7 +126,7 @@ public class JUnit5Test {
     void exportTypeCsv() {
         TestProvider testProvider = TestProvider.create(model);
 
-        for (String chunk : testProvider.exportNWise(method, TypeExport.CSV, new Param.ParamsNWise())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.CSV, new ParamsNWise())) {
             System.out.println(chunk);
         }
     }
@@ -136,7 +136,7 @@ public class JUnit5Test {
     void exportTypeGherkin() {
         TestProvider testProvider = TestProvider.create(model);
 
-        for (String chunk : testProvider.exportNWise(method, TypeExport.Gherkin, new Param.ParamsNWise())) {
+        for (String chunk : testProvider.exportNWise(method, TypeExport.Gherkin, new ParamsNWise())) {
             System.out.println(chunk);
         }
     }
@@ -175,7 +175,7 @@ public class JUnit5Test {
 
         TestProvider testProvider = TestProvider.create(model);
 
-        Param.ParamsNWise config = new Param.ParamsNWise()
+        ParamsNWise config = new ParamsNWise()
                 .constraints(constraints)
                 .choices(choices)
                 .coverage(100)
@@ -222,7 +222,7 @@ public class JUnit5Test {
 
         TestProvider testProvider = TestProvider.create(model);
 
-        Param.ParamsPairwise config = new Param.ParamsPairwise()
+        ParamsPairwise config = new ParamsPairwise()
                 .constraints(constraints)
                 .choices(choices)
                 .coverage(100);
@@ -267,7 +267,7 @@ public class JUnit5Test {
 
         TestProvider testProvider = TestProvider.create(model);
 
-        Param.ParamsCartesian config = new Param.ParamsCartesian()
+        ParamsCartesian config = new ParamsCartesian()
                 .constraints(constraints)
                 .choices(choices);
 
@@ -314,7 +314,7 @@ public class JUnit5Test {
 
         TestProvider testProvider = TestProvider.create(model);
 
-        Param.ParamsRandom config = new Param.ParamsRandom()
+        ParamsRandom config = new ParamsRandom()
                 .constraints(constraints)
                 .choices(choices)
                 .length(25)
@@ -354,7 +354,7 @@ public class JUnit5Test {
 
         TestProvider testProvider = TestProvider.create(model);
 
-        Param.ParamsStatic config = new Param.ParamsStatic()
+        ParamsStatic config = new ParamsStatic()
                 .testSuites(testSuites);
 
         for (Object[] chunk : testProvider.generateStatic(method, config)) {
