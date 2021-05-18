@@ -5,5 +5,4 @@ module com.ecfeed {
     exports com.ecfeed;
     exports com.ecfeed.params;
     exports com.ecfeed.type;
-    exports com.ecfeed.queue;
 }

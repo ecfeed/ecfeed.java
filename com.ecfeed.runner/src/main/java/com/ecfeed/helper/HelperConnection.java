@@ -1,12 +1,10 @@
 package com.ecfeed.helper;
 
 import com.ecfeed.config.ConfigDefault;
-import com.ecfeed.queue.IterableTestQueue;
 import com.ecfeed.data.DataConnection;
 import com.ecfeed.data.DataSession;
-import com.ecfeed.chunk.parser.ChunkParser;
-import com.ecfeed.chunk.parser.ChunkParserExport;
-import com.ecfeed.chunk.parser.ChunkParserStream;
+import com.ecfeed.queue.IterableTestQueue;
+import com.ecfeed.type.TypeGenerator;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public final class HelperConnection {
 
@@ -73,7 +70,7 @@ public final class HelperConnection {
     }
 
     public static void validateConnection(DataConnection connection) {
-        IterableTestQueue<String> iterator = new IterableTestQueue<>(ChunkParserExport.create());
+        IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
 
         try {
             processChunkStream(iterator, HelperConnection.getChunkStreamForHealthCheck(connection));
@@ -83,22 +80,20 @@ public final class HelperConnection {
         }
     }
 
-    public static ChunkParser<Optional<Object[]>> sendMockRequest(DataConnection connection, String model, String method) {
+    public static DataSession sendMockRequest(DataConnection connection, String model, String method) {
         Map<String, Object> userProperties = new HashMap<>();
 
         userProperties.put(ConfigDefault.Key.parLength, "0");
 
-        DataSession dataSession = DataSession.create(connection, model, method, ConfigDefault.Value.parGenRandom);
+        DataSession dataSession = DataSession.create(connection, model, method, TypeGenerator.Random);
         dataSession.setGeneratorOptions(userProperties);
 
-        ChunkParser<Optional<Object[]>> chunkParser = ChunkParserStream.create(dataSession);
-        
-        IterableTestQueue<Object[]> iterator = new IterableTestQueue<>(chunkParser);
+        IterableTestQueue<Object[]> iterator = IterableTestQueue.createForStream(dataSession);
         
         processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
         dryChunkStream(iterator);
 
-        return chunkParser;
+        return dataSession;
     }
 
     public static void processChunkStream(IterableTestQueue<?> iterator, InputStream chunkInputStream) {

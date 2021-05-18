@@ -4,8 +4,7 @@ import java.util.Optional;
 
 public class ChunkParserExport implements ChunkParser<Optional<String>> {
 
-    private ChunkParserExport() {
-    }
+    private ChunkParserExport() { }
 
     public static ChunkParserExport create() {
 

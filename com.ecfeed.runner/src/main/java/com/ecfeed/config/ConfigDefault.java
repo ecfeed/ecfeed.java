@@ -37,11 +37,6 @@ public final class ConfigDefault {
         final public static boolean parDuplicates = false;
         final public static boolean parAdaptive = true;
 
-        final public static String parGenNWise = "genNWise";
-        final public static String parGenCartesian = "genCartesian";
-        final public static String parGenRandom = "genRandom";
-        final public static String parGenStatic = "static";
-
         final public static String parRequestTypeExport = "requestExport";
         final public static String parRequestTypeStream = "requestData";
 

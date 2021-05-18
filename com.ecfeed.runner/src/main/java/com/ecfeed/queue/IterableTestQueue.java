@@ -1,6 +1,9 @@
 package com.ecfeed.queue;
 
 import com.ecfeed.chunk.parser.ChunkParser;
+import com.ecfeed.chunk.parser.ChunkParserExport;
+import com.ecfeed.chunk.parser.ChunkParserStream;
+import com.ecfeed.data.DataSession;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -14,10 +17,20 @@ public class IterableTestQueue<T> implements Iterator<T>, Iterable<T> {
     private Optional<T> parsedTest;
     private boolean readyToSend;
 
-    public IterableTestQueue(ChunkParser<Optional<T>> chunkParser) {
+    private IterableTestQueue(ChunkParser<Optional<T>> chunkParser) {
 
         this.parsedTestBuffer = new LinkedBlockingQueue<>();
         this.chunkParser = chunkParser;
+    }
+
+    public static IterableTestQueue<String> createForExport() {
+
+        return new IterableTestQueue<>(ChunkParserExport.create());
+    }
+
+    public static IterableTestQueue<Object[]> createForStream(DataSession dataSession) {
+
+        return new IterableTestQueue<>(ChunkParserStream.create(dataSession));
     }
 
     @Override

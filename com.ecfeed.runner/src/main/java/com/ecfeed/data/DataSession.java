@@ -1,9 +1,10 @@
 package com.ecfeed.data;
 
-import com.ecfeed.config.ConfigDefault;
 import com.ecfeed.FeedbackHandle;
-import com.ecfeed.type.TypeExport;
+import com.ecfeed.config.ConfigDefault;
 import com.ecfeed.helper.HelperConnection;
+import com.ecfeed.type.TypeExport;
+import com.ecfeed.type.TypeGenerator;
 import org.apache.http.client.HttpClient;
 import org.json.JSONObject;
 
@@ -21,9 +22,12 @@ public class DataSession {
     private final JSONObject testResults = new JSONObject();
 
     private final DataConnection connection;
-    private final String generatorType;
+    private final TypeGenerator generatorType;
     private final String method;
     private final String model;
+
+    private String[] argumentTypes;
+    private String[] argumentNames;
 
     private Map<String, Object> generatorOptions = new HashMap<>();
     private Map<String, String> custom = new HashMap<>();
@@ -41,14 +45,14 @@ public class DataSession {
     private int testCasesTotal = 0;
     private int testCasesParsed = 0;
 
-    private DataSession(DataConnection connection, String model, String method, String generatorType) {
+    private DataSession(DataConnection connection, String model, String method, TypeGenerator generatorType) {
         this.connection = connection;
         this.model = model;
         this.method = method;
         this.generatorType = generatorType;
     }
 
-    public static DataSession create(DataConnection connection, String model, String method, String generatorType) {
+    public static DataSession create(DataConnection connection, String model, String method, TypeGenerator generatorType) {
 
         return new DataSession(connection, model, method, generatorType);
     }
@@ -97,7 +101,7 @@ public class DataSession {
     private String generateURLForTestDataRequestUserData() {
         JSONObject requestUserData = new JSONObject();
 
-        requestUserData.put(ConfigDefault.Key.parDataSource, getGeneratorType());
+        requestUserData.put(ConfigDefault.Key.parDataSource, getGeneratorType().getName());
         requestUserData.put(ConfigDefault.Key.parProperties, getGeneratorOptions());
 
         return requestUserData.toString().replaceAll("\"", "'");
@@ -138,7 +142,7 @@ public class DataSession {
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackConstraints, getConstraints());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackChoices, getChoices());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestResults, getTestResults());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorType, getGeneratorType());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorType, getGeneratorType().getNickname());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorOptions, getGeneratorOptions().entrySet().stream()
                 .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining(", ")));
@@ -173,7 +177,7 @@ public class DataSession {
         json.put(key, value);
     }
 
-    private String getGeneratorType() {
+    private TypeGenerator getGeneratorType() {
 
         return generatorType;
     }
@@ -315,6 +319,26 @@ public class DataSession {
     private void setChoices(Object choices) {
 
         this.choices = choices;
+    }
+
+    public String[] getArgumentTypes() {
+
+        return this.argumentTypes;
+    }
+
+    public void setArgumentTypes(String[] argumentTypes) {
+
+        this.argumentTypes = argumentTypes;
+    }
+
+    public String[] getArgumentNames() {
+
+        return this.argumentNames;
+    }
+
+    public void setArgumentNames(String[] argumentNames) {
+
+        this.argumentNames = argumentNames;
     }
 
     private String getHttpAddress() {

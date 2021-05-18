@@ -26,18 +26,6 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     }
 
     @Override
-    public String[] getMethodTypes() {
-
-        return argumentTypes;
-    }
-
-    @Override
-    public String[] getMethodNames() {
-
-        return argumentNames;
-    }
-
-    @Override
     public Optional<Object[]> parse(String chunk) {
 
         if (chunk == null || chunk.equals("")) {
@@ -113,6 +101,9 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
             argumentTypes[i] = parsedArgument[0];
             argumentNames[i] = parsedArgument[1];
         }
+
+        dataSession.setArgumentTypes(argumentTypes);
+        dataSession.setArgumentNames(argumentNames);
     }
 
     private Optional<Object[]> parseTestCase(JSONObject json) {

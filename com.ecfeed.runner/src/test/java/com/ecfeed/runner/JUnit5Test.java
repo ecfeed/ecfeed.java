@@ -29,7 +29,6 @@ public class JUnit5Test {
         PASSPORT, DRIVERS_LICENSE, PERSONAL_ID
     }
 
-
     static Iterable<Object[]> testProviderNWiseFeedback() {
         return TestProvider.create(model).generateNWise(method, ParamsNWise.create().feedback());
     }
@@ -370,7 +369,7 @@ public class JUnit5Test {
     void getMethodTypes() {
         TestProvider testProvider = TestProvider.create(model);
 
-        System.out.println(testProvider.getMethodTypes(method));
+        System.out.println(testProvider.getArgumentTypes(method));
     }
 
     @Test
@@ -378,7 +377,7 @@ public class JUnit5Test {
     void getMethodNames() {
         TestProvider testProvider = TestProvider.create(model);
 
-        System.out.println(testProvider.getMethodNames(method));
+        System.out.println(testProvider.getArgumentNames(method));
     }
 
     @Test
