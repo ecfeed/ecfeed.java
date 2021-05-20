@@ -1,7 +1,7 @@
 package com.ecfeed.chunk.parser;
 
 import com.ecfeed.config.ConfigDefault;
-import com.ecfeed.FeedbackHandle;
+import com.ecfeed.TestHandle;
 import com.ecfeed.data.DataSession;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,7 +109,7 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
     private Optional<Object[]> parseTestCase(JSONObject json) {
 
         if (json.keySet().contains(ConfigDefault.Key.reqTestInfoCase)) {
-            Optional<FeedbackHandle> feedbackHandle = dataSession.feedbackHandleCreate(json.toString());
+            Optional<TestHandle> feedbackHandle = dataSession.feedbackHandleCreate(json.toString());
             JSONArray arguments = json.getJSONArray(ConfigDefault.Key.reqTestInfoCase);
 
             if (feedbackHandle.isPresent()) {
@@ -132,14 +132,14 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
         return Optional.of(response);
     }
 
-    private Optional<Object[]> parseTestCaseFeedback(JSONArray json, FeedbackHandle feedbackHandle) {
+    private Optional<Object[]> parseTestCaseFeedback(JSONArray json, TestHandle testHandle) {
         Object[] response = new Object[argumentTypes.length + 1];
 
         for (int i = 0 ; i < json.length() ; i++) {
             response[i] = parseType(i, json.getJSONObject(i).getString(ConfigDefault.Key.reqTestInfoCaseValue));
         }
 
-        response[response.length - 1] = feedbackHandle;
+        response[response.length - 1] = testHandle;
 
         return Optional.of(response);
     }

@@ -1,6 +1,6 @@
 package com.ecfeed.data;
 
-import com.ecfeed.FeedbackHandle;
+import com.ecfeed.TestHandle;
 import com.ecfeed.config.ConfigDefault;
 import com.ecfeed.helper.HelperConnection;
 import com.ecfeed.type.TypeExport;
@@ -374,13 +374,13 @@ public class DataSession {
         }
     }
 
-    public Optional<FeedbackHandle> feedbackHandleCreate(String data) {
+    public Optional<TestHandle> feedbackHandleCreate(String data) {
 
         if (!this.enabled) {
             return Optional.empty();
         }
 
-        return Optional.of(FeedbackHandle.create(this, data, "0:" + testCasesTotal++));
+        return Optional.of(TestHandle.create(this, data, "0:" + testCasesTotal++));
     }
 
     public void feedbackHandleRegister(String id, JSONObject feedback) {

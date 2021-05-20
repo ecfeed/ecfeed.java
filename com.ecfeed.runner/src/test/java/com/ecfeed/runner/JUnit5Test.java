@@ -3,7 +3,7 @@ package com.ecfeed.runner;
 import com.ecfeed.params.*;
 import com.ecfeed.TestProvider;
 import com.ecfeed.type.TypeExport;
-import com.ecfeed.FeedbackHandle;
+import com.ecfeed.TestHandle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,8 +55,8 @@ public class JUnit5Test {
 
     @ParameterizedTest
     @MethodSource("testProviderNWiseFeedback")
-    void testProviderNWiseFeedback(String name, String firstName, Gender gender, int age, String id, ID type, FeedbackHandle feedbackHandle) {
-        feedbackHandle.addFeedback(true);
+    void testProviderNWiseFeedback(String name, String firstName, Gender gender, int age, String id, ID type, TestHandle testHandle) {
+        testHandle.addFeedback(true);
         System.out.println("name = " + name + ", firstName = " + firstName + ", gender = " + gender + ", age = " + age + ", id = " + id + ", type = " + type);
     }
 
