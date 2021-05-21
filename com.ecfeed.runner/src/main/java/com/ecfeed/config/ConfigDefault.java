@@ -21,7 +21,7 @@ public final class ConfigDefault {
 
         private Value() { }
 
-        final public static String generatorAddress = "https://develop-gen.ecfeed.com";
+        final public static String generatorAddress = "https://gen.ecfeed.com";
         final public static String keyStorePassword = "changeit";
         final public static String[] keyStorePath = {
                 ".ecfeed/security.p12", "ecfeed/security.p12",
