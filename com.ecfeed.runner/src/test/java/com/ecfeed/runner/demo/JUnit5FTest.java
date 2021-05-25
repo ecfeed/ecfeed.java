@@ -19,27 +19,27 @@ public class JUnit5FTest {
         return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .length(1)
-                .setTestSessionLabel("Random / Quantity - Single"));
+                .label("Random / Quantity - Single"));
     }
 
     static Iterable<Object[]> genRandomQuantityShort() {
         return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(100, 500))
-                .setTestSessionLabel("Random / Quantity - Short"));
+                .label("Random / Quantity - Short"));
     }
 
     static Iterable<Object[]> genRandomQuantityLong() {
         return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(1000, 5000))
-                .setTestSessionLabel("Random / Quantity - Long"));
+                .label("Random / Quantity - Long"));
     }
 
     static Iterable<Object[]> genRandom() {
         return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
-                .setTestSessionLabel("Random"));
+                .label("Random"));
     }
 
     static Iterable<Object[]> genRandomAdaptive() {
@@ -47,7 +47,7 @@ public class JUnit5FTest {
                 .feedback()
                 .length(10)
                 .adaptive(false)
-                .setTestSessionLabel("Random - Adaptive"));
+                .label("Random - Adaptive"));
     }
 
     static Iterable<Object[]> genRandomDuplicates() {
@@ -55,86 +55,93 @@ public class JUnit5FTest {
                 .feedback()
                 .length(10)
                 .duplicates(true)
-                .setTestSessionLabel("Random - Duplicates"));
+                .label("Random - Duplicates"));
     }
 
     static Iterable<Object[]> genNWise() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
-                .setTestSessionLabel("NWise"));
+                .label("NWise"));
     }
 
     static Iterable<Object[]> genNWiseN() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .n(3)
-                .setTestSessionLabel("NWise - N"));
+                .label("NWise - N"));
     }
 
     static Iterable<Object[]> genNWiseCoverage() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .coverage(50)
-                .setTestSessionLabel("NWise - Coverage"));
+                .label("NWise - Coverage"));
     }
 
     static Iterable<Object[]> genNWiseConstraintsNone() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .constraints("NONE")
-                .setTestSessionLabel("NWise / Constraints - None"));
+                .label("NWise / Constraints - None"));
     }
 
     static Iterable<Object[]> genNWiseConstraintsSelected() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .constraints(new String[]{"constraint1", "constraint2"})
-                .setTestSessionLabel("NWise / Constraints - Selected"));
+                .label("NWise / Constraints - Selected"));
     }
 
     static Iterable<Object[]> genNWiseChoicesSelected() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .choices(new HashMap<>(){{put("arg1", new String[]{"choice1", "choice2"});put("arg2", new String[]{"choice2", "choice3"});}})
-                .setTestSessionLabel("NWise / Choices - Selected"));
+                .label("NWise / Choices - Selected"));
+    }
+
+    static Iterable<Object[]> genNWiseCustom() {
+        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+                .feedback()
+                .custom(new HashMap<>(){{put("key1","value1");put("key2","value2");}})
+                .label("NWise / Custom"));
     }
 
     static Iterable<Object[]> genPairwise() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
-                .setTestSessionLabel("Pairwise"));
+                .label("Pairwise"));
     }
 
     static Iterable<Object[]> genCartesian() {
         return TestProvider.create(ConfigDefault.MODEL).generateCartesian(ConfigDefault.F_TEST, ParamsCartesian.create()
                 .feedback()
-                .setTestSessionLabel("Cartesian"));
+                .label("Cartesian"));
     }
 
     static Iterable<Object[]> genStatic() {
         return TestProvider.create(ConfigDefault.MODEL).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
                 .feedback()
-                .setTestSessionLabel("Static"));
+                .label("Static"));
     }
 
     static Iterable<Object[]> genStaticAll() {
         return TestProvider.create(ConfigDefault.MODEL).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
                 .feedback()
                 .testSuites("ALL")
-                .setTestSessionLabel("Static  - All"));
+                .label("Static  - All"));
     }
 
     static Iterable<Object[]> genStaticSelected() {
         return TestProvider.create(ConfigDefault.MODEL).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
                 .feedback()
                 .testSuites(new String[]{"suite1"})
-                .setTestSessionLabel("Static - Selected"));
+                .label("Static - Selected"));
     }
 
     static Iterable<Object[]> genNWiseTest() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
-                .setTestSessionLabel("NWise / Feedback"));
+                .label("NWise / Feedback"));
     }
 
     @ParameterizedTest

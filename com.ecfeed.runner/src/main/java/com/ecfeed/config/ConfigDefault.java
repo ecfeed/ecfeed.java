@@ -88,7 +88,7 @@ public final class ConfigDefault {
         final public static String reqFeedbackModel = "modelId";
         final public static String reqFeedbackMethod = "methodInfo";
         final public static String reqFeedbackTestSessionId = "testSessionId";
-        final public static String reqFeedbackTestSessionLabel = "testSessionLabel";
+        final public static String reqFeedbackLabel = "testSessionLabel";
         final public static String reqFeedbackFramework = "framework";
         final public static String reqFeedbackTimestamp = "timestamp";
         final public static String reqFeedbackCustom = "custom";

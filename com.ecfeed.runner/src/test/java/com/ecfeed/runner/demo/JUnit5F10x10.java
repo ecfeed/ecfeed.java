@@ -17,47 +17,47 @@ public class JUnit5F10x10 {
         return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(1)
-                .setTestSessionLabel("Random / Quantity - Single"));
+                .label("Random / Quantity - Single"));
     }
 
     static Iterable<Object[]> genRandomQuantityShort() {
         return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(100, 500))
-                .setTestSessionLabel("Random / Quantity - Short"));
+                .label("Random / Quantity - Short"));
     }
 
     static Iterable<Object[]> genRandomQuantityLong() {
         return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(1000, 5000))
-                .setTestSessionLabel("Random / Quantity - Long"));
+                .label("Random / Quantity - Long"));
     }
 
     static Iterable<Object[]> genRandomCustom() {
         return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(1)
-                .setTestSessionLabel("Random / Custom")
-                .setCustom(new HashMap<>(){{put("key1", "value1"); put("key2", "value2");}}));
+                .label("Random / Custom")
+                .custom(new HashMap<>(){{put("key1", "value1"); put("key2", "value2");}}));
     }
 
     static Iterable<Object[]> genNWise() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
                 .feedback()
-                .setTestSessionLabel("NWise"));
+                .label("NWise"));
     }
 
     static Iterable<Object[]> genPairwise() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
                 .feedback()
-                .setTestSessionLabel("Pairwise"));
+                .label("Pairwise"));
     }
 
     static Iterable<Object[]> genNWiseTest() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
                 .feedback()
-                .setTestSessionLabel("NWise / Feedback"));
+                .label("NWise / Feedback"));
     }
 
     @ParameterizedTest

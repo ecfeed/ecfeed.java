@@ -57,12 +57,12 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
         return self();
     }
 
-    public String getTestSessionLabel() {
+    public String getLabel() {
 
         return testSessionLabel;
     }
 
-    public T setTestSessionLabel(String testSessionLabel) {
+    public T label(String testSessionLabel) {
 
         this.testSessionLabel = testSessionLabel;
         return self();
@@ -73,7 +73,7 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
         return custom;
     }
 
-    public T setCustom(Map<String, String> custom) {
+    public T custom(Map<String, String> custom) {
 
         this.custom = custom;
         return self();

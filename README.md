@@ -41,13 +41,13 @@ However, have in mind that the ID of each model (including the welcome model) is
 
 ## JUnit5
 
-The ecFeed library can be used to create test cases for JUnit, which is one of the mose common testing frameworks for Java. It is possible, because generation methods return the 'Iterable<Object[]>' interface, which can be directly used as the data source.  
+The ecFeed library can be used to create test cases for JUnit, which is one of the most common testing frameworks for Java. It is possible, because generation methods return the 'Iterable<Object[]>' interface, which can be directly used as the data source.  
 
 ```java
 public class JUnit5Test {
     
     static Iterable<Object[]> testProviderNWise() {
-        TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");
+        TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");
         return testProvider.generateNWise("QuickStart.test");
     }
 
@@ -86,6 +86,41 @@ public class JUnit5Test {
 
 }
 ```
+
+## Feedback
+
+To send feedback, you need to have a BASIC account type or be a member of a TEAM.
+
+An example looks as follows:
+
+```java
+static final String MODEL = "XXXX-XXXX-XXXX-XXXX-XXXX";
+static final String METHOD = "QuickStart.test";
+
+static Iterable<Object[]> feedback() {
+    return TestProvider.create(MODEL).generateRandom(METHOD, ParamsRandom.create().feedback().length(1));
+}
+        
+@ParameterizedTest
+@MethodSource("feedback")
+void feedbackTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
+    Assertions.assertTrue(arg1 < 2, () -> testHandle.addFeedback(false, "Failed - arg1 < 2"));
+    testHandle.addFeedback(true, "OK");
+}
+```
+
+To the generation method an additional parameter, i.e. 'TestHandle testHandle', must be added. The class contains a few, overloaded methods, namely 'addFeedback'. The required parameter denotes the result of the test, everything else is optional.
+
+```java
+public String addFeedback(boolean status, int duration, String comment, Map<String, String> custom)
+```
+
+- *status* - The result of the test. This is the only required field.
+- *duration* - The optional execution time in milliseconds.
+- *comment* - The optional description of the execution.
+- *custom* -  The optional map of custom key-value pairs. 
+  
+Note, that each test must return a feedback, regardless whether it has passed or failed. One solution to overcome this problem is to create an extension to the JUnit5 framework. However, it can also be done manually. Only the first execution of the 'addFeedback' takes effect. All subsequent executions are neglected.
 
 # TestProvider class API
 
@@ -131,7 +166,10 @@ Arguments:
 - *n* - The 'N' value required in the NWise algorithm. The default is 2 (pairwise).
 - *coverage* - The percentage of N-tuples that the generator will try to cover. The default is 100.
 - *choices* - A map in which keys are names of method parameters. Their values define a list of choices that should be used during the generation process. If an argument is skipped, all choices are used.
-- *constraints* - An array of constraints used for the generation. If not provided, all constraints are used. Additionally, two String values can be used instead, i.e. "ALL", "NONE".
+- *constraints* - An array of constraint names used for the generation process. If not provided, all constraints are used. Additionally, two string values can be used instead, i.e. "ALL", "NONE".
+- *feedback* - A flag denoting whether feedback should be sent beck to the generator. By default, this functionality is switched off.
+- *label* - An additional label associated with feedback.
+- *custom* - An additional map ('Map<String, String>') with custom elements associated with feedback.
 
 ```java
 String[] constraints = new String[]{ "constraint" };
@@ -139,11 +177,17 @@ String[] constraints = new String[]{ "constraint" };
 Map<String, String[]> choices = new HashMap<>();
 choices.put("arg1", new String[]{ "choice1", "choice2" });
 
+Map<String, String> custom = new HashMap<>();
+custom.put("key1", "value1");
+
 Param.ParamsNWise config = new Param.ParamsNWise()
         .constraints(constraints)
         .choices(choices)
         .coverage(100)
-        .n(3);
+        .n(3)
+        .feedback()
+        .label("label")
+        .custom(custom);
 
 testProvider.generateNWise("QuickStart.test", config)
 ```
@@ -163,6 +207,13 @@ Map<String, String[]> choices = new HashMap<>();
 choices.put("arg1", new String[]{ "choice1", "choice2" });
 config.put("choices", choices);
 
+config.put("feedback", "true");
+config.put("label", "label");
+
+Map<String, String> custom = new HashMap<>();
+custom.put("key1", "value1");
+config.put("custom", custom);
+
 testProvider.generateNWise("QuickStart.test", config)
 ```
 
@@ -180,6 +231,9 @@ Arguments:
 - *method (required)* - See 'generateNWise'.
 - *choices* - See 'generateNWise'.
 - *constraints* - See 'generateNWise'.
+- *feedback* - See 'generateNWise'.
+- *label* - See 'generateNWise'.
+- *custom* - See 'generateNWise'.
 
 ### public Iterable<Object[]> generateRandom(String method, Param.ParamsRandom config)
 
@@ -192,6 +246,9 @@ Arguments:
 - *adaptive* - If set to true, the generator will try to provide tests that are farthest (in the means of the Hamming distance) from the ones already generated. The default is 'false'.
 - *choices* - See 'generateNWise'.
 - *constraints* - See 'generateNWise'.
+- *feedback* - See 'generateNWise'.
+- *label* - See 'generateNWise'.
+- *custom* - See 'generateNWise'.
 
 ### public Iterable<Object[]> generateStatic(String method, Param.ParamsStatic config)
 
@@ -199,7 +256,10 @@ Download generated test cases (do not use the generator).
 
 Arguments:
 - *method (required)* - See 'generateNWise'.
-- *testSuites* - An array of test case names to be downloaded. Additionally, one string value can be used instead, i.e. "ALL".
+- *testSuites* - An array of test suite names to be downloaded. Additionally, one string value can be used instead, i.e. "ALL".
+- *feedback* - See 'generateNWise'.
+- *label* - See 'generateNWise'.
+- *custom* - See 'generateNWise'.
 
 ## Export calls
 

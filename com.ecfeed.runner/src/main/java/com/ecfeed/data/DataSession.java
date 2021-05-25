@@ -134,7 +134,7 @@ public class DataSession {
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackModel, getModel());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackMethod, getMethodNameQualified());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionId, getTestSessionId());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionLabel, getTestSessionLabel());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackLabel, getTestSessionLabel());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackFramework, ConfigDefault.Value.parClient);
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTimestamp, getTimestamp());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackCustom, getCustom());
