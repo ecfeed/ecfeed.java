@@ -106,7 +106,7 @@ public class JUnit5F100x2 {
     @MethodSource("genNWiseTest")
     void genNWiseTest(String a, String b, TestHandle testHandle) {
         System.out.println("a = " + a + ", b = " + b + ", testHandle = " + testHandle);
-        Oracle.validateTestF100x2(a, b, testHandle);
+        Oracle.validateFeedbackF100x2(a, b, testHandle);
     }
 
 }

@@ -104,6 +104,16 @@ public class DataSession {
         requestUserData.put(ConfigDefault.Key.parDataSource, getGeneratorType().getName());
         requestUserData.put(ConfigDefault.Key.parProperties, getGeneratorOptions());
 
+        if (getConstraints() != null) {
+            requestUserData.put(ConfigDefault.Key.parConstraints, getConstraints());
+        }
+        if (getChoices() != null) {
+            requestUserData.put(ConfigDefault.Key.parChoices, getChoices());
+        }
+        if (getTestSuites() != null) {
+            requestUserData.put(ConfigDefault.Key.parTestSuites, getTestSuites());
+        }
+
         return requestUserData.toString().replaceAll("\"", "'");
     }
 
@@ -134,7 +144,7 @@ public class DataSession {
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackModel, getModel());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackMethod, getMethodNameQualified());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionId, getTestSessionId());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackLabel, getTestSessionLabel());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionLabel, getTestSessionLabel());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackFramework, ConfigDefault.Value.parClient);
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTimestamp, getTimestamp());
         parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackCustom, getCustom());

@@ -7,10 +7,13 @@ import com.ecfeed.params.ParamsNWise;
 import com.ecfeed.params.ParamsRandom;
 import com.ecfeed.params.ParamsStatic;
 import com.ecfeed.runner.ConfigDefault;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class JUnit5FTest {
@@ -267,7 +270,25 @@ public class JUnit5FTest {
     @MethodSource("genNWiseTest")
     void genNWiseNTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
         System.out.println("arg1 = " + arg1 + ", arg2 = " + arg2 + ", arg3 = " + arg3 + ", testHandle = " + testHandle);
-        Oracle.validateTestFTest(arg1, arg2, arg3, testHandle);
+        Oracle.validateFeedbackFTest(arg1, arg2, arg3, testHandle);
+    }
+
+    @Test
+    void genNWiseMap() {
+        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+
+        Map<String, Object> config = new HashMap<>();
+        config.put("constraints", new String[]{"constraint1"});
+        config.put("choices", new HashMap<>(){{put("arg1", new String[]{"choice1", "choice2", "choice3"});}});
+        config.put("coverage", "100");
+        config.put("n", "3");
+        config.put("feedback", "true");
+        config.put("label", "NWise / Map");
+
+        for (Object[] chunk : testProvider.generateNWise(ConfigDefault.F_TEST, config)) {
+            System.out.println(Arrays.toString(chunk));
+            Oracle.validateMapFTest((int) chunk[0], (int) chunk[1], (int) chunk[2], (TestHandle) chunk[3]);
+        }
     }
 
 }

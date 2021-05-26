@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");            // The model ID.
+        TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");            // The model ID.
         
         for (String chunk : testProvider.exportNWise("QuickStart.test", TypeExport.CSV)) {      // The method name.
             System.out.println(chunk);
@@ -74,7 +74,7 @@ public class JUnit5Test {
     }
 
     static Iterable<Object[]> testProviderNWise() {
-        TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");
+        TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");
         return testProvider.generateNWise("com.example.test.LoanDecisionTest2.generateCustomerData");
     }
 
@@ -130,27 +130,27 @@ The library provides connectivity with the ecFeed test generation service using 
 
 The 'TestProvider' constructor takes one required and three optional parameters which can be provided in the form of a 'Map<String, String>'. If they are not provided, default values are used (which, for the vast majority of cases, are sufficient).  
 
-- *model* - The model ID. It is a 20 digit number (grouped by 4) that can be found in the 'My projects' page at 'ecfeed.com'. It can be also found in the URL of the model editor page.
+- *model* - The model ID. It is a 20-digit number (grouped by 4) that can be found in the 'My projects' page at 'ecfeed.com'. It can be also found in the URL of the model editor page.
 ```java
-TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL");
+TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");
 ```
 - *keyStorePath* - The path to the keystore downloaded from the 'ecfeed.com' webpage ('Settings' -> 'Security'). The keystore contains the user certificate which is needed to authenticate the user at the generator service. Be default, the constructor looks for the keystore in \~/.ecfeed/security.p12, except for Windows, where the default path is \~/ecfeed/security.p12.
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("keyStorePath", "testKeyStorePath");
-TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL", configProvider);
+TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX", configProvider);
 ```
 - *keyStorePassword* - The password for the keystore. The default value is 'changeit' which is the password used to encrypt the keystore downloaded form the 'ecfeed.com' page.
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("keyStorePassword", "testKeyStorePassword");
-TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL", configProvider);
+TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX", configProvider);
 ```
 - *generatorAddress* - The URL of the ecfeed generator service. By default, it is 'gen.ecfeed.com'.
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("generatorAddress", "testGeneratorAddress");
-TestProvider testProvider = TestProvider.create("GA1C-N74Z-HKAT-6FMS-35EL", configProvider);
+TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX", configProvider);
 ```
 
 ## Generator calls

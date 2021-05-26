@@ -17,7 +17,7 @@ public class Oracle {
         testHandle.addFeedback(true, "OK");
     }
 
-    static void validateTestF10x10(String a, String b, String c, String d, String e, String f, String g, String h, String i, String j, TestHandle testHandle) {
+    static void validateFeedbackF10x10(String a, String b, String c, String d, String e, String f, String g, String h, String i, String j, TestHandle testHandle) {
         Assertions.assertNotEquals("a0", a, () -> testHandle.addFeedback(false, getDuration(), "Failed - a", getCustom()));
         Assertions.assertNotEquals("b1", b, () -> testHandle.addFeedback(false, getDuration(), "Failed - b", getCustom()));
         Assertions.assertNotEquals("h6", h, () -> testHandle.addFeedback(false, getDuration(), "Failed - h", getCustom()));
@@ -32,7 +32,7 @@ public class Oracle {
         testHandle.addFeedback(true, "OK");
     }
 
-    static void validateTestF100x2(String a, String b, TestHandle testHandle) {
+    static void validateFeedbackF100x2(String a, String b, TestHandle testHandle) {
         Assertions.assertNotEquals("a00", a, () -> testHandle.addFeedback(false, getDuration(), "Failed - a", getCustom()));
         Assertions.assertNotEquals("b00", b, () -> testHandle.addFeedback(false, getDuration(), "Failed - b", getCustom()));
 
@@ -45,10 +45,19 @@ public class Oracle {
         testHandle.addFeedback(true, "OK");
     }
 
-    static void validateTestFTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
+    static void validateFeedbackFTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
         Assertions.assertTrue(arg1 < 2, () -> testHandle.addFeedback(false, getDuration(), "Failed - arg1 < 2", getCustom()));
 
         testHandle.addFeedback(true, getDuration(), "OK", getCustom());
+    }
+
+    static void validateMapFTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
+
+        if (arg1 == arg2 && arg2 == arg3) {
+            testHandle.addFeedback(false, getDuration(), "Failed - arg1 < 2", getCustom());
+        } else {
+            testHandle.addFeedback(true, getDuration(), "OK", getCustom());
+        }
     }
 
     private static int getDuration() {
@@ -57,13 +66,13 @@ public class Oracle {
     }
 
     private static Map<String, String> getCustom() {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> custom = new HashMap<>();
 
         for (int i = 0; i < ThreadLocalRandom.current().nextInt(2, 10); i++) {
-            map.put("key " + i, "value " + i);
+            custom.put("key " + i, "value " + i);
         }
 
-        return map;
+        return custom;
     }
 
 }

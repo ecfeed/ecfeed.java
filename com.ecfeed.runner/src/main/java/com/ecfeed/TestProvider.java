@@ -121,6 +121,7 @@ public class TestProvider {
     }
 
     public Iterable<String> export(String method, TypeGenerator generatorType, TypeExport typeExport, Map<String, Object> properties) {
+        ConfigDefault.processUserParameters(properties);
         ConfigDefault.validateUserParameters(properties);
 
         IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
@@ -231,6 +232,7 @@ public class TestProvider {
     }
 
     public Iterable<Object[]> generate(String method, TypeGenerator generator, Map<String, Object> properties) {
+        ConfigDefault.processUserParameters(properties);
         ConfigDefault.validateUserParameters(properties);
 
         DataSession dataSession = DataSession.create(this.connection, this.model, method, generator);

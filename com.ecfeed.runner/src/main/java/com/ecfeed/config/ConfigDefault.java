@@ -88,7 +88,7 @@ public final class ConfigDefault {
         final public static String reqFeedbackModel = "modelId";
         final public static String reqFeedbackMethod = "methodInfo";
         final public static String reqFeedbackTestSessionId = "testSessionId";
-        final public static String reqFeedbackLabel = "testSessionLabel";
+        final public static String reqFeedbackTestSessionLabel = "testSessionLabel";
         final public static String reqFeedbackFramework = "framework";
         final public static String reqFeedbackTimestamp = "timestamp";
         final public static String reqFeedbackCustom = "custom";
@@ -119,6 +119,15 @@ public final class ConfigDefault {
             throw new IllegalArgumentException("The following configuration parameters are invalid: " +
                     Arrays.toString(incorrectKeys.toArray()));
         }
+    }
+
+    public static void processUserParameters(Map<String, Object> config) {
+
+        if (config.containsKey("label")) {
+            config.put(Key.parTestSessionLabel, config.get("label"));
+            config.remove("label");
+        }
+
     }
 
 }

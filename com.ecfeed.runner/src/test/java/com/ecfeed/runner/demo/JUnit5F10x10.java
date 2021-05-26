@@ -106,7 +106,7 @@ public class JUnit5F10x10 {
     @MethodSource("genNWiseTest")
     void genNWiseTest(String a, String b, String c, String d, String e, String f, String g, String h, String i, String j, TestHandle testHandle) {
         System.out.println("a = " + a + ", b = " + b + ", c = " + c + ", d = " + d + ", e = " + e + ", f = " + f + ", g = " + g + ", h = " + h + ", i = " + i + ", j = " + j);
-        Oracle.validateTestF10x10(a, b, c, d, e, f, g, h, i, j, testHandle);
+        Oracle.validateFeedbackF10x10(a, b, c, d, e, f, g, h, i, j, testHandle);
     }
 
 }
