@@ -36,9 +36,12 @@ public final class HelperConnection {
         return createChunkStreamGet(dataSession.getHttpClient(), dataSession.generateURLForTestData());
     }
 
-    public static InputStream getChunkStreamForFeedback(DataSession dataSession) {
+    public static InputStream sendFeedbackRequest(DataSession dataSession) {
 
-        return createChunkStreamPost(dataSession.getHttpClient(), dataSession.generateURLForFeedback(), dataSession.generateBodyForFeedback());
+        return sendPostRequest(
+                dataSession.getHttpClient(),
+                dataSession.generateURLForFeedback(),
+                dataSession.generateBodyForFeedback());
     }
 
     private static String generateURLForHealthCheck(String generatorAddress) {
@@ -57,15 +60,15 @@ public final class HelperConnection {
         }
     }
 
-    private static InputStream createChunkStreamPost(HttpClient httpClient, String request, String body) {
+    private static InputStream sendPostRequest(HttpClient httpClient, String uri, String body) {
 
         try {
-            HttpPost httpPost = new HttpPost(request);
+            HttpPost httpPost = new HttpPost(uri);
             httpPost.setEntity(new StringEntity(body));
             HttpResponse httpResponse = httpClient.execute(httpPost);
             return httpResponse.getEntity().getContent();
         } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous).", e);
+            throw new RuntimeException("Sending post request failed.", e);
         }
     }
 

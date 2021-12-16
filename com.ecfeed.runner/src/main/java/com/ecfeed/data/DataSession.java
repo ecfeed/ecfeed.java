@@ -414,7 +414,7 @@ public class DataSession {
             return;
         }
 
-        HelperConnection.getChunkStreamForFeedback(this);
+        HelperConnection.sendFeedbackRequest(this);
     }
 
 }
