@@ -38,10 +38,48 @@ public final class HelperConnection {
 
     public static InputStream sendFeedbackRequest(DataSession dataSession) {
 
-        return sendPostRequest(
-                dataSession.getHttpClient(),
-                dataSession.generateURLForFeedback(),
-                dataSession.generateBodyForFeedback());
+        final int MAX_ATTEMPTS = 5;
+        final boolean IS_DIAGNOSTICS = false;
+
+        printDiagnosticMessage("Sending feeddback...", IS_DIAGNOSTICS);
+
+        for (int attempt_number = 1; attempt_number <= MAX_ATTEMPTS; attempt_number++) {
+
+            try {
+                return sendPostRequest(
+                        dataSession.getHttpClient(),
+                        dataSession.generateURLForFeedback(),
+                        dataSession.generateBodyForFeedback());
+
+            } catch (Exception e) {
+
+                String attemptFailed = "Sending feeddback failed at attempt: " + attempt_number;
+                printDiagnosticMessage(attemptFailed, IS_DIAGNOSTICS);
+
+                if (attempt_number >=  MAX_ATTEMPTS) {
+                    throw new RuntimeException("Sending feedback failed.", e);
+                }
+
+                sleep(500);
+            }
+        }
+
+        return null;
+    }
+
+    private static void printDiagnosticMessage(String message, boolean isDiagnostic) {
+
+        if (isDiagnostic) {
+            System.out.println(message);
+        }
+    }
+
+    static void sleep(int milliseconds) { // TODO move to helper
+
+        try {
+            Thread.sleep(milliseconds);
+        } catch (Exception e) {
+        }
     }
 
     private static String generateURLForHealthCheck(String generatorAddress) {
