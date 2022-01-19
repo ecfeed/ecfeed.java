@@ -19,6 +19,9 @@ import java.util.Map;
 
 public class TestProvider {
 
+    private static int ITERATOR_TIMEOUT = 1000;
+    private static int ITERATOR_TIMEOUT_STEP = 100;
+
     private String model;
     private DataConnection connection;
 
@@ -133,10 +136,16 @@ public class TestProvider {
         new Thread(() -> {
             try {
                 HelperConnection.processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
-            } finally {
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            finally {
                 iterator.terminate();
             }
         }).start();
+
+        validate(iterator);
 
         return iterator;
     }
@@ -243,12 +252,37 @@ public class TestProvider {
         new Thread(() -> {
             try {
                 HelperConnection.processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
-            } finally {
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            finally {
                 iterator.terminate();
             }
         }).start();
 
+        validate(iterator);
+
         return iterator;
+    }
+
+    public void validate(IterableTestQueue<?> iterator) {
+        int timeout = 0;
+
+        do {
+            if (iterator.hasNext()) {
+                return;
+            }
+
+            timeout += ITERATOR_TIMEOUT_STEP;
+
+            try {
+                Thread.sleep(ITERATOR_TIMEOUT_STEP);
+            } catch (InterruptedException e) { }
+
+        } while (timeout < ITERATOR_TIMEOUT);
+
+        throw new RuntimeException("Unable to create test suites. Please check the configuration parameters for any typos!");
     }
 
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {

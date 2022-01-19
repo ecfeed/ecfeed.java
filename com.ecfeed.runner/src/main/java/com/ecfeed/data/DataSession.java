@@ -359,7 +359,7 @@ public class DataSession {
         }
 
         if (!httpAddress.startsWith("https://")) {
-            throw new RuntimeException("The generator address should start with http://");
+            throw new RuntimeException("The generator address should start with https://");
         }
 
         return httpAddress;

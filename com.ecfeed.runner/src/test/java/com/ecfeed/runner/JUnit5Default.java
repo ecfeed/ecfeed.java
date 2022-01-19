@@ -3,6 +3,7 @@ package com.ecfeed.runner;
 import com.ecfeed.TestProvider;
 import com.ecfeed.params.*;
 import com.ecfeed.type.TypeExport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -432,9 +433,11 @@ public class JUnit5Default {
         configProvider.put("generatorAddress", "testAddress");
         TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL, configProvider);
 
-        for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.JSON, new HashMap<>())) {
-            System.out.println(chunk);
-        }
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.JSON, new HashMap<>())) {
+                System.out.println(chunk);
+            }
+        });
     }
 
     @Test
