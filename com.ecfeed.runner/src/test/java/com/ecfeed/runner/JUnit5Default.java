@@ -142,24 +142,6 @@ public class JUnit5Default {
         }
     }
 
-//    @Test
-//    @DisplayName("NWise")
-//    void feedbak() {
-//
-//        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
-//
-//
-//        for (Object[] chunk : testProvider.generateNWise(ConfigDefault.F_LOAN_2, ParamsNWise.create().feedback())) {
-//            System.out.println(Arrays.toString(chunk));
-//
-//            if (chunk[2].equals(Gender.FEMALE.toString())) {
-//                System.out.println(chunk[2]);
-//                testProvider.
-//            }
-//        }
-//
-//    }
-
     @Test
     @DisplayName("NWise")
     void exportNWise() {
