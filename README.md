@@ -6,17 +6,17 @@ The following tutorial is an introduction to the Java runner. Note, that it does
 
 Prerequisites:
 - Install Java JDK, e.g. [OpenJDK 11](https://openjdk.java.net/projects/jdk/11/).
-- Install an IDE, e.g. [IntelliJ](https://www.jetbrains.com/idea/download/), [Eclipse](https://www.eclipse.org/downloads/).
-- Create a test model on the ecFeed webpage.
+- Download an IDE, e.g. [VSCode](https://code.visualstudio.com/), [IntelliJ](https://www.jetbrains.com/idea/download/), [Eclipse](https://www.eclipse.org/downloads/).
+- Create a test model on the ecFeed webpage (or use the default one).
 - Generate a personal keystore named 'security.p12' and put it in the \~/.ecfeed/ directory (Linux users) or in the \~/ecfeed/ directory (Windows users).  
 
-For the complete documentation check the source directly at [GitHub](https://github.com/ecfeed/ecfeed.java).  
+For complete documentation check the source directly at [GitHub](https://github.com/ecfeed/ecfeed.java).  
 
-The ecFeed library can be found online in the [Maven Repository](https://mvnrepository.com/artifact/com.ecfeed/ecfeed.java).  
+The ecFeed library can be found in the [Maven Repository](https://mvnrepository.com/artifact/com.ecfeed/ecfeed.java).  
 
 ## Examples
 
-Methods, used in the tutorial, are a part of the welcome model, created during the registration process at the 'ecfeed.com' webpage. If the model is missing (e.g. it has been deleted by the user), it can be downloaded (and then imported) from [here](https://s3-eu-west-1.amazonaws.com/resources.ecfeed.com/repo/tutorial/Welcome.ect).  
+Methods, used in the tutorial, are a part of the welcome model, created during the registration process at the 'ecfeed.com' webpage. If the model is missing (e.g. it has been deleted by the user), it can be downloaded from [here](https://s3-eu-west-1.amazonaws.com/resources.ecfeed.com/repo/tutorial/Welcome.ect).  
 
 ```java
 import com.ecfeed.TestProvider;
@@ -28,20 +28,20 @@ public class Main {
     public static void main(String[] args) {
         TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");            // The model ID.
         
-        for (String chunk : testProvider.exportNWise("QuickStart.test", TypeExport.CSV)) {      // The method name.
+        for (String chunk : testProvider.exportNWise("QuickStart.test", TypeExport.CSV)) {      // The name of the method.
             System.out.println(chunk);
         }
     }
 }
 ```
 
-Do not hesitate to experiment with the code and modify the welcome mode. It can be recreated easily and there is no better way to learn than hands-on exercises.  
+Do not hesitate to experiment with the code and modify the welcome model. It can be recreated easily and there is no better way to learn than hands-on exercises.  
 
-However, have in mind that the ID of each model (including the welcome model) is unique. If you want to copy and paste the above example, be sure to update it accordingly.
+However, have in mind that the ID of each model (including the welcome model) is unique. If you want to copy and paste the example, be sure to update it accordingly.
 
 ## JUnit5
 
-The ecFeed library can be used to create test cases for JUnit, which is one of the most common testing frameworks for Java. It is possible, because generation methods return the 'Iterable<Object[]>' interface, which can be directly used as the data source.  
+The ecFeed library can be used to create test cases for JUnit5, which is one of the most common testing frameworks for Java. It is possible, because generation methods return the 'Iterable<Object[]>' interface, which can be directly used as the data source.  
 
 ```java
 public class JUnit5Test {
@@ -60,12 +60,12 @@ public class JUnit5Test {
 }
 ```
 
-It is also possible to use enums as arguments. To do so, they must be defined (and visible) somewhere in the project.  
+It is also possible to use enums as arguments. To do so, they must be defined in the project.  
 
 ```java
 public class JUnit5Test {
     
- enum Gender {
+    enum Gender {
         MALE, FEMALE
     }
 
@@ -91,7 +91,7 @@ public class JUnit5Test {
 
 To send feedback, you need to have a BASIC account type or be a member of a TEAM.
 
-An example looks as follows:
+A feedback example looks as follows:
 
 ```java
 static final String MODEL = "XXXX-XXXX-XXXX-XXXX-XXXX";
@@ -109,7 +109,7 @@ void feedbackTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
 }
 ```
 
-To the generation method an additional parameter, i.e. 'TestHandle testHandle', must be added. The class contains a few, overloaded methods, namely 'addFeedback'. The required parameter denotes the result of the test, everything else is optional.
+To the generation method an additional parameter, i.e. 'TestHandle testHandle', must be added. The class contains an overloaded method 'addFeedback'. The required argument denotes the result of the test, everything else is optional.
 
 ```java
 public String addFeedback(boolean status, int duration, String comment, Map<String, String> custom)
@@ -120,27 +120,29 @@ public String addFeedback(boolean status, int duration, String comment, Map<Stri
 - *comment* - The optional description of the execution.
 - *custom* -  The optional map of custom key-value pairs. 
   
-Note, that each test must return a feedback, regardless whether it has passed or failed. One solution to overcome this problem is to create an extension to the JUnit5 framework. However, it can also be done manually. Only the first execution of the 'addFeedback' takes effect. All subsequent executions are neglected.
+Note, that each test must return a feedback, regardless whether it has passed or failed. In each test, only the first invocation of the 'addFeedback' method takes effect. All subsequent invocations are neglected.  
+
+Generated feedback can be analyzed on the 'ecfeed.com' webpage.  
 
 # TestProvider class API
 
-The library provides connectivity with the ecFeed test generation service using the 'TestProvider' class. It requires the model ID, the keystore location, the keystore password, and the generator service address.  
+The library provides connectivity with the ecFeed test generation service using the 'TestProvider' class. It requires the model ID, the keystore location, the keystore password, and the generator web address.  
 
 ## Constructor
 
-The 'TestProvider' constructor takes one required and three optional parameters which can be provided in the form of a 'Map<String, String>'. If they are not provided, default values are used (which, for the vast majority of cases, are sufficient).  
+The 'TestProvider' constructor consists of one required and three optional parameters which can be provided in the form of 'Map<String, String>'. If they are non-existent, default values are used (which, for the vast majority of cases, are sufficient).  
 
 - *model* - The model ID. It is a 20-digit number (grouped by 4) that can be found in the 'My projects' page at 'ecfeed.com'. It can be also found in the URL of the model editor page.
 ```java
 TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");
 ```
-- *keyStorePath* - The path to the keystore downloaded from the 'ecfeed.com' webpage ('Settings' -> 'Security'). The keystore contains the user certificate which is needed to authenticate the user at the generator service. Be default, the constructor looks for the keystore in \~/.ecfeed/security.p12, except for Windows, where the default path is \~/ecfeed/security.p12.
+- *keyStorePath* - The path to the keystore downloaded from the 'ecfeed.com' webpage ('Settings' -> 'Security'). The keystore contains the user certificate which is needed to authenticate the user at the generator service. By default, the constructor looks for the keystore in \~/.ecfeed/security.p12, except for Windows, where the default path is \~/ecfeed/security.p12.
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("keyStorePath", "testKeyStorePath");
 TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX", configProvider);
 ```
-- *keyStorePassword* - The password for the keystore. The default value is 'changeit' which is the password used to encrypt the keystore downloaded form the 'ecfeed.com' page.
+- *keyStorePassword* - The password to the keystore. The default value is 'changeit'.  
 ```java
 Map<String, String> configProvider = new HashMap<>();
 configProvider.put("keyStorePassword", "testKeyStorePassword");
@@ -165,8 +167,8 @@ Arguments:
 - *method (required)* - The full name of the method that will be used for generation (including the package). If the method is not overloaded, its parameters are not required.
 - *n* - The 'N' value required in the NWise algorithm. The default is 2 (pairwise).
 - *coverage* - The percentage of N-tuples that the generator will try to cover. The default is 100.
-- *choices* - A map in which keys are names of method parameters. Their values define a list of choices that should be used during the generation process. If an argument is skipped, all choices are used.
-- *constraints* - An array of constraint names used for the generation process. If not provided, all constraints are used. Additionally, two string values can be used instead, i.e. "ALL", "NONE".
+- *choices* - A map in which keys are names of method parameters. Their values define a list of choices that should be used during the generation process. If a key is skipped, all choices are used.
+- *constraints* - An array of constraint names used in the generation process. If not provided, all constraints are used. Additionally, two string values can be used instead, i.e. "ALL", "NONE".
 - *feedback* - A flag denoting whether feedback should be sent beck to the generator. By default, this functionality is switched off.
 - *label* - An additional label associated with feedback.
 - *custom* - An additional map ('Map<String, String>') with custom elements associated with feedback.
@@ -192,7 +194,7 @@ Param.ParamsNWise config = new Param.ParamsNWise()
 testProvider.generateNWise("QuickStart.test", config)
 ```
 
-Also, additional parameters can be passed using a map.  
+Also, additional parameters can be provided using a map.  
 
 ```java
 Map<String, Object> config = new HashMap<>();
@@ -221,7 +223,7 @@ If the configuration object/map is not provided, default values are used.
 
 ### public Iterable<Object[]> generatePairwise(String method, Param.ParamsPairwise config)
 
-Calls n-wise with n=2. For people that like being explicit. Uses the same arguments as 'generateNWise' excluding 'n'.  
+Calls the '2-wise' generation procedure. For people that like being explicit. Apart from 'n' (which is always 2 and cannot be changed), the method accepts the same arguments as 'generateNWise'.  
 
 ### public Iterable<Object[]> generateCartesian(String method, Param.ParamsCartesian config)
 
@@ -241,9 +243,9 @@ Generate randomized test cases.
 
 Arguments:
 - *method (required)* - See 'generateNWise'.
-- *length* - The number of tests to be generated. The default is 1.
-- *duplicates* - If two identical tests are allowed to be generated. If set to 'false', the generator will stop after creating all allowed combinations. The default is 'true'.
-- *adaptive* - If set to true, the generator will try to provide tests that are farthest (in the means of the Hamming distance) from the ones already generated. The default is 'false'.
+- *length* - The number of tests to be generated. The default value is 1.
+- *duplicates* - If two identical tests are allowed to be generated. If set to 'false', the generator will stop after creating all allowed combinations. The default value is 'true'.
+- *adaptive* - If set to true, the generator will try to provide tests that are farthest (in the means of the Hamming distance) from the ones already generated. The default value is 'false'.
 - *choices* - See 'generateNWise'.
 - *constraints* - See 'generateNWise'.
 - *feedback* - See 'generateNWise'.
@@ -256,7 +258,7 @@ Download generated test cases (do not use the generator).
 
 Arguments:
 - *method (required)* - See 'generateNWise'.
-- *testSuites* - An array of test suite names to be downloaded. Additionally, one string value can be used instead, i.e. "ALL".
+- *testSuites* - An array of test suite names to be downloaded. Additionally, a string value can be used instead, i.e. "ALL".
 - *feedback* - See 'generateNWise'.
 - *label* - See 'generateNWise'.
 - *custom* - See 'generateNWise'.
@@ -275,7 +277,7 @@ public Iterable<String> exportStatic(String method, TypeExport typeExport, Param
 
 ## Other methods
 
-The following section describes non-crucial methods.
+The following section describes supplementary methods.
 
 ### public void validateConnection()
 

@@ -123,29 +123,25 @@ public class TestProvider {
         return this.connection.getKeyStorePath();
     }
 
-    public Iterable<String> export(String method, TypeGenerator generatorType, TypeExport typeExport, Map<String, Object> properties) {
+    public Iterable<String> export(String method, TypeGenerator generator, TypeExport typeExport, Map<String, Object> properties) {
         ConfigDefault.processUserParameters(properties);
         ConfigDefault.validateUserParameters(properties);
 
         IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
 
-        DataSession dataSession = DataSession.create(this.connection, this.model, method, generatorType);
+        DataSession dataSession = DataSession.create(this.connection, this.model, method, generator);
         dataSession.setGeneratorOptions(properties);
         dataSession.setTemplate(typeExport);
 
         new Thread(() -> {
             try {
                 HelperConnection.processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            finally {
+            } finally {
                 iterator.terminate();
             }
         }).start();
 
-        validate(iterator);
+        validate(iterator, generator);
 
         return iterator;
     }
@@ -252,21 +248,17 @@ public class TestProvider {
         new Thread(() -> {
             try {
                 HelperConnection.processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            finally {
+            } finally {
                 iterator.terminate();
             }
         }).start();
 
-        validate(iterator);
+        validate(iterator, generator);
 
         return iterator;
     }
 
-    public void validate(IterableTestQueue<?> iterator) {
+    private void validate(IterableTestQueue<?> iterator, TypeGenerator generator) {
         int timeout = 0;
 
         do {
@@ -282,7 +274,12 @@ public class TestProvider {
 
         } while (timeout < ITERATOR_TIMEOUT);
 
-        throw new RuntimeException("Unable to create test suites. Please check the configuration parameters for any typos!");
+        if (generator == TypeGenerator.Static) {
+            throw new IllegalArgumentException("Empty test set error! " +
+                    "Please check if the name of the requested test suite is correct.");
+        } else {
+            throw new IllegalArgumentException("Will check in a while");
+        }
     }
 
     public Iterable<Object[]> generateNWise(String method, Map<String, Object> properties) {

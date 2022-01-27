@@ -1,5 +1,6 @@
 package com.ecfeed.runner;
 
+import com.ecfeed.TestHandle;
 import com.ecfeed.TestProvider;
 import com.ecfeed.params.*;
 import com.ecfeed.type.TypeExport;
@@ -25,10 +26,6 @@ public class JUnit5Default {
         PASSPORT, DRIVERS_LICENSE, PERSONAL_ID
     }
 
-    static Iterable<Object[]> testProviderNWiseFeedback() {
-        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_LOAN_2, ParamsNWise.create().feedback());
-    }
-
     static Iterable<Object[]> testProviderNWise() {
         return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_LOAN_2);
     }
@@ -47,6 +44,10 @@ public class JUnit5Default {
 
     static Iterable<Object[]> testProviderStatic() {
         return TestProvider.create(ConfigDefault.MODEL).generateStatic(ConfigDefault.F_LOAN_2);
+    }
+
+    static Iterable<Object[]> testProviderNWiseFeedback() {
+        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_LOAN_2, ParamsNWise.create().feedback());
     }
 
     @ParameterizedTest
@@ -77,6 +78,18 @@ public class JUnit5Default {
     @MethodSource("testProviderStatic")
     void testProviderStatic(String name, String firstName, Gender gender, int age, String id, ID type) {
         System.out.println("name = " + name + ", firstName = " + firstName + ", gender = " + gender + ", age = " + age + ", id = " + id + ", type = " + type);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testProviderNWiseFeedback")
+    void testProviderNWiseFeedback(String name, String firstName, Gender gender, int age, String id, ID type, TestHandle testHandle) {
+        System.out.println("name = " + name + ", firstName = " + firstName + ", gender = " + gender + ", age = " + age + ", id = " + id + ", type = " + type);
+
+        if (gender.equals(Gender.FEMALE)) {
+            testHandle.addFeedback(true, "VALID");
+        } else {
+            testHandle.addFeedback(false, "INVALID");
+        }
     }
 
     @Test

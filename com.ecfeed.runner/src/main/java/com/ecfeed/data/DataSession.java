@@ -355,11 +355,11 @@ public class DataSession {
         String httpAddress = connection.getHttpAddress();
 
         if (httpAddress == null) {
-            throw new RuntimeException("The generator address is not defined");
+            throw new IllegalArgumentException("The generator address is not defined");
         }
 
         if (!httpAddress.startsWith("https://")) {
-            throw new RuntimeException("The generator address should start with https://");
+            throw new IllegalArgumentException("The generator address should start with https://");
         }
 
         return httpAddress;
