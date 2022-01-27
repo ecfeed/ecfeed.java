@@ -28,7 +28,7 @@ public class Main {
     public static void main(String[] args) {
         TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");            // The model ID.
         
-        for (String chunk : testProvider.exportNWise("QuickStart.test", TypeExport.CSV)) {      // The method name.
+        for (String chunk : testProvider.exportNWise("QuickStart.test", TypeExport.CSV)) {      // The name of the method.
             System.out.println(chunk);
         }
     }
@@ -37,7 +37,7 @@ public class Main {
 
 Do not hesitate to experiment with the code and modify the welcome model. It can be recreated easily and there is no better way to learn than hands-on exercises.  
 
-However, have in mind that the ID of each model (including the welcome model) is unique. If you want to copy and paste the above example, be sure to update it accordingly.
+However, have in mind that the ID of each model (including the welcome model) is unique. If you want to copy and paste the example, be sure to update it accordingly.
 
 ## JUnit5
 
@@ -109,7 +109,7 @@ void feedbackTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
 }
 ```
 
-To the generation method an additional parameter, i.e. 'TestHandle testHandle', must be added. The class contains an overloaded method 'addFeedback'. The required parameter denotes the result of the test, everything else is optional.
+To the generation method an additional parameter, i.e. 'TestHandle testHandle', must be added. The class contains an overloaded method 'addFeedback'. The required argument denotes the result of the test, everything else is optional.
 
 ```java
 public String addFeedback(boolean status, int duration, String comment, Map<String, String> custom)
