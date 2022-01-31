@@ -1,7 +1,6 @@
 package com.ecfeed.runner.feedback;
 
 import com.ecfeed.TestHandle;
-import com.ecfeed.TestProvider;
 import com.ecfeed.params.ParamsNWise;
 import com.ecfeed.runner.ConfigDefault;
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class JUnit5Manual {
 
     static Iterable<Object[]> method() {
-        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create().feedback());
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create().feedback());
     }
 
     private void validate(String a, String b, String c, String d, String e, String f, String g, String h, String i, String j, TestHandle testHandle) {

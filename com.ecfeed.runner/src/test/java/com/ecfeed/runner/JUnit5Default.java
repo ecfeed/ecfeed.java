@@ -27,27 +27,27 @@ public class JUnit5Default {
     }
 
     static Iterable<Object[]> testProviderNWise() {
-        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_LOAN_2);
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderPairwise() {
-        return TestProvider.create(ConfigDefault.MODEL).generatePairwise(ConfigDefault.F_LOAN_2);
+        return  ConfigDefault.getTestProvider(ConfigDefault.PROD).generatePairwise(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderCartesian() {
-        return TestProvider.create(ConfigDefault.MODEL).generateCartesian(ConfigDefault.F_LOAN_2);
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateCartesian(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderRandom() {
-        return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_LOAN_2);
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderStatic() {
-        return TestProvider.create(ConfigDefault.MODEL).generateStatic(ConfigDefault.F_LOAN_2);
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateStatic(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderNWiseFeedback() {
-        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_LOAN_2, ParamsNWise.create().feedback());
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_LOAN_2, ParamsNWise.create().feedback());
     }
 
     @ParameterizedTest
@@ -95,7 +95,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export raw")
     void exportTypeRaw() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.Raw, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -105,7 +105,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export xml")
     void exportTypeXml() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.XML, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -115,7 +115,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export json")
     void exportTypeJson() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.JSON, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -125,7 +125,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export csv")
     void exportTypeCsv() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.CSV, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -135,7 +135,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export gherkin")
     void exportTypeGherkin() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.Gherkin, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -150,7 +150,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", constraints);
@@ -174,7 +174,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         ParamsNWise config = ParamsNWise.create()
                 .constraints(constraints)
@@ -198,7 +198,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", constraints);
@@ -221,7 +221,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         ParamsPairwise config = ParamsPairwise.create()
                 .constraints(constraints)
@@ -244,7 +244,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", constraints);
@@ -266,7 +266,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         ParamsCartesian config = ParamsCartesian.create()
                 .constraints(constraints)
@@ -288,7 +288,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", constraints);
@@ -313,7 +313,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         ParamsRandom config = ParamsRandom.create()
                 .constraints(constraints)
@@ -335,7 +335,7 @@ public class JUnit5Default {
     void exportStatic() {
         String[] testSuites = new String[]{ "default suite" };
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("testSuites", testSuites);
@@ -353,7 +353,7 @@ public class JUnit5Default {
     void exportStaticParams() {
         String[] testSuites = new String[]{ "default suite" };
 
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         ParamsStatic config = ParamsStatic.create()
                 .testSuites(testSuites);
@@ -369,7 +369,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Get method types")
     void getMethodTypes() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         System.out.println(testProvider.getArgumentTypes(ConfigDefault.F_LOAN_2));
     }
@@ -377,7 +377,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Get method names")
     void getMethodNames() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         System.out.println(testProvider.getArgumentNames(ConfigDefault.F_LOAN_2));
     }
@@ -385,7 +385,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Validate")
     void validate() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         testProvider.validateConnection();
     }
@@ -393,9 +393,9 @@ public class JUnit5Default {
     @Test
     @DisplayName("Get model")
     void getModel() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
-        assertEquals(ConfigDefault.MODEL, testProvider.getModel(),
+        assertTrue(ConfigDefault.MODEL_PROD.equals(testProvider.getModel()) || ConfigDefault.MODEL_DEVELOP.equals(testProvider.getModel()),
                 "The default name of the model is erroneous");
     }
 
@@ -411,7 +411,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Get generator address")
     void getGeneratorAddress() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         assertTrue("https://gen.ecfeed.com".equalsIgnoreCase(testProvider.getAddress()) || "https://develop-gen.ecfeed.com".equalsIgnoreCase(testProvider.getAddress()),
                 "The default generator address is erroneous");
@@ -422,7 +422,7 @@ public class JUnit5Default {
     void getGeneratorAddressCustom() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("generatorAddress", "testAddress");
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL, configProvider);
+        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL_DUMMY, configProvider);
 
         assertEquals("testAddress", testProvider.getAddress(),
                 "The custom generator address is erroneous");
@@ -433,7 +433,7 @@ public class JUnit5Default {
     void getKeyStorePath() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/security.p12");
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL, configProvider);
+        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL_DUMMY, configProvider);
 
         assertEquals("src/test/resources/security.p12", testProvider.getKeyStorePath().toString(),
                 "The keystore path is erroneous");
@@ -444,7 +444,7 @@ public class JUnit5Default {
     void errorGeneratorAddress() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("generatorAddress", "testAddress");
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL, configProvider);
+        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL_DUMMY, configProvider);
 
         Assertions.assertThrows(RuntimeException.class, () -> {
             for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.JSON, new HashMap<>())) {
@@ -466,7 +466,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Error - method name")
     void errorMethodName() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise("testMethod", TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
@@ -479,7 +479,7 @@ public class JUnit5Default {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePassword", "testPassword");
 
-        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(ConfigDefault.MODEL, configProvider));
+        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(ConfigDefault.MODEL_DUMMY, configProvider));
     }
 
     @Test
@@ -488,7 +488,7 @@ public class JUnit5Default {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/securityNoClient.p12");
 
-        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(ConfigDefault.MODEL, configProvider));
+        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(ConfigDefault.MODEL_DEVELOP, configProvider));
     }
 
     @Test
@@ -497,13 +497,13 @@ public class JUnit5Default {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("keyStorePath", "src/test/resources/securityNoServer.p12");
 
-        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(ConfigDefault.MODEL, configProvider));
+        assertThrows(IllegalArgumentException.class, () -> TestProvider.create(ConfigDefault.MODEL_DEVELOP, configProvider));
     }
 
     @Test
     @DisplayName("Error - invalid user parameters")
     void errorInvalidUserParameters() {
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL);
+        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("error", "error");

@@ -1,7 +1,6 @@
 package com.ecfeed.runner.demo;
 
 import com.ecfeed.TestHandle;
-import com.ecfeed.TestProvider;
 import com.ecfeed.params.ParamsNWise;
 import com.ecfeed.params.ParamsRandom;
 import com.ecfeed.runner.ConfigDefault;
@@ -14,28 +13,28 @@ import java.util.concurrent.ThreadLocalRandom;
 public class JUnit5F10x10 {
 
     static Iterable<Object[]> genRandomQuantitySingle() {
-        return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(1)
                 .label("Random / Quantity - Single"));
     }
 
     static Iterable<Object[]> genRandomQuantityShort() {
-        return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(100, 500))
                 .label("Random / Quantity - Short"));
     }
 
     static Iterable<Object[]> genRandomQuantityLong() {
-        return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(1000, 5000))
                 .label("Random / Quantity - Long"));
     }
 
     static Iterable<Object[]> genRandomCustom() {
-        return TestProvider.create(ConfigDefault.MODEL).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(1)
                 .label("Random / Custom")
@@ -43,19 +42,19 @@ public class JUnit5F10x10 {
     }
 
     static Iterable<Object[]> genNWise() {
-        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
                 .feedback()
                 .label("NWise"));
     }
 
     static Iterable<Object[]> genPairwise() {
-        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
                 .feedback()
                 .label("Pairwise"));
     }
 
     static Iterable<Object[]> genNWiseTest() {
-        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create()
                 .feedback()
                 .label("NWise / Feedback"));
     }

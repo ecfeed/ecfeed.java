@@ -1,7 +1,6 @@
 package com.ecfeed.runner.feedback;
 
 import com.ecfeed.TestHandle;
-import com.ecfeed.TestProvider;
 import com.ecfeed.params.ParamsNWise;
 import com.ecfeed.runner.ConfigDefault;
 import com.ecfeed.runner.feedback.controller.TestHandleBox;
@@ -15,7 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class JUnit5Extension {
 
     static Iterable<Object[]> method() {
-        return TestProvider.create(ConfigDefault.MODEL).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create().feedback());
+        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create().feedback());
     }
 
     @ParameterizedTest
