@@ -429,17 +429,6 @@ public class JUnit5Default {
     }
 
     @Test
-    @DisplayName("Get keystore path")
-    void getKeyStorePath() {
-        Map<String, String> configProvider = new HashMap<>();
-        configProvider.put("keyStorePath", "src/test/resources/security.p12");
-        TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL_DUMMY, configProvider);
-
-        assertEquals("src/test/resources/security.p12", testProvider.getKeyStorePath().toString(),
-                "The keystore path is erroneous");
-    }
-
-    @Test
     @DisplayName("Error - generator address")
     void errorGeneratorAddress() {
         Map<String, String> configProvider = new HashMap<>();
