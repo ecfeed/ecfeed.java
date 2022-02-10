@@ -435,7 +435,7 @@ public class JUnit5Default {
         configProvider.put("generatorAddress", "testAddress");
         TestProvider testProvider = TestProvider.create(ConfigDefault.MODEL_DUMMY, configProvider);
 
-        Assertions.assertThrows(RuntimeException.class, () -> {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
             for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.JSON, new HashMap<>())) {
                 System.out.println(chunk);
             }
