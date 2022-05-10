@@ -464,24 +464,6 @@ public class TestProvider {
         if (template.isPresent() && !template.get().equals(TypeExport.Raw.toString())) {
             request.put(Config.Key.parTemplate, template.get());
         }
-//        var templateX = "[Header]\n" +
-//                "{ \n" +
-//                "\"testCases\" : [\n" +
-//                "[TestCase]\n" +
-//                "{\n" +
-//                "\"index\": %index, \n" +
-//                "\"$1.name\":\"$1.value\", \n" +
-//                "},\n" +
-//                "[Footer]\n" +
-//                "]\n" +
-//                "}";
-//
-//        var templateY = "[Header]\n" +
-//                "lolek tester $1.name,$2.name,$3.name,$4.name,$5.name\n" +
-//                "[TestCase]\n" +
-//                "lokel nie tester $1.value,$2.value,$3.value,$4.value,$5.value";
-//
-//        request.put(Config.Key.parTemplate, templateX);
 
         String result = request.toString();
 
