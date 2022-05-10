@@ -190,12 +190,26 @@ public class TestProvider {
     public Iterable<String> export(String method, String generator, TypeExport typeExport, Map<String, Object> properties) {
         Config.validateUserParameters(properties);
 
-        IterableTestQueue<String> iterator = new IterableTestQueue<>(new ChunkParserExport());
-        String userData = getUserData(generator, properties);
+        String template;
+
+        if (typeExport == TypeExport.Custom) {
+            if (!properties.containsKey(Config.Key.parTemplate)) {
+                throw new IllegalArgumentException("For the 'custom' template type, the 'template' property must be defined");
+            }
+
+            template = properties.get(Config.Key.parTemplate).toString();
+
+            properties.remove(Config.Key.parTemplate);
+        } else {
+            template = typeExport.toString();
+        }
+
+        var iterator = new IterableTestQueue<>(new ChunkParserExport());
+        var userData = getUserData(generator, properties);
 
         new Thread(() -> {
             try {
-                processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.of(typeExport.toString()))));
+                processChunkStream(iterator, getChunkStream(generateRequestURL(method, userData, Optional.of(template))));
             } finally {
                 iterator.terminate();
             }
@@ -450,6 +464,24 @@ public class TestProvider {
         if (template.isPresent() && !template.get().equals(TypeExport.Raw.toString())) {
             request.put(Config.Key.parTemplate, template.get());
         }
+//        var templateX = "[Header]\n" +
+//                "{ \n" +
+//                "\"testCases\" : [\n" +
+//                "[TestCase]\n" +
+//                "{\n" +
+//                "\"index\": %index, \n" +
+//                "\"$1.name\":\"$1.value\", \n" +
+//                "},\n" +
+//                "[Footer]\n" +
+//                "]\n" +
+//                "}";
+//
+//        var templateY = "[Header]\n" +
+//                "lolek tester $1.name,$2.name,$3.name,$4.name,$5.name\n" +
+//                "[TestCase]\n" +
+//                "lokel nie tester $1.value,$2.value,$3.value,$4.value,$5.value";
+//
+//        request.put(Config.Key.parTemplate, templateX);
 
         String result = request.toString();
 
@@ -461,8 +493,7 @@ public class TestProvider {
             throw new IllegalArgumentException("The URL request could not be built");
         }
 
-
-        return requestBuilder.toString() + result;
+        return requestBuilder + result;
     }
 
     public void validateConnection() {

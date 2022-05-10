@@ -77,7 +77,7 @@ public final class Config {
         final static String certServer = "ca";
 
         final static List<String> userAllowedKeys = Arrays.asList(
-                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites
+                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parTemplate
         );
     }
 

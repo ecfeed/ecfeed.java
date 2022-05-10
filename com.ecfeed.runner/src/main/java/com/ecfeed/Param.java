@@ -8,6 +8,7 @@ public class Param{
     private static abstract class ParamsCommon<T extends ParamsCommon> {
         private Object constraints;
         private Object choices;
+        private String template;
 
         public Object getConstraints() {
 
@@ -17,6 +18,11 @@ public class Param{
         public Object getChoices() {
 
             return choices;
+        }
+
+        public String getTemplate() {
+
+            return template;
         }
 
         public T constraints(String[] constraints) {
@@ -43,6 +49,12 @@ public class Param{
             return self();
         }
 
+        public T template(String template) {
+
+            this.template = template;
+            return self();
+        }
+
         protected Map<String, Object> getParamMap() {
             Map<String, Object> paramMap = new HashMap<>();
 
@@ -54,6 +66,9 @@ public class Param{
                 paramMap.put(Config.Key.parChoices, choices);
             }
 
+            if (template != null && !template.isBlank()) {
+                paramMap.put(Config.Key.parTemplate, template);
+            }
 
             return paramMap;
         }
