@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ecfeed'
-version '2.1.5'
+version '2.2.4'
 
 java {
     modularity.inferModulePath = true
