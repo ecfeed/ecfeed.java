@@ -67,6 +67,7 @@ public final class ConfigDefault {
 
         final public static String parDataSource = "dataSource";
         final public static String parProperties = "properties";
+        final public static String parDataTemplate = "template";
 
         final public static String reqDataMode = "model";
         final public static String reqDataMethod = "method";
@@ -74,7 +75,6 @@ public final class ConfigDefault {
         final public static String reqDataRequestType = "requestType";
         final public static String reqDataClient = "client";
         final public static String reqDataRequest = "request";
-        final public static String reqDataTemplate = "template";
 
         final public static String reqTestStatus = "status";
         final public static String reqTestStatusEnd = "END_DATA";
@@ -107,7 +107,7 @@ public final class ConfigDefault {
         final public static String certServer = "ca";
 
         final public static List<String> userAllowedKeys = Arrays.asList(
-                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback, parCustom, parTestSessionLabel
+                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback, parCustom, parTestSessionLabel, parDataTemplate
         );
     }
 

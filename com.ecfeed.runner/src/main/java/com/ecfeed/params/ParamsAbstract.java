@@ -10,6 +10,7 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
     private Object choices = ConfigDefault.Value.parAll;
     private boolean feedback = ConfigDefault.Value.parFeedback;
     private String testSessionLabel = "";
+    private String template = "";
     private Map<String, String> custom = new HashMap<>();
 
     public Object getConstraints() {
@@ -79,6 +80,17 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
         return self();
     }
 
+    public String getTemplate() {
+
+        return template;
+    }
+
+    public T template(String template) {
+
+        this.template = template;
+        return self();
+    }
+
     @Override
     public Map<String, Object> getParamsMap() {
         Map<String, Object> paramMap = new HashMap<>();
@@ -95,12 +107,16 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
             paramMap.put(ConfigDefault.Key.parFeedback, "true");
         }
 
-        if (this.testSessionLabel != null && !this.testSessionLabel.equalsIgnoreCase("")) {
+        if (this.testSessionLabel != null && !this.testSessionLabel.isBlank()) {
             paramMap.put(ConfigDefault.Key.parTestSessionLabel, this.testSessionLabel);
         }
 
         if (this.custom != null && this.custom.size() > 0) {
             paramMap.put(ConfigDefault.Key.parCustom, this.custom);
+        }
+
+        if (this.template != null && !this.template.isBlank()) {
+            paramMap.put(ConfigDefault.Key.parDataTemplate, this.template);
         }
 
         return paramMap;

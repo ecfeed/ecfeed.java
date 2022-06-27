@@ -124,14 +124,28 @@ public class TestProvider {
     }
 
     public Iterable<String> export(String method, TypeGenerator generator, TypeExport typeExport, Map<String, Object> properties) {
+        String template;
+
         ConfigDefault.processUserParameters(properties);
         ConfigDefault.validateUserParameters(properties);
+
+        if (typeExport == TypeExport.Custom) {
+            if (!properties.containsKey(ConfigDefault.Key.parDataTemplate)) {
+                throw new IllegalArgumentException("For the 'custom' template type, the 'template' property must be defined");
+            }
+
+            template = properties.get(ConfigDefault.Key.parDataTemplate).toString();
+
+            properties.remove(ConfigDefault.Key.parDataTemplate);
+        } else {
+            template = typeExport.toString();
+        }
 
         IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
 
         DataSession dataSession = DataSession.create(this.connection, this.model, method, generator);
         dataSession.setGeneratorOptions(properties);
-        dataSession.setTemplate(typeExport);
+        dataSession.setTemplate(template);
 
         new Thread(() -> {
             try {

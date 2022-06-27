@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Model name="welcome2" version="3">
+<Model name="Welcome" version="4">
     <Class name="QuickStart">
-        <Properties>
-            <Property name="runOnAndroid" type="boolean" value="false"/>
-        </Properties>
         <Method name="test">
             <Properties>
                 <Property name="methodRunner" type="String" value="Java Runner"/>
@@ -47,7 +44,7 @@
                 <Choice name="choice3" value="2" isRandomized="false"/>
                 <Choice name="choice4" value="3" isRandomized="false"/>
             </Parameter>
-            <Constraint name="constraint1">
+            <Constraint name="constraint1" type="EF">
                 <Premise>
                     <StaticStatement value="true"/>
                 </Premise>
@@ -55,7 +52,7 @@
                     <ParameterStatement rightParameter="arg2" parameter="arg1" relation="greaterthanequal"/>
                 </Consequence>
             </Constraint>
-            <Constraint name="constraint2">
+            <Constraint name="constraint2" type="EF">
                 <Premise>
                     <StaticStatement value="true"/>
                 </Premise>
@@ -64,63 +61,8 @@
                 </Consequence>
             </Constraint>
             <TestCase testSuite="suite1">
-                <TestParameter choice="choice1"/>
-                <TestParameter choice="choice1"/>
-                <TestParameter choice="choice1"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice2"/>
-                <TestParameter choice="choice4"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice3"/>
-                <TestParameter choice="choice2"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice3"/>
-                <TestParameter choice="choice3"/>
-                <TestParameter choice="choice3"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice2"/>
                 <TestParameter choice="choice2"/>
                 <TestParameter choice="choice1"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice3"/>
-                <TestParameter choice="choice1"/>
-                <TestParameter choice="choice2"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice1"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice1"/>
-                <TestParameter choice="choice3"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice2"/>
-                <TestParameter choice="choice2"/>
-                <TestParameter choice="choice2"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice2"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice3"/>
-                <TestParameter choice="choice4"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice3"/>
-                <TestParameter choice="choice2"/>
                 <TestParameter choice="choice1"/>
             </TestCase>
             <TestCase testSuite="suite1">
@@ -129,6 +71,71 @@
                 <TestParameter choice="choice3"/>
             </TestCase>
             <TestCase testSuite="suite1">
+                <TestParameter choice="choice3"/>
+                <TestParameter choice="choice2"/>
+                <TestParameter choice="choice1"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice2"/>
+                <TestParameter choice="choice2"/>
+                <TestParameter choice="choice2"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice3"/>
+                <TestParameter choice="choice3"/>
+                <TestParameter choice="choice2"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice3"/>
+                <TestParameter choice="choice1"/>
+                <TestParameter choice="choice3"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice1"/>
+                <TestParameter choice="choice2"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice3"/>
+                <TestParameter choice="choice4"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice3"/>
+                <TestParameter choice="choice1"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice2"/>
+                <TestParameter choice="choice4"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice2"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice1"/>
+                <TestParameter choice="choice1"/>
+                <TestParameter choice="choice1"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice4"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice4"/>
+                <TestParameter choice="choice2"/>
+                <TestParameter choice="choice3"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
+                <TestParameter choice="choice3"/>
+                <TestParameter choice="choice3"/>
+                <TestParameter choice="choice3"/>
+            </TestCase>
+            <TestCase testSuite="suite1">
                 <TestParameter choice="choice4"/>
                 <TestParameter choice="choice1"/>
                 <TestParameter choice="choice4"/>
@@ -136,29 +143,11 @@
             <TestCase testSuite="suite1">
                 <TestParameter choice="choice4"/>
                 <TestParameter choice="choice4"/>
-                <TestParameter choice="choice4"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice2"/>
-                <TestParameter choice="choice1"/>
-                <TestParameter choice="choice2"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice4"/>
-                <TestParameter choice="choice2"/>
-                <TestParameter choice="choice3"/>
-            </TestCase>
-            <TestCase testSuite="suite1">
-                <TestParameter choice="choice3"/>
-                <TestParameter choice="choice3"/>
                 <TestParameter choice="choice1"/>
             </TestCase>
         </Method>
     </Class>
     <Class name="com.example.test.Playground">
-        <Properties>
-            <Property name="runOnAndroid" type="boolean" value="false"/>
-        </Properties>
         <Method name="size_10x10">
             <Properties>
                 <Property name="methodRunner" type="String" value="Java Runner"/>
@@ -346,6 +335,18 @@
                 <Choice name="j8" value="j8" isRandomized="false"/>
                 <Choice name="j9" value="j9" isRandomized="false"/>
             </Parameter>
+            <Constraint name="constraint" type="EF">
+                <Premise>
+                    <StaticStatement value="true"/>
+                </Premise>
+                <Consequence>
+                    <StatementArray operator="and">
+                        <Statement choice="a0" parameter="a" relation="notequal"/>
+                        <Statement choice="b1" parameter="b" relation="notequal"/>
+                        <Statement choice="h6" parameter="h" relation="notequal"/>
+                    </StatementArray>
+                </Consequence>
+            </Constraint>
         </Method>
         <Method name="size_100x2">
             <Properties>
@@ -570,6 +571,17 @@
                 <Choice name="b98" value="b98" isRandomized="false"/>
                 <Choice name="b99" value="b99" isRandomized="false"/>
             </Parameter>
+            <Constraint name="constraint" type="EF">
+                <Premise>
+                    <StaticStatement value="true"/>
+                </Premise>
+                <Consequence>
+                    <StatementArray operator="and">
+                        <Statement choice="a00" parameter="a" relation="notequal"/>
+                        <Statement choice="b00" parameter="b" relation="notequal"/>
+                    </StatementArray>
+                </Consequence>
+            </Constraint>
         </Method>
         <Method name="size_2x100">
             <Properties>
@@ -1774,7 +1786,7 @@
                     <TypeComments/>
                 </Comments>
             </Parameter>
-            <Constraint name="greater_or_equal">
+            <Constraint name="greater_or_equal" type="EF">
                 <Premise>
                     <StaticStatement value="true"/>
                 </Premise>
@@ -1792,7 +1804,7 @@
                     </StatementArray>
                 </Consequence>
             </Constraint>
-            <Constraint name="equal">
+            <Constraint name="equal" type="EF">
                 <Premise>
                     <StaticStatement value="true"/>
                 </Premise>
@@ -1810,7 +1822,7 @@
                     </StatementArray>
                 </Consequence>
             </Constraint>
-            <Constraint name="greater">
+            <Constraint name="greater" type="EF">
                 <Premise>
                     <StaticStatement value="true"/>
                 </Premise>
@@ -1831,9 +1843,6 @@
         </Method>
     </Class>
     <Class name="com.example.test.LoanDecisionTest1">
-        <Properties>
-            <Property name="runOnAndroid" type="boolean" value="false"/>
-        </Properties>
         <Method name="generateCustomerData">
             <Properties>
                 <Property name="methodRunner" type="String" value="Java Runner"/>
@@ -1916,7 +1925,18 @@
                 <Choice name="drivers\slicense" value="DRIVERS_LICENSE" isRandomized="false"/>
                 <Choice name="personal\sid" value="PERSONAL_ID" isRandomized="false"/>
             </Parameter>
-            <Constraint name="gender">
+            <Parameter name="occupation" type="String" isExpected="false" expected="0" linked="false">
+                <Properties>
+                    <Property name="wbIsOptional" type="boolean" value="false"/>
+                </Properties>
+                <Comments>
+                    <TypeComments/>
+                </Comments>
+                <Choice name="student" value="student" isRandomized="false"/>
+                <Choice name="employee" value="employtee" isRandomized="false"/>
+                <Choice name="enterprenour" value="enterprenour" isRandomized="false"/>
+            </Parameter>
+            <Constraint name="gender" type="EF">
                 <Premise>
                     <StatementArray operator="or">
                         <StatementArray operator="and">
@@ -1933,7 +1953,7 @@
                     <StaticStatement value="false"/>
                 </Consequence>
             </Constraint>
-            <Constraint name="documentType">
+            <Constraint name="documentType" type="EF">
                 <Premise>
                     <Statement choice="passport" parameter="documentType" relation="equal"/>
                 </Premise>
@@ -1941,7 +1961,7 @@
                     <Statement choice="passport" parameter="documentSerialNumber" relation="equal"/>
                 </Consequence>
             </Constraint>
-            <Constraint name="documentType">
+            <Constraint name="documentType" type="EF">
                 <Premise>
                     <Statement choice="drivers\slicense" parameter="documentType" relation="equal"/>
                 </Premise>
@@ -1949,7 +1969,7 @@
                     <Statement choice="drivers\slicense" parameter="documentSerialNumber" relation="equal"/>
                 </Consequence>
             </Constraint>
-            <Constraint name="documentType">
+            <Constraint name="documentType" type="EF">
                 <Premise>
                     <Statement choice="personal\sid" parameter="documentType" relation="equal"/>
                 </Premise>
@@ -1957,270 +1977,779 @@
                     <Statement choice="personal\sID" parameter="documentSerialNumber" relation="equal"/>
                 </Consequence>
             </Constraint>
-        </Method>
-    </Class>
-    <Class name="com.example.test.LoanDecisionTest2">
-        <Properties>
-            <Property name="runOnAndroid" type="boolean" value="false"/>
-        </Properties>
-        <Method name="generateCustomerData">
-            <Properties>
-                <Property name="methodRunner" type="String" value="Java Runner"/>
-                <Property name="wbMapBrowserToParam" type="boolean" value="false"/>
-                <Property name="wbBrowser" type="String" value="Chrome"/>
-                <Property name="wbMapStartUrlToParam" type="boolean" value="false"/>
-            </Properties>
-            <Parameter name="familyName" type="String" isExpected="false" expected="0" linked="false">
-                <Properties>
-                    <Property name="wbIsOptional" type="boolean" value="false"/>
-                </Properties>
-                <Comments>
-                    <TypeComments/>
-                </Comments>
-                <Choice name="short" value="Smith" isRandomized="false"/>
-                <Choice name="long\ssingle\sword" value="Rockefeller" isRandomized="false"/>
-                <Choice name="long\scomplex" value="Mendhelsson-Bartholdy" isRandomized="false"/>
-                <Choice name="two\swords" value="van\sBeethoven" isRandomized="false"/>
-                <Choice name="more\sthan\stwo\swords" value="van\sder\sSar" isRandomized="false"/>
-            </Parameter>
-            <Parameter name="firstName" type="String" isExpected="false" expected="0" linked="false">
-                <Properties>
-                    <Property name="wbIsOptional" type="boolean" value="false"/>
-                </Properties>
-                <Comments>
-                    <TypeComments/>
-                </Comments>
-                <Choice name="male" value="0" isRandomized="false">
-                    <Choice name="short" value="John" isRandomized="false"/>
-                    <Choice name="long" value="Alexander" isRandomized="false"/>
-                    <Choice name="two\snames" value="Jean\sPierre" isRandomized="false"/>
-                </Choice>
-                <Choice name="female" value="0" isRandomized="false">
-                    <Choice name="short" value="Eva" isRandomized="false"/>
-                    <Choice name="long" value="Margaret" isRandomized="false"/>
-                    <Choice name="two\snames" value="Mary\sJane" isRandomized="false"/>
-                </Choice>
-            </Parameter>
-            <Parameter name="gender" type="com.example.test.Gender" isExpected="false" expected="MALE" linked="false">
-                <Properties>
-                    <Property name="wbIsOptional" type="boolean" value="false"/>
-                </Properties>
-                <Comments>
-                    <TypeComments/>
-                </Comments>
-                <Choice name="male" value="MALE" isRandomized="false"/>
-                <Choice name="female" value="FEMALE" isRandomized="false"/>
-            </Parameter>
-            <Parameter name="age" type="int" isExpected="false" expected="0" linked="false">
-                <Properties>
-                    <Property name="wbIsOptional" type="boolean" value="false"/>
-                </Properties>
-                <Comments>
-                    <TypeComments/>
-                </Comments>
-                <Choice name="minor" value="10:17" isRandomized="true"/>
-                <Choice name="young" value="18:30" isRandomized="true"/>
-                <Choice name="mature" value="31:65" isRandomized="true"/>
-                <Choice name="senior" value="66:100" isRandomized="true"/>
-            </Parameter>
-            <Parameter name="documentSerialNumber" type="String" isExpected="false" expected="0" linked="false">
-                <Properties>
-                    <Property name="wbIsOptional" type="boolean" value="false"/>
-                </Properties>
-                <Comments>
-                    <TypeComments/>
-                </Comments>
-                <Choice name="drivers\slicense" value="[A-Z]{1}[0-9]{7}" isRandomized="true"/>
-                <Choice name="personal\sID" value="[A-Z]{3}[0-9]{6}" isRandomized="true"/>
-                <Choice name="passport" value="[A-Z]{2}[0-9]{9}" isRandomized="false"/>
-            </Parameter>
-            <Parameter name="documentType" type="com.example.test.DocumentType" isExpected="false" expected="PASSPORT" linked="false">
-                <Properties>
-                    <Property name="wbIsOptional" type="boolean" value="false"/>
-                </Properties>
-                <Comments>
-                    <TypeComments/>
-                </Comments>
-                <Choice name="passport" value="PASSPORT" isRandomized="false"/>
-                <Choice name="drivers\slicense" value="DRIVERS_LICENSE" isRandomized="false"/>
-                <Choice name="personal\sid" value="PERSONAL_ID" isRandomized="false"/>
-            </Parameter>
-            <Constraint name="gender">
-                <Premise>
-                    <StatementArray operator="or">
-                        <StatementArray operator="and">
-                            <Statement choice="male" parameter="gender" relation="equal"/>
-                            <Statement choice="male" parameter="firstName" relation="notequal"/>
-                        </StatementArray>
-                        <StatementArray operator="and">
-                            <Statement choice="female" parameter="gender" relation="equal"/>
-                            <Statement choice="female" parameter="firstName" relation="notequal"/>
-                        </StatementArray>
-                    </StatementArray>
-                </Premise>
-                <Consequence>
-                    <StaticStatement value="false"/>
-                </Consequence>
-            </Constraint>
-            <Constraint name="documentType">
-                <Premise>
-                    <Statement choice="passport" parameter="documentType" relation="equal"/>
-                </Premise>
-                <Consequence>
-                    <Statement choice="passport" parameter="documentSerialNumber" relation="equal"/>
-                </Consequence>
-            </Constraint>
-            <Constraint name="documentType">
-                <Premise>
-                    <Statement choice="drivers\slicense" parameter="documentType" relation="equal"/>
-                </Premise>
-                <Consequence>
-                    <Statement choice="drivers\slicense" parameter="documentSerialNumber" relation="equal"/>
-                </Consequence>
-            </Constraint>
-            <Constraint name="documentType">
-                <Premise>
-                    <Statement choice="personal\sid" parameter="documentType" relation="equal"/>
-                </Premise>
-                <Consequence>
-                    <Statement choice="personal\sID" parameter="documentSerialNumber" relation="equal"/>
-                </Consequence>
-            </Constraint>
-            <Constraint name="uno">
-                <Premise>
-                    <StaticStatement value="true"/>
-                </Premise>
-                <Consequence>
-                    <StaticStatement value="true"/>
-                </Consequence>
-            </Constraint>
-            <Constraint name="dos">
-                <Premise>
-                    <StaticStatement value="true"/>
-                </Premise>
-                <Consequence>
-                    <StaticStatement value="true"/>
-                </Consequence>
-            </Constraint>
-            <TestCase testSuite="tests">
+            <TestCase testSuite="pairwise">
                 <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="enterprenour"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="short"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="enterprenour"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="short"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="short"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="enterprenour"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="enterprenour"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="short"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="enterprenour"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="enterprenour"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="short"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="two\swords"/>
                 <TestParameter choice="female:long"/>
                 <TestParameter choice="female"/>
                 <TestParameter choice="minor"/>
                 <TestParameter choice="drivers\slicense"/>
                 <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="enterprenour"/>
             </TestCase>
-            <TestCase testSuite="tests">
-                <TestParameter choice="two\swords"/>
-                <TestParameter choice="female:short"/>
-                <TestParameter choice="female"/>
-                <TestParameter choice="minor"/>
-                <TestParameter choice="drivers\slicense"/>
-                <TestParameter choice="drivers\slicense"/>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="enterprenour"/>
             </TestCase>
-            <TestCase testSuite="tests">
+            <TestCase testSuite="pairwise">
                 <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="two\swords"/>
                 <TestParameter choice="female:short"/>
                 <TestParameter choice="female"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="enterprenour"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="short"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="student"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="enterprenour"/>
+            </TestCase>
+            <TestCase testSuite="pairwise">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
                 <TestParameter choice="minor"/>
                 <TestParameter choice="drivers\slicense"/>
                 <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="enterprenour"/>
             </TestCase>
-            <TestCase testSuite="tests">
+            <TestCase testSuite="pairwise">
                 <TestParameter choice="two\swords"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="employee"/>
+            </TestCase>
+        </Method>
+    </Class>
+    <Class name="com.example.test.LoanDecisionTest2">
+        <Method name="generateCustomerData">
+            <Properties>
+                <Property name="methodRunner" type="String" value="Java Runner"/>
+                <Property name="wbMapBrowserToParam" type="boolean" value="false"/>
+                <Property name="wbBrowser" type="String" value="Chrome"/>
+                <Property name="wbMapStartUrlToParam" type="boolean" value="false"/>
+            </Properties>
+            <Parameter name="familyName" type="String" isExpected="false" expected="0" linked="false">
+                <Properties>
+                    <Property name="wbIsOptional" type="boolean" value="false"/>
+                </Properties>
+                <Comments>
+                    <TypeComments/>
+                </Comments>
+                <Choice name="short" value="Smith" isRandomized="false"/>
+                <Choice name="long\ssingle\sword" value="Rockefeller" isRandomized="false"/>
+                <Choice name="long\scomplex" value="Mendhelsson-Bartholdy" isRandomized="false"/>
+                <Choice name="two\swords" value="van\sBeethoven" isRandomized="false"/>
+                <Choice name="more\sthan\stwo\swords" value="van\sder\sSar" isRandomized="false"/>
+            </Parameter>
+            <Parameter name="firstName" type="String" isExpected="false" expected="0" linked="false">
+                <Properties>
+                    <Property name="wbIsOptional" type="boolean" value="false"/>
+                </Properties>
+                <Comments>
+                    <TypeComments/>
+                </Comments>
+                <Choice name="male" value="0" isRandomized="false">
+                    <Choice name="short" value="John" isRandomized="false"/>
+                    <Choice name="long" value="Alexander" isRandomized="false"/>
+                    <Choice name="two\snames" value="Jean\sPierre" isRandomized="false"/>
+                </Choice>
+                <Choice name="female" value="0" isRandomized="false">
+                    <Choice name="short" value="Eva" isRandomized="false"/>
+                    <Choice name="long" value="Margaret" isRandomized="false"/>
+                    <Choice name="two\snames" value="Mary\sJane" isRandomized="false"/>
+                </Choice>
+            </Parameter>
+            <Parameter name="gender" type="com.example.test.Gender" isExpected="false" expected="MALE" linked="false">
+                <Properties>
+                    <Property name="wbIsOptional" type="boolean" value="false"/>
+                </Properties>
+                <Comments>
+                    <TypeComments/>
+                </Comments>
+                <Choice name="male" value="MALE" isRandomized="false"/>
+                <Choice name="female" value="FEMALE" isRandomized="false"/>
+            </Parameter>
+            <Parameter name="age" type="int" isExpected="false" expected="0" linked="false">
+                <Properties>
+                    <Property name="wbIsOptional" type="boolean" value="false"/>
+                </Properties>
+                <Comments>
+                    <TypeComments/>
+                </Comments>
+                <Choice name="minor" value="10:17" isRandomized="true"/>
+                <Choice name="young" value="18:30" isRandomized="true"/>
+                <Choice name="mature" value="31:65" isRandomized="true"/>
+                <Choice name="senior" value="66:100" isRandomized="true"/>
+            </Parameter>
+            <Parameter name="documentSerialNumber" type="String" isExpected="false" expected="0" linked="false">
+                <Properties>
+                    <Property name="wbIsOptional" type="boolean" value="false"/>
+                </Properties>
+                <Comments>
+                    <TypeComments/>
+                </Comments>
+                <Choice name="drivers\slicense" value="[A-Z]{1}[0-9]{7}" isRandomized="true"/>
+                <Choice name="personal\sID" value="[A-Z]{3}[0-9]{6}" isRandomized="true"/>
+                <Choice name="passport" value="[A-Z]{2}[0-9]{9}" isRandomized="true"/>
+            </Parameter>
+            <Parameter name="documentType" type="com.example.test.DocumentType" isExpected="false" expected="PASSPORT" linked="false">
+                <Properties>
+                    <Property name="wbIsOptional" type="boolean" value="false"/>
+                </Properties>
+                <Comments>
+                    <TypeComments/>
+                </Comments>
+                <Choice name="passport" value="PASSPORT" isRandomized="false"/>
+                <Choice name="drivers\slicense" value="DRIVERS_LICENSE" isRandomized="false"/>
+                <Choice name="personal\sid" value="PERSONAL_ID" isRandomized="false"/>
+            </Parameter>
+            <Constraint name="gender" type="EF">
+                <Premise>
+                    <StatementArray operator="or">
+                        <StatementArray operator="and">
+                            <Statement choice="male" parameter="gender" relation="equal"/>
+                            <Statement choice="male" parameter="firstName" relation="notequal"/>
+                        </StatementArray>
+                        <StatementArray operator="and">
+                            <Statement choice="female" parameter="gender" relation="equal"/>
+                            <Statement choice="female" parameter="firstName" relation="notequal"/>
+                        </StatementArray>
+                    </StatementArray>
+                </Premise>
+                <Consequence>
+                    <StaticStatement value="false"/>
+                </Consequence>
+            </Constraint>
+            <Constraint name="documentType" type="EF">
+                <Premise>
+                    <Statement choice="passport" parameter="documentType" relation="equal"/>
+                </Premise>
+                <Consequence>
+                    <Statement choice="passport" parameter="documentSerialNumber" relation="equal"/>
+                </Consequence>
+            </Constraint>
+            <Constraint name="documentType" type="EF">
+                <Premise>
+                    <Statement choice="drivers\slicense" parameter="documentType" relation="equal"/>
+                </Premise>
+                <Consequence>
+                    <Statement choice="drivers\slicense" parameter="documentSerialNumber" relation="equal"/>
+                </Consequence>
+            </Constraint>
+            <Constraint name="documentType" type="EF">
+                <Premise>
+                    <Statement choice="personal\sid" parameter="documentType" relation="equal"/>
+                </Premise>
+                <Consequence>
+                    <Statement choice="personal\sID" parameter="documentSerialNumber" relation="equal"/>
+                </Consequence>
+            </Constraint>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
                 <TestParameter choice="female:long"/>
                 <TestParameter choice="female"/>
                 <TestParameter choice="mature"/>
                 <TestParameter choice="drivers\slicense"/>
                 <TestParameter choice="drivers\slicense"/>
             </TestCase>
-            <TestCase testSuite="tests">
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="drivers\slicense"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
                 <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="drivers\slicense"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="drivers\slicense"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="drivers\slicense"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="drivers\slicense"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="drivers\slicense"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
                 <TestParameter choice="male:two\snames"/>
                 <TestParameter choice="male"/>
                 <TestParameter choice="minor"/>
                 <TestParameter choice="drivers\slicense"/>
                 <TestParameter choice="drivers\slicense"/>
             </TestCase>
-            <TestCase testSuite="tests">
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="drivers\slicense"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
                 <TestParameter choice="more\sthan\stwo\swords"/>
                 <TestParameter choice="male:long"/>
                 <TestParameter choice="male"/>
-                <TestParameter choice="minor"/>
+                <TestParameter choice="mature"/>
                 <TestParameter choice="drivers\slicense"/>
-                <TestParameter choice="drivers\slicense"/>
-            </TestCase>
-            <TestCase testSuite="tests">
-                <TestParameter choice="long\scomplex"/>
-                <TestParameter choice="female:short"/>
-                <TestParameter choice="female"/>
-                <TestParameter choice="senior"/>
-                <TestParameter choice="personal\sID"/>
                 <TestParameter choice="personal\sid"/>
             </TestCase>
-            <TestCase testSuite="tests">
+            <TestCase testSuite="default\ssuite">
                 <TestParameter choice="more\sthan\stwo\swords"/>
                 <TestParameter choice="female:two\snames"/>
                 <TestParameter choice="female"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="young"/>
+                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
                 <TestParameter choice="senior"/>
                 <TestParameter choice="personal\sID"/>
                 <TestParameter choice="drivers\slicense"/>
             </TestCase>
-            <TestCase testSuite="tests">
-                <TestParameter choice="long\ssingle\sword"/>
-                <TestParameter choice="male:long"/>
-                <TestParameter choice="male"/>
-                <TestParameter choice="minor"/>
-                <TestParameter choice="drivers\slicense"/>
-                <TestParameter choice="drivers\slicense"/>
-            </TestCase>
-            <TestCase testSuite="tests">
-                <TestParameter choice="two\swords"/>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
                 <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="two\swords"/>
+                <TestParameter choice="female:long"/>
                 <TestParameter choice="female"/>
                 <TestParameter choice="young"/>
                 <TestParameter choice="drivers\slicense"/>
                 <TestParameter choice="drivers\slicense"/>
             </TestCase>
-            <TestCase testSuite="tests">
+            <TestCase testSuite="default\ssuite">
                 <TestParameter choice="long\scomplex"/>
-                <TestParameter choice="female:short"/>
-                <TestParameter choice="female"/>
-                <TestParameter choice="minor"/>
-                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
                 <TestParameter choice="drivers\slicense"/>
             </TestCase>
-            <TestCase testSuite="tests">
-                <TestParameter choice="two\swords"/>
-                <TestParameter choice="female:short"/>
-                <TestParameter choice="female"/>
-                <TestParameter choice="minor"/>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
                 <TestParameter choice="drivers\slicense"/>
                 <TestParameter choice="personal\sid"/>
             </TestCase>
-            <TestCase testSuite="tests">
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="more\sthan\stwo\swords"/>
+                <TestParameter choice="female:long"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="mature"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
                 <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="female:two\snames"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
+                <TestParameter choice="male:long"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="male:short"/>
+                <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="female:short"/>
+                <TestParameter choice="female"/>
+                <TestParameter choice="minor"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="personal\sid"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="short"/>
                 <TestParameter choice="female:long"/>
                 <TestParameter choice="female"/>
                 <TestParameter choice="minor"/>
                 <TestParameter choice="drivers\slicense"/>
-                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="passport"/>
             </TestCase>
-            <TestCase testSuite="tests">
-                <TestParameter choice="long\scomplex"/>
-                <TestParameter choice="female:two\snames"/>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\ssingle\sword"/>
+                <TestParameter choice="female:short"/>
                 <TestParameter choice="female"/>
-                <TestParameter choice="minor"/>
-                <TestParameter choice="drivers\slicense"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="passport"/>
                 <TestParameter choice="drivers\slicense"/>
             </TestCase>
-            <TestCase testSuite="tests">
-                <TestParameter choice="more\sthan\stwo\swords"/>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="two\swords"/>
                 <TestParameter choice="male:long"/>
                 <TestParameter choice="male"/>
+                <TestParameter choice="senior"/>
+                <TestParameter choice="personal\sID"/>
+                <TestParameter choice="passport"/>
+            </TestCase>
+            <TestCase testSuite="default\ssuite">
+                <TestParameter choice="long\scomplex"/>
+                <TestParameter choice="male:two\snames"/>
+                <TestParameter choice="male"/>
                 <TestParameter choice="minor"/>
-                <TestParameter choice="drivers\slicense"/>
-                <TestParameter choice="personal\sid"/>
+                <TestParameter choice="passport"/>
+                <TestParameter choice="passport"/>
             </TestCase>
         </Method>
         <Method name="processLoanApplication">
@@ -2291,7 +2820,7 @@
                 <Choice name="high" value="50001:100000" isRandomized="true"/>
                 <Choice name="very\shigh" value="10001:MAX_VALUE" isRandomized="true"/>
             </Parameter>
-            <Constraint name="loan\sdecision">
+            <Constraint name="loan\sdecision" type="AS">
                 <Premise>
                     <StatementArray operator="or">
                         <StatementArray operator="and">
@@ -2305,10 +2834,10 @@
                     </StatementArray>
                 </Premise>
                 <Consequence>
-                    <ExpectedValueStatement parameter="loanDecision" value="POSITIVE"/>
+                    <ValueStatement rightValue="POSITIVE" parameter="loanDecision" relation="assign"/>
                 </Consequence>
             </Constraint>
-            <Constraint name="loan\sdecision">
+            <Constraint name="loan\sdecision" type="AS">
                 <Premise>
                     <StatementArray operator="and">
                         <LabelStatement label="potentially\spositive\sloan\sdecision" parameter="employmentStatus" relation="equal"/>
@@ -2316,7 +2845,7 @@
                     </StatementArray>
                 </Premise>
                 <Consequence>
-                    <ExpectedValueStatement parameter="loanDecision" value="INCONCLUSIVE"/>
+                    <ValueStatement rightValue="INCONCLUSIVE" parameter="loanDecision" relation="assign"/>
                 </Consequence>
             </Constraint>
         </Method>

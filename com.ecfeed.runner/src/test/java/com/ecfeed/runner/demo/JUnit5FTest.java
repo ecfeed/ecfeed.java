@@ -7,6 +7,8 @@ import com.ecfeed.params.ParamsNWise;
 import com.ecfeed.params.ParamsRandom;
 import com.ecfeed.params.ParamsStatic;
 import com.ecfeed.runner.ConfigDefault;
+import com.ecfeed.type.TypeExport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -212,6 +214,7 @@ public class JUnit5FTest {
 
     @ParameterizedTest
     @MethodSource("genNWiseConstraintsNone")
+    @Disabled("At least one test in this set should fail")
     void genNWiseConstraintsNone(int arg1, int arg2, int arg3, TestHandle testHandle) {
         System.out.println("arg1 = " + arg1 + ", arg2 = " + arg2 + ", arg3 = " + arg3 + ", testHandle = " + testHandle);
         Oracle.validateFTest(arg1, arg2, arg3, testHandle);

@@ -40,13 +40,15 @@ public class Oracle {
     }
 
     static void validateFTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
-        Assertions.assertTrue(arg1 < 2, () -> testHandle.addFeedback(false, "Failed - arg1 < 2"));
+        Assertions.assertTrue(arg1 >= arg2, () -> testHandle.addFeedback(false, getDuration(), "Failed - arg1 is lower than arg2", getCustom()));
+        Assertions.assertTrue(arg1 >= arg3, () -> testHandle.addFeedback(false, getDuration(), "Failed - arg1 is lower than arg3", getCustom()));
 
         testHandle.addFeedback(true, "OK");
     }
 
     static void validateFeedbackFTest(int arg1, int arg2, int arg3, TestHandle testHandle) {
-        Assertions.assertTrue(arg1 < 2, () -> testHandle.addFeedback(false, getDuration(), "Failed - arg1 < 2", getCustom()));
+        Assertions.assertTrue(arg1 >= arg2, () -> testHandle.addFeedback(false, getDuration(), "Failed - arg1 is lower than arg2", getCustom()));
+        Assertions.assertTrue(arg1 >= arg3, () -> testHandle.addFeedback(false, getDuration(), "Failed - arg1 is lower than arg3", getCustom()));
 
         testHandle.addFeedback(true, getDuration(), "OK", getCustom());
     }

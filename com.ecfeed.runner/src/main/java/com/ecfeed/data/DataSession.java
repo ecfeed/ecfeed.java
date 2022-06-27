@@ -31,7 +31,7 @@ public class DataSession {
 
     private Map<String, Object> generatorOptions = new HashMap<>();
     private Map<String, String> custom = new HashMap<>();
-    private TypeExport template = null;
+    private String template = "";
     private String methodNameQualified = "";
     private String testSessionId = "";
     private String testSessionLabel = "";
@@ -89,7 +89,7 @@ public class DataSession {
         request.put(ConfigDefault.Key.reqDataMethod, getMethodName());
         request.put(ConfigDefault.Key.reqDataUserData, generateURLForTestDataRequestUserData());
 
-        getTemplate().ifPresent(e -> request.put(ConfigDefault.Key.reqDataTemplate, e));
+        getTemplate().ifPresent(e -> request.put(ConfigDefault.Key.parDataTemplate, e));
 
         try {
             return URLEncoder.encode(request.toString(), StandardCharsets.UTF_8.toString());
@@ -207,16 +207,16 @@ public class DataSession {
         return testResults;
     }
 
-    private Optional<TypeExport> getTemplate() {
+    private Optional<String> getTemplate() {
 
-        if (this.template == null || this.template.equals(TypeExport.Raw)) {
+        if (this.template == null || this.template.isBlank() || this.template.equals(TypeExport.Raw)) {
             return Optional.empty();
         }
 
         return Optional.of(template);
     }
 
-    public void setTemplate(TypeExport template) {
+    public void setTemplate(String template) {
 
         this.template = template;
     }
