@@ -56,74 +56,6 @@ public class TestProvider {
         return new TestProvider(model, config);
     }
 
-    private void setup(String model, Map<String, String> config) {
-
-        this.model = model;
-        this.connection = DataConnection.create(
-                setupExtractGeneratorAddress(config),
-                setupExtractKeyStorePath(config),
-                setupExtractKeyStorePassword(config)
-        );
-
-    }
-
-    private String setupExtractGeneratorAddress(Map<String, String> config) {
-        String value = config.get(ConfigDefault.Key.setupGeneratorAddress);
-
-        return value != null ? value : ConfigDefault.Value.generatorAddress;
-    }
-
-    private String setupExtractKeyStorePassword(Map<String, String> config) {
-        String value = config.get(ConfigDefault.Key.setupKeyStorePassword);
-
-        return value != null ? value : ConfigDefault.Value.keyStorePassword;
-    }
-
-    private Path setupExtractKeyStorePath(Map<String, String> config) {
-        String value = config.get(ConfigDefault.Key.setupKeyStorePath);
-
-        if (value != null) {
-            return getKeyStore(value);
-        } else {
-            return getKeyStoreDefault();
-        }
-    }
-
-    private Path getKeyStore(String address) {
-
-        return getKeyStorePath(address);
-    }
-
-    private Path getKeyStoreDefault() {
-
-        for (String address : ConfigDefault.Value.keyStorePath) {
-            try {
-                return getKeyStore(address);
-            } catch (IllegalArgumentException ignored) {
-            }
-        }
-
-        throw new IllegalArgumentException("The keystore could not be loaded");
-    }
-
-    private Path getKeyStorePath(String keyStoreAddress) {
-        Path keyStorePath = Paths.get(keyStoreAddress);
-
-        if (!Files.exists(keyStorePath)) {
-            throw new IllegalArgumentException("The keystore does not exist: " + keyStorePath.toAbsolutePath());
-        }
-
-        if (!Files.isReadable(keyStorePath)) {
-            throw new IllegalArgumentException("The keystore is not readable: " + keyStorePath.toAbsolutePath());
-        }
-
-        if (!Files.isRegularFile(keyStorePath)) {
-            throw new IllegalArgumentException("The keystore file type is erroneous: " + keyStorePath.toAbsolutePath());
-        }
-
-        return keyStorePath;
-    }
-
     /**
      * Gets the UUID of the ecFeed model.
      *
@@ -445,30 +377,6 @@ public class TestProvider {
         return iterator;
     }
 
-    private void validate(IterableTestQueue<?> iterator, TypeGenerator generator) {
-        int timeout = 0;
-
-        do {
-            if (iterator.hasNext()) {
-                return;
-            }
-
-            timeout += ITERATOR_TIMEOUT_STEP;
-
-            try {
-                Thread.sleep(ITERATOR_TIMEOUT_STEP);
-            } catch (InterruptedException e) { }
-
-        } while (timeout < ITERATOR_TIMEOUT);
-
-        if (generator == TypeGenerator.Static) {
-            throw new IllegalArgumentException("Empty test set error! " +
-                    "Please check if the name of the requested test suite is correct.");
-        } else {
-            throw new IllegalArgumentException("Will check in a while");
-        }
-    }
-
     /**
      * Generates test cases using the n-wise algorithm and returns them as arrays of objects.
      *
@@ -704,6 +612,98 @@ public class TestProvider {
         if (!map.containsKey(key)) {
             map.put(key, value);
         }
+    }
+
+    private void setup(String model, Map<String, String> config) {
+
+        this.model = model;
+        this.connection = DataConnection.create(
+                setupExtractGeneratorAddress(config),
+                setupExtractKeyStorePath(config),
+                setupExtractKeyStorePassword(config)
+        );
+
+    }
+
+    private void validate(IterableTestQueue<?> iterator, TypeGenerator generator) {
+        int timeout = 0;
+
+        do {
+            if (iterator.hasNext()) {
+                return;
+            }
+
+            timeout += ITERATOR_TIMEOUT_STEP;
+
+            try {
+                Thread.sleep(ITERATOR_TIMEOUT_STEP);
+            } catch (InterruptedException e) { }
+
+        } while (timeout < ITERATOR_TIMEOUT);
+
+        if (generator == TypeGenerator.Static) {
+            throw new IllegalArgumentException("Empty test set error! " +
+                    "Please check if the name of the requested test suite is correct.");
+        } else {
+            throw new IllegalArgumentException("Will check in a while");
+        }
+    }
+
+    private String setupExtractGeneratorAddress(Map<String, String> config) {
+        String value = config.get(ConfigDefault.Key.setupGeneratorAddress);
+
+        return value != null ? value : ConfigDefault.Value.generatorAddress;
+    }
+
+    private String setupExtractKeyStorePassword(Map<String, String> config) {
+        String value = config.get(ConfigDefault.Key.setupKeyStorePassword);
+
+        return value != null ? value : ConfigDefault.Value.keyStorePassword;
+    }
+
+    private Path setupExtractKeyStorePath(Map<String, String> config) {
+        String value = config.get(ConfigDefault.Key.setupKeyStorePath);
+
+        if (value != null) {
+            return getKeyStore(value);
+        } else {
+            return getKeyStoreDefault();
+        }
+    }
+
+    private Path getKeyStore(String address) {
+
+        return getKeyStorePath(address);
+    }
+
+    private Path getKeyStoreDefault() {
+
+        for (String address : ConfigDefault.Value.keyStorePath) {
+            try {
+                return getKeyStore(address);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        throw new IllegalArgumentException("The keystore could not be loaded");
+    }
+
+    private Path getKeyStorePath(String keyStoreAddress) {
+        Path keyStorePath = Paths.get(keyStoreAddress);
+
+        if (!Files.exists(keyStorePath)) {
+            throw new IllegalArgumentException("The keystore does not exist: " + keyStorePath.toAbsolutePath());
+        }
+
+        if (!Files.isReadable(keyStorePath)) {
+            throw new IllegalArgumentException("The keystore is not readable: " + keyStorePath.toAbsolutePath());
+        }
+
+        if (!Files.isRegularFile(keyStorePath)) {
+            throw new IllegalArgumentException("The keystore file type is erroneous: " + keyStorePath.toAbsolutePath());
+        }
+
+        return keyStorePath;
     }
 
 }

@@ -72,21 +72,21 @@ public class IterableTestQueue<T> implements Iterator<T>, Iterable<T> {
         chunkParser.parse(chunk).ifPresent(this::appendParsedTest);
     }
 
-    private void appendParsedTest(T parsedTest) {
-
-        try {
-            parsedTestBuffer.put(Optional.of(parsedTest));
-        } catch (InterruptedException e) {
-            throw new IllegalArgumentException("The test could not be added", e);
-        }
-    }
-
     public void terminate() {
 
         try {
             parsedTestBuffer.put(Optional.empty());
         } catch (InterruptedException e) {
             throw new IllegalArgumentException("The test buffer could not be closed", e);
+        }
+    }
+
+    private void appendParsedTest(T parsedTest) {
+
+        try {
+            parsedTestBuffer.put(Optional.of(parsedTest));
+        } catch (InterruptedException e) {
+            throw new IllegalArgumentException("The test could not be added", e);
         }
     }
 

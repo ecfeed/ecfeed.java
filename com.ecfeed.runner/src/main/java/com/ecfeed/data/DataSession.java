@@ -66,6 +66,145 @@ public class DataSession {
         return requestBuilder.toString();
     }
 
+    public String generateBodyForTestData() {
+
+        return "";
+    }
+
+    public String generateURLForFeedback() {
+        StringBuilder requestBuilder = new StringBuilder();
+
+        generateURLForFeedbackCore(requestBuilder);
+        generateURLForFeedbackParameters(requestBuilder);
+
+        return requestBuilder.toString();
+    }
+
+    public String generateBodyForFeedback() {
+        JSONObject json = new JSONObject();
+
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackModel, getModel());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackMethod, getMethodNameQualified());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionId, getTestSessionId());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionLabel, getTestSessionLabel());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackFramework, ConfigDefault.Value.parClient);
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTimestamp, getTimestamp());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackCustom, getCustom());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSuites, getTestSuites());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackConstraints, getConstraints());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackChoices, getChoices());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestResults, getTestResults());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorType, getGeneratorType().getNickname());
+        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorOptions, getGeneratorOptions().entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining(", ")));
+
+        return json.toString();
+    }
+
+    public void setTemplate(String template) {
+
+        this.template = template;
+    }
+
+    public void setMethodNameQualified(String methodNameQualified) {
+
+        this.methodNameQualified = methodNameQualified;
+    }
+
+    public void setGeneratorOptions(Map<String, Object> properties) {
+        this.generatorOptions = new HashMap<>();
+
+        properties.forEach((key, value) -> {
+            if (key.equalsIgnoreCase(ConfigDefault.Key.parConstraints)) {
+                setConstraints(value);
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSuites)) {
+                setTestSuites(value);
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parChoices)) {
+                setChoices(value);
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSessionLabel)) {
+                setTestSessionLabel(value.toString());
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parCustom)) {
+                setCustom((Map<String, String>) value);
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parFeedback)) {
+                if (value.equals(true) || value.toString().equalsIgnoreCase("true")) {
+                    feedbackSetEnable();
+                }
+            } else {
+                this.generatorOptions.put(key, value);
+            }
+        });
+
+    }
+
+    public void setTimestamp(int timestamp) {
+
+        this.timestamp = timestamp;
+    }
+
+    public String[] getArgumentTypes() {
+
+        return this.argumentTypes;
+    }
+
+    public void setArgumentTypes(String[] argumentTypes) {
+
+        this.argumentTypes = argumentTypes;
+    }
+
+    public String[] getArgumentNames() {
+
+        return this.argumentNames;
+    }
+
+    public void setArgumentNames(String[] argumentNames) {
+
+        this.argumentNames = argumentNames;
+    }
+
+    public HttpClient getHttpClient() {
+
+        return connection.getHttpClient();
+    }
+
+    public void feedbackSetComplete() {
+
+        this.completed = true;
+
+        if (testCasesParsed == testCasesTotal) {
+            sendFeedback();
+        }
+    }
+
+    public Optional<TestHandle> feedbackHandleCreate(String data) {
+
+        if (!this.enabled) {
+            return Optional.empty();
+        }
+
+        return Optional.of(TestHandle.create(this, data, "0:" + testCasesTotal++));
+    }
+
+    public void feedbackHandleRegister(String id, JSONObject feedback) {
+
+        if (!this.enabled) {
+            return;
+        }
+
+        testCasesParsed++;
+
+        testResults.put(id, feedback);
+
+        if (testCasesParsed == testCasesTotal && completed) {
+            sendFeedback();
+        }
+    }
+
+    public void setTestSessionId(String testSessionId) {
+
+        this.testSessionId = testSessionId;
+    }
+
     private void generateURLForTestDataCore(StringBuilder builder) {
 
         builder.append(getHttpAddress()).append("/").append(ConfigDefault.Key.urlService);
@@ -117,48 +256,12 @@ public class DataSession {
         return requestUserData.toString().replaceAll("\"", "'");
     }
 
-    public String generateBodyForTestData() {
-
-        return "";
-    }
-
-    public String generateURLForFeedback() {
-        StringBuilder requestBuilder = new StringBuilder();
-
-        generateURLForFeedbackCore(requestBuilder);
-        generateURLForFeedbackParameters(requestBuilder);
-
-        return requestBuilder.toString();
-    }
-
     private void generateURLForFeedbackCore(StringBuilder builder) {
 
         builder.append(getHttpAddress()).append("/").append(ConfigDefault.Key.urlFeedback);
     }
 
     private void generateURLForFeedbackParameters(StringBuilder builder) { }
-
-    public String generateBodyForFeedback() {
-        JSONObject json = new JSONObject();
-
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackModel, getModel());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackMethod, getMethodNameQualified());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionId, getTestSessionId());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionLabel, getTestSessionLabel());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackFramework, ConfigDefault.Value.parClient);
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTimestamp, getTimestamp());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackCustom, getCustom());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSuites, getTestSuites());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackConstraints, getConstraints());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackChoices, getChoices());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestResults, getTestResults());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorType, getGeneratorType().getNickname());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorOptions, getGeneratorOptions().entrySet().stream()
-                .map(e -> e.getKey() + "=" + e.getValue())
-                .collect(Collectors.joining(", ")));
-
-        return json.toString();
-    }
 
     private void parseFeedbackElement(JSONObject json, String key, Object value) {
 
@@ -216,19 +319,9 @@ public class DataSession {
         return Optional.of(template);
     }
 
-    public void setTemplate(String template) {
-
-        this.template = template;
-    }
-
     private String getMethodNameQualified() {
 
         return methodNameQualified;
-    }
-
-    public void setMethodNameQualified(String methodNameQualified) {
-
-        this.methodNameQualified = methodNameQualified;
     }
 
     private Map<String, Object> getGeneratorOptions() {
@@ -236,39 +329,9 @@ public class DataSession {
         return generatorOptions;
     }
 
-    public void setGeneratorOptions(Map<String, Object> properties) {
-        this.generatorOptions = new HashMap<>();
-
-        properties.forEach((key, value) -> {
-            if (key.equalsIgnoreCase(ConfigDefault.Key.parConstraints)) {
-                setConstraints(value);
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSuites)) {
-                setTestSuites(value);
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parChoices)) {
-                setChoices(value);
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSessionLabel)) {
-                setTestSessionLabel(value.toString());
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parCustom)) {
-                setCustom((Map<String, String>) value);
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parFeedback)) {
-                if (value.equals(true) || value.toString().equalsIgnoreCase("true")) {
-                    feedbackSetEnable();
-                }
-            } else {
-                this.generatorOptions.put(key, value);
-            }
-        });
-
-    }
-
     private String getTestSessionId() {
 
         return this.testSessionId;
-    }
-
-    public void setTestSessionId(String testSessionId) {
-
-        this.testSessionId = testSessionId;
     }
 
     private String getTestSessionLabel() {
@@ -284,11 +347,6 @@ public class DataSession {
     private int getTimestamp() {
 
         return this.timestamp;
-    }
-
-    public void setTimestamp(int timestamp) {
-
-        this.timestamp = timestamp;
     }
 
     private Map<String, String> getCustom() {
@@ -331,26 +389,6 @@ public class DataSession {
         this.choices = choices;
     }
 
-    public String[] getArgumentTypes() {
-
-        return this.argumentTypes;
-    }
-
-    public void setArgumentTypes(String[] argumentTypes) {
-
-        this.argumentTypes = argumentTypes;
-    }
-
-    public String[] getArgumentNames() {
-
-        return this.argumentNames;
-    }
-
-    public void setArgumentNames(String[] argumentNames) {
-
-        this.argumentNames = argumentNames;
-    }
-
     private String getHttpAddress() {
         String httpAddress = connection.getHttpAddress();
 
@@ -365,47 +403,9 @@ public class DataSession {
         return httpAddress;
     }
 
-    public HttpClient getHttpClient() {
-
-        return connection.getHttpClient();
-    }
-
     private void feedbackSetEnable() {
 
         this.enabled = true;
-    }
-
-    public void feedbackSetComplete() {
-
-        this.completed = true;
-
-        if (testCasesParsed == testCasesTotal) {
-            sendFeedback();
-        }
-    }
-
-    public Optional<TestHandle> feedbackHandleCreate(String data) {
-
-        if (!this.enabled) {
-            return Optional.empty();
-        }
-
-        return Optional.of(TestHandle.create(this, data, "0:" + testCasesTotal++));
-    }
-
-    public void feedbackHandleRegister(String id, JSONObject feedback) {
-
-        if (!this.enabled) {
-            return;
-        }
-
-        testCasesParsed++;
-
-        testResults.put(id, feedback);
-
-        if (testCasesParsed == testCasesTotal && completed) {
-            sendFeedback();
-        }
     }
 
     private void sendFeedback() {

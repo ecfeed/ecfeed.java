@@ -67,6 +67,47 @@ public final class HelperConnection {
         return null;
     }
 
+    public static void validateConnection(DataConnection connection) {
+        IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
+
+        try {
+            processChunkStream(iterator, HelperConnection.getChunkStreamForHealthCheck(connection));
+            dryChunkStream(iterator);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("The connection could not be established", e);
+        }
+    }
+
+    public static DataSession sendMockRequest(DataConnection connection, String model, String method) {
+        Map<String, Object> userProperties = new HashMap<>();
+
+        userProperties.put(ConfigDefault.Key.parLength, "0");
+
+        DataSession dataSession = DataSession.create(connection, model, method, TypeGenerator.Random);
+        dataSession.setGeneratorOptions(userProperties);
+
+        IterableTestQueue<Object[]> iterator = IterableTestQueue.createForStream(dataSession);
+
+        processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
+        dryChunkStream(iterator);
+
+        return dataSession;
+    }
+
+    public static void processChunkStream(IterableTestQueue<?> iterator, InputStream chunkInputStream) {
+        String chunk;
+
+        try (BufferedReader responseReader = new BufferedReader(new InputStreamReader(chunkInputStream))) {
+            while ((chunk = responseReader.readLine()) != null) {
+                processChunk(iterator, chunk);
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("The connection was interrupted", e);
+        }
+
+        cleanup(iterator);
+    }
+
     private static void printDiagnosticMessage(String message, boolean isDiagnostic) {
 
         if (isDiagnostic) {
@@ -108,47 +149,6 @@ public final class HelperConnection {
         } catch (IOException e) {
             throw new RuntimeException("Sending post request failed.", e);
         }
-    }
-
-    public static void validateConnection(DataConnection connection) {
-        IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
-
-        try {
-            processChunkStream(iterator, HelperConnection.getChunkStreamForHealthCheck(connection));
-            dryChunkStream(iterator);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("The connection could not be established", e);
-        }
-    }
-
-    public static DataSession sendMockRequest(DataConnection connection, String model, String method) {
-        Map<String, Object> userProperties = new HashMap<>();
-
-        userProperties.put(ConfigDefault.Key.parLength, "0");
-
-        DataSession dataSession = DataSession.create(connection, model, method, TypeGenerator.Random);
-        dataSession.setGeneratorOptions(userProperties);
-
-        IterableTestQueue<Object[]> iterator = IterableTestQueue.createForStream(dataSession);
-        
-        processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
-        dryChunkStream(iterator);
-
-        return dataSession;
-    }
-
-    public static void processChunkStream(IterableTestQueue<?> iterator, InputStream chunkInputStream) {
-        String chunk;
-
-        try (BufferedReader responseReader = new BufferedReader(new InputStreamReader(chunkInputStream))) {
-            while ((chunk = responseReader.readLine()) != null) {
-                processChunk(iterator, chunk);
-            }
-        } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was interrupted", e);
-        }
-
-        cleanup(iterator);
     }
 
     private static void processChunk(IterableTestQueue<?> iterator, String chunk) {
