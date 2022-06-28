@@ -4,7 +4,7 @@ import com.ecfeed.config.ConfigDefault;
 
 import java.util.Map;
 
-public class ParamsDefault extends ParamsAbstract<ParamsDefault> {
+class ParamsDefault extends ParamsAbstract<ParamsDefault> {
     private int n = ConfigDefault.Value.parN;
     private int coverage = ConfigDefault.Value.parCoverage;
     private int length = ConfigDefault.Value.parLength;

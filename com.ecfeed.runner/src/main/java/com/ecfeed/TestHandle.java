@@ -6,6 +6,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class contains feedback data.
+ */
 public final class TestHandle {
 
     private final String id;
@@ -27,11 +30,27 @@ public final class TestHandle {
         this.id = id;
     }
 
+    /**
+     * Creates a TestHandle object.
+     *
+     * @param feedback  the DataSession object
+     * @param data      a string containing parsed data
+     * @param id        the session id
+     * @return          a new TestHandle object.
+     */
+    @Deprecated
     public static TestHandle create(DataSession feedback, String data, String id) {
 
         return new TestHandle(feedback, data, id);
     }
 
+    /**
+     * Adds a custom property.
+     *
+     * @param key       the key of the property
+     * @param value     the name of the property
+     * @return          the current TestHandle object (can be used for chaining)
+     */
     public TestHandle addProperty(String key, String value) {
 
         this.custom.put(key, value);
@@ -39,6 +58,12 @@ public final class TestHandle {
         return this;
     }
 
+    /**
+     * Adds a comment.
+     *
+     * @param comment   a custom comment
+     * @return          the current TestHandle object (can be used for chaining)
+     */
     public TestHandle addComment(String comment) {
 
         parseComment(comment);
@@ -46,6 +71,12 @@ public final class TestHandle {
         return this;
     }
 
+    /**
+     * Adds the duration of the test.
+     *
+     * @param duration  the duration of the test
+     * @return          the current TestHandle object (can be used for chaining)
+     */
     public TestHandle addDuration(int duration) {
 
         parseDuration(duration);
@@ -53,51 +84,119 @@ public final class TestHandle {
         return this;
     }
 
+    /**
+     * Adds the status of the test.
+     *
+     * @param status    the outcome of the test (passed/failed)
+     * @return          a text describing the test outcome
+     */
     public String addFeedback(boolean status) {
 
         parse(status, -1, null, null);
+
         return response();
     }
 
+    /**
+     * Adds feedback data.
+     *
+     * @param status    the outcome of the test (passed/failed)
+     * @param duration  the duration of the test
+     * @return          a text describing the test outcome
+     */
     public String addFeedback(boolean status, int duration) {
 
         parse(status, duration, null, null);
+
         return response();
     }
 
+    /**
+     * Adds feedback data.
+     *
+     * @param status    the outcome of the test (passed/failed)
+     * @param comment   a custom comment
+     * @return          a text describing the test outcome
+     */
     public String addFeedback(boolean status, String comment) {
 
         parse(status, -1, comment, null);
+
         return response();
     }
 
+    /**
+     * Adds feedback data.
+     *
+     * @param status    the outcome of the test (passed/failed)
+     * @param custom    a custom map of key-value pairs
+     * @return          a text describing the test outcome
+     */
     public String addFeedback(boolean status, Map<String, String> custom) {
 
         parse(status, -1, null, custom);
+
         return response();
     }
 
+    /**
+     * Adds feedback data.
+     *
+     * @param status    the outcome of the test (passed/failed)
+     * @param duration  the duration of the test
+     * @param comment   a custom comment
+     * @return          a text describing the test outcome
+     */
     public String addFeedback(boolean status, int duration, String comment) {
 
         parse(status, duration, comment, null);
+
         return response();
     }
 
+    /**
+     * Adds feedback data.
+     *
+     * @param status    the outcome of the test (passed/failed)
+     * @param duration  the duration of the test
+     * @param custom    a custom map of key-value pairs
+     * @return          a text describing the test outcome
+     */
     public String addFeedback(boolean status, int duration, Map<String, String> custom) {
 
         parse(status, duration, null, custom);
+
         return response();
     }
 
+    /**
+     * Adds feedback data.
+     *
+     * @param status    the outcome of the test (passed/failed)
+     * @param comment   a custom comment
+     * @param custom    a custom map of key-value pairs
+     * @return          a text describing the test outcome
+     */
     public String addFeedback(boolean status, String comment, Map<String, String> custom) {
 
         parse(status, -1, comment, custom);
+
         return response();
     }
 
+    /**
+     * Adds feedback data.
+     *
+     * @param status    the outcome of the test (passed/failed)
+     * @param duration  the duration of the test
+     * @param comment   a custom comment
+     * @param custom    a custom map of key-value pairs
+     * @return          a text describing the test outcome
+     */
     public String addFeedback(boolean status, int duration, String comment, Map<String, String> custom) {
 
         parse(status, duration, comment, custom);
+
         return response();
     }
 

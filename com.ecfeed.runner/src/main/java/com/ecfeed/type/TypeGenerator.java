@@ -1,5 +1,8 @@
 package com.ecfeed.type;
 
+/**
+ * Generator type.
+ */
 public enum TypeGenerator {
     NWise("genNWise", "NWise"),
     Pairwise("genNWise", "Pairwise"),
