@@ -39,6 +39,8 @@ hs_err_pid*
 **/build
 **/out
 
+**/secring.gpg
+
 *.gradletasknamecache
 **/main/resources/application.properties
 **/test/resources/security
