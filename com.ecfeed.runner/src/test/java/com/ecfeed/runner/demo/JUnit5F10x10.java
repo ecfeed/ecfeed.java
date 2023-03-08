@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class JUnit5F10x10 {
 
     static Iterable<Object[]> genRandomQuantitySingle() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
+        return ConfigDefault.getTestProvider(false).generateRandom(ConfigDefault.F_10x10, ParamsRandom.create()
                 .feedback()
                 .length(1)
                 .label("Random / Quantity - Single"));
