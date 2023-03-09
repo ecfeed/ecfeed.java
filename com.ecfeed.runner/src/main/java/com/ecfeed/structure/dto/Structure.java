@@ -6,10 +6,29 @@ import java.util.Objects;
 
 public class Structure {
 
+    private boolean active = false;
+    private Constructor activeConstructor;
+
     private Class source;
     private String nameSimple;
     private String nameQualified;
     private Map<String, Constructor> constructors;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public Constructor getActiveConstructor() {
+        return activeConstructor;
+    }
+
+    public void setActiveConstructor(Constructor activeConstructor) {
+        this.activeConstructor = activeConstructor;
+    }
 
     public Class getSource() {
         return source;
@@ -47,15 +66,6 @@ public class Structure {
     public String toString() {
 
         return getNameSimple();
-//        var builder = new StringBuilder();
-//
-//        builder.append(getNameSimple() + "\n");
-//
-//        for (var constructor : getConstructors().entrySet()) {
-//            builder.append("- " + constructor.getKey() + "\n");
-//        }
-//
-//        return builder.toString();
     }
 
     @Override

@@ -37,6 +37,12 @@ public class StructureInitializerDefault implements StructureInitializer {
         }
     }
 
+    @Override
+    public void activate(String... signatureStructure) {
+
+        structuresSetter.activate(structures, signatureStructure);
+    }
+
     private void addSource(Structure source) {
         var success = structures.add(source);
 
@@ -54,21 +60,54 @@ public class StructureInitializerDefault implements StructureInitializer {
     }
 
     @Override
-    public Set<Structure> getStructures() {
+    public Set<Structure> getStructuresRaw() {
 
         return structures;
     }
 
     @Override
-    public Set<String> getNamesSimple() {
+    public Set<Structure> getStructuresActive() {
+
+        return structures.stream().filter(Structure::isActive).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<String> getNamesSimpleRaw() {
 
         return structures.stream().map(Structure::getNameSimple).collect(Collectors.toSet());
     }
 
     @Override
-    public Set<String> getNamesQualified() {
+    public Set<String> getNamesSimpleActive() {
+
+        return structures.stream().filter(Structure::isActive).map(Structure::getNameSimple).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<String> getNamesQualifiedRaw() {
 
         return structures.stream().map(Structure::getNameQualified).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<String> getNamesQualifiedActive() {
+
+        return structures.stream().filter(Structure::isActive).map(Structure::getNameQualified).collect(Collectors.toSet());
+    }
+
+    @Override
+    public void validateIntegrityStructure(String signatureStructure) {
+
+    }
+
+    @Override
+    public void validateIntegrityMethod(String signatureMethod) {
+
+    }
+
+    @Override
+    public int getNumberOfParameters(String signatureStructure) {
+        return 0;
     }
 
     @Override
@@ -80,10 +119,5 @@ public class StructureInitializerDefault implements StructureInitializer {
         structures.forEach(e -> builder.append(e.toString() + "\n"));
 
         return builder.toString();
-    }
-
-    @Override
-    public Object initialize(String name, String constructor) {
-        return null;
     }
 }

@@ -3,6 +3,7 @@ package com.ecfeed.structure.setter;
 import com.ecfeed.structure.dto.Structure;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 public class StructuresSetterDefault implements StructuresSetter {
@@ -100,5 +101,42 @@ public class StructuresSetterDefault implements StructuresSetter {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("The class '" + classNameQualified + "' could not be loaded!");
         }
+    }
+
+    @Override
+    public void activate(Set<Structure> structures, String... signatures) {
+
+        Arrays.stream(signatures).forEach(e -> activate(structures, e));
+    }
+
+    public void activate(Set<Structure> structures, String signature) {
+        var activated = false;
+
+        var signatureParsed = getSignatureName(signature);
+
+        for (var structure : structures) {
+            if (structure.getNameSimple().equalsIgnoreCase(signatureParsed)) {
+                structureSetter.activate(structure, signature);
+                activated = true;
+            }
+        }
+
+        if (!activated) {
+            throw new RuntimeException("The structure '" + signature + "' could not be activated! It might not exist in the source.");
+        }
+    }
+
+    private String getSignatureName(String signature) {
+        var signatureParsed = signature.replaceAll(" ", "");
+
+        if (signatureParsed.contains("(")) {
+            signatureParsed = signatureParsed.substring(0, signatureParsed.lastIndexOf("("));
+        }
+
+        if (signatureParsed.contains(".")) {
+            signatureParsed = signatureParsed.substring(signatureParsed.lastIndexOf(".") + 1);
+        }
+
+        return signatureParsed;
     }
 }

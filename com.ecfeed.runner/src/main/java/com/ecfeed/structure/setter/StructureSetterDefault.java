@@ -6,7 +6,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -64,5 +63,37 @@ public class StructureSetterDefault implements StructureSetter {
     private String parseConstructorParameter(Parameter parameter) {
 
         return getNameSimple(parameter.getType());
+    }
+
+    @Override
+    public void activate(Structure structure, String signature) {
+        var signatureParsed = getSignatureDefinition(signature);
+
+        for (var constructor : structure.getConstructors().entrySet()) {
+            if (constructor.getKey().equalsIgnoreCase(signatureParsed)) {
+                if (structure.getActiveConstructor() != null && structure.getActiveConstructor() != constructor.getValue()) {
+                    throw new RuntimeException("The redefinition of constructors is not supported. Affected structure: '" + structure.getNameSimple() + "'.");
+                }
+
+                structure.setActiveConstructor(constructor.getValue());
+                break;
+            }
+        }
+
+        if (structure.getActiveConstructor() == null) {
+            throw new RuntimeException("The constructor for the structure '" + structure.getNameSimple() + "' is not defined in the source!");
+        }
+
+        structure.setActive(true);
+    }
+
+    private String getSignatureDefinition(String signature) {
+        var signatureParsed = signature.replaceAll(" ", "");
+
+        if (signatureParsed.contains(".")) {
+            return signatureParsed.substring(signature.lastIndexOf(".") + 1);
+        }
+
+        return signatureParsed;
     }
 }
