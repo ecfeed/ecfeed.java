@@ -13,7 +13,11 @@ public interface StructureInitializer {
 
     void activate(String... signatureStructure);
 
-    Object instantiate(String signatureStructure, Queue<String> parameters);
+    <T> T instantiate(Class<T> type, Queue<String> arguments);
+
+    Object instantiate(String signatureStructure, Queue<String> arguments);
+
+    Object[] getTestCase(String signatureMethod, Queue<String> arguments);
 
     Set<Structure> getStructuresRaw();
 

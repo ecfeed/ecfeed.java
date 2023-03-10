@@ -6,12 +6,14 @@ import java.util.Objects;
 
 public class Structure {
 
+    private Class source;
+
     private boolean active = false;
     private Constructor activeConstructor;
 
-    private Class source;
     private String nameSimple;
     private String nameQualified;
+
     private Map<String, Constructor> constructors;
 
     public boolean isActive() {

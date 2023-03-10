@@ -280,21 +280,152 @@ public class LoadSourceTest {
         initializer.activate("test.package.Element1(int,double,String,Element2)");
 
         assertThrows(RuntimeException.class, () -> {
-            initializer.activate("test.package.Element1(int,int,int)");
+            initializer.activate("test.package.Element1(int,double,string)");
         });
     }
 
 //---------------------------------------------------------------------------------------
 
     @Test
-    @DisplayName("Instantiate")
-    void instantiate() {
+    @DisplayName("Instantiate - Simple - Class")
+    void instantiateSimpleClassTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
+
         initializer.source("com.ecfeed.runner.reflection.source.correct");
-        initializer.activate("Element1(byte,short,int,long,float,double,boolean,char,String,Element2)");
         initializer.activate("Element2(int,int,int)");
-        initializer.instantiate("Element2", new LinkedList<>(Arrays.asList("-1", "-2", "-3")));
-//        initializer.instantiate("Element1", new LinkedList<>(Arrays.asList("1", "2", "3", "4", "5.0", "6.0", "true", "x", "test", "-1", "-2", "-3")));
+
+        Source.Element2 element = initializer.instantiate(Source.Element2.class, new LinkedList<>(Arrays.asList("1.9", "2", "3")));
+
+        assertEquals(1, element.a);
+        assertEquals(2, element.b);
+        assertEquals(3, element.c);
+    }
+
+    @Test
+    @DisplayName("Instantiate - Simple - Signature")
+    void instantiateSimpleSignatureTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element2(int,int,int)");
+
+        var element = (Source.Element2) initializer.instantiate("Element2", new LinkedList<>(Arrays.asList("1", "2", "3")));
+
+        assertEquals(1, element.a);
+        assertEquals(2, element.b);
+        assertEquals(3, element.c);
+    }
+
+    @Test
+    @DisplayName("Instantiate - Nested - Class")
+    void instantiateNestedClassTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        var element = initializer.instantiate(Source.Element1.class, new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3")));
+
+        assertEquals(1, element.a);
+        assertEquals(2.5, element.b);
+        assertEquals("test", element.c);
+        assertNotNull(element.d);
+        assertEquals(-1, element.d.a);
+        assertEquals(-2, element.d.b);
+        assertEquals(-3, element.d.c);
+    }
+
+    @Test
+    @DisplayName("Instantiate - Nested - Signature")
+    void instantiateNestedSignatureTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        var element = (Source.Element1) initializer.instantiate("Element1", new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3")));
+
+        assertEquals(1, element.a);
+        assertEquals(2.5, element.b);
+        assertEquals("test", element.c);
+        assertNotNull(element.d);
+        assertEquals(-1, element.d.a);
+        assertEquals(-2, element.d.b);
+        assertEquals(-3, element.d.c);
+    }
+
+//---------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Instantiate - Nested - Not active")
+    void instantiateNestedNotActiveTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+
+        assertThrows(RuntimeException.class, () -> {
+            initializer.instantiate(Source.Element1.class, new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3")));
+        });
+    }
+
+    @Test
+    @DisplayName("Instantiate - Nested - Wrong parameter type")
+    void instantiateNestedWrongSourceTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        assertThrows(RuntimeException.class, () -> {
+            initializer.instantiate(Source.Element1.class, new LinkedList<>(Arrays.asList("1.5", "2.5", "test", "-1", "-2", "-3")));
+        });
+    }
+
+    @Test
+    @DisplayName("Instantiate - Nested - Too short parameter list")
+    void instantiateNestedTooShortParameterListTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        assertThrows(RuntimeException.class, () -> {
+            initializer.instantiate(Source.Element1.class, new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2")));
+        });
+    }
+
+    @Test
+    @DisplayName("Instantiate - Nested - Too long parameter list")
+    void instantiateNestedTooLongParameterListTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        assertThrows(RuntimeException.class, () -> {
+            initializer.instantiate(Source.Element1.class, new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3", "-4")));
+        });
+    }
+
+//---------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Get test case")
+    void getTestCase() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        var testCase = initializer.getTestCase("method(Element1,String)", new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3", "ecFeed")));
+        System.out.println("test");
     }
 
 }
