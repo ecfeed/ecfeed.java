@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoadSourceTest {
@@ -19,7 +22,7 @@ public class LoadSourceTest {
     @DisplayName("List structures from classes - Single source")
     void listStructuresClassSingleTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource(Source.class);
+        initializer.source(Source.class);
 
         assertEquals(3, initializer.getStructuresRaw().size());
     }
@@ -28,7 +31,19 @@ public class LoadSourceTest {
     @DisplayName("List structures from classes - Multiple sources")
     void listStructuresClassMultipleTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource(Source.class, SourceNested1.class, SourceNested2.class, SourceNested3.class);
+        initializer.source(Source.class, SourceNested1.class, SourceNested2.class, SourceNested3.class);
+
+        assertEquals(10, initializer.getStructuresRaw().size());
+    }
+
+    @Test
+    @DisplayName("List structures from classes - Multiple sources - Sequential")
+    void listStructuresClassMultipleSequentialTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+        initializer.source(Source.class);
+        initializer.source(SourceNested1.class);
+        initializer.source(SourceNested2.class);
+        initializer.source(SourceNested3.class);
 
         assertEquals(10, initializer.getStructuresRaw().size());
     }
@@ -39,7 +54,7 @@ public class LoadSourceTest {
         StructureInitializer initializer = new StructureInitializerDefault();
 
         Assertions.assertThrows(RuntimeException.class, () -> {
-            initializer.addSource(Source.class, SourceErroneous.class);
+            initializer.source(Source.class, SourceErroneous.class);
         });
     }
 
@@ -47,7 +62,7 @@ public class LoadSourceTest {
     @DisplayName("List structures from classes - Correct name - Simple")
     void listStructuresClassNameSimpleTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource(Source.class, SourceNested1.class, SourceNested2.class, SourceNested3.class);
+        initializer.source(Source.class, SourceNested1.class, SourceNested2.class, SourceNested3.class);
 
         assertTrue(initializer.getNamesSimpleRaw().contains("Source"));
         assertTrue(initializer.getNamesSimpleRaw().contains("Element1"));
@@ -65,7 +80,7 @@ public class LoadSourceTest {
     @DisplayName("List structures from classes - Correct name - Qualified")
     void listStructuresClassNameQualifiedTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource(Source.class, SourceNested1.class, SourceNested2.class, SourceNested3.class);
+        initializer.source(Source.class, SourceNested1.class, SourceNested2.class, SourceNested3.class);
 
         assertTrue(initializer.getNamesQualifiedRaw().contains("com.ecfeed.runner.reflection.source.correct.Source"));
         assertTrue(initializer.getNamesQualifiedRaw().contains("com.ecfeed.runner.reflection.source.correct.Source.Element1"));
@@ -85,7 +100,7 @@ public class LoadSourceTest {
     @DisplayName("List structures from packages - Single source")
     void listStructuresPackageSingleTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct.nested1");
+        initializer.source("com.ecfeed.runner.reflection.source.correct.nested1");
 
         assertEquals(3, initializer.getStructuresRaw().size());
     }
@@ -94,7 +109,17 @@ public class LoadSourceTest {
     @DisplayName("List structures from packages - Multiple sources")
     void listStructuresPackageMultipleTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct.nested1", "com.ecfeed.runner.reflection.source.correct.nested2");
+        initializer.source("com.ecfeed.runner.reflection.source.correct.nested1", "com.ecfeed.runner.reflection.source.correct.nested2");
+
+        assertEquals(6, initializer.getStructuresRaw().size());
+    }
+
+    @Test
+    @DisplayName("List structures from packages - Multiple sources - Sequential")
+    void listStructuresPackageMultipleSequentialTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+        initializer.source("com.ecfeed.runner.reflection.source.correct.nested1");
+        initializer.source("com.ecfeed.runner.reflection.source.correct.nested2");
 
         assertEquals(6, initializer.getStructuresRaw().size());
     }
@@ -103,7 +128,7 @@ public class LoadSourceTest {
     @DisplayName("List structures from packages - Nested sources")
     void listStructuresPackageNestedTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         assertEquals(10, initializer.getStructuresRaw().size());
     }
@@ -114,7 +139,7 @@ public class LoadSourceTest {
         StructureInitializer initializer = new StructureInitializerDefault();
 
         Assertions.assertThrows(RuntimeException.class, () -> {
-            initializer.addSource("com.ecfeed.runner.reflection.source.correct", "com.ecfeed.runner.reflection.source.erroneous");
+            initializer.source("com.ecfeed.runner.reflection.source.correct", "com.ecfeed.runner.reflection.source.erroneous");
         });
     }
 
@@ -124,7 +149,7 @@ public class LoadSourceTest {
         StructureInitializer initializer = new StructureInitializerDefault();
 
         Assertions.assertThrows(RuntimeException.class, () -> {
-            initializer.addSource("com.ecfeed.runner.reflection.source.empty");
+            initializer.source("com.ecfeed.runner.reflection.source.empty");
         });
     }
 
@@ -132,7 +157,7 @@ public class LoadSourceTest {
     @DisplayName("List structures from packages - Correct name - Simple")
     void listStructuresPackageNameSimpleTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         assertTrue(initializer.getNamesSimpleRaw().contains("Source"));
         assertTrue(initializer.getNamesSimpleRaw().contains("Element1"));
@@ -150,7 +175,7 @@ public class LoadSourceTest {
     @DisplayName("List structures from classes - Correct name - Qualified")
     void listStructuresPackageNameQualifiedTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         assertTrue(initializer.getNamesQualifiedRaw().contains("com.ecfeed.runner.reflection.source.correct.Source"));
         assertTrue(initializer.getNamesQualifiedRaw().contains("com.ecfeed.runner.reflection.source.correct.Source.Element1"));
@@ -170,7 +195,7 @@ public class LoadSourceTest {
     @DisplayName("Activate structures - Empty")
     void activateStructuresNoneTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         assertEquals(0, initializer.getStructuresActive().size());
     }
@@ -179,7 +204,7 @@ public class LoadSourceTest {
     @DisplayName("Activate structures - Single")
     void activateStructuresSingleTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         initializer.activate("Element1(int,double,String,Element2)");
 
@@ -192,7 +217,7 @@ public class LoadSourceTest {
     @DisplayName("Activate structures - Single with spaces")
     void activateStructuresSingleWithSpacesTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         initializer.activate(" Element1 (int, double, String, Element2) ");
 
@@ -205,7 +230,7 @@ public class LoadSourceTest {
     @DisplayName("Activate structures - Single with package name")
     void activateStructuresSingleWithPackageNameTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         initializer.activate("test.package.Element1(int,double,String,Element2)");
 
@@ -218,7 +243,7 @@ public class LoadSourceTest {
     @DisplayName("Activate structures - Erroneous structure")
     void activateStructuresErroneousStructureTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         assertThrows(RuntimeException.class, () -> {
             initializer.activate("test.package.Element100(int,double,String,Element2)");
@@ -229,7 +254,7 @@ public class LoadSourceTest {
     @DisplayName("Activate structures - Erroneous constructor")
     void activateStructuresErroneousConstructorTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         assertThrows(RuntimeException.class, () -> {
             initializer.activate("test.package.Element1(int,double,String,Element2,int)");
@@ -240,7 +265,7 @@ public class LoadSourceTest {
     @DisplayName("Activate structures - Redefinition - Same constructor")
     void activateStructuresRedefinitionSameConstructorTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         initializer.activate("test.package.Element1(int,double,String,Element2)");
         initializer.activate("test.package.Element1(int,double,String,Element2)");
@@ -250,7 +275,7 @@ public class LoadSourceTest {
     @DisplayName("Activate structures - Redefinition - Different constructor")
     void activateStructuresRedefinitionDifferentConstructorTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
-        initializer.addSource("com.ecfeed.runner.reflection.source.correct");
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
 
         initializer.activate("test.package.Element1(int,double,String,Element2)");
 
@@ -258,4 +283,18 @@ public class LoadSourceTest {
             initializer.activate("test.package.Element1(int,int,int)");
         });
     }
+
+//---------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Instantiate")
+    void instantiate() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(byte,short,int,long,float,double,boolean,char,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+        initializer.instantiate("Element2", new LinkedList<>(Arrays.asList("-1", "-2", "-3")));
+//        initializer.instantiate("Element1", new LinkedList<>(Arrays.asList("1", "2", "3", "4", "5.0", "6.0", "true", "x", "test", "-1", "-2", "-3")));
+    }
+
 }
