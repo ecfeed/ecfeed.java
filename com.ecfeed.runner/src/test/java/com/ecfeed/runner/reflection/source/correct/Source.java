@@ -20,6 +20,16 @@ public class Source {
             this.b = b;
             this.c = c;
         }
+
+        @Override
+        public String toString() {
+            return "Element1{" +
+                    "a=" + a +
+                    ", b=" + b +
+                    ", c='" + c + '\'' +
+                    ", d=" + d +
+                    '}';
+        }
     }
 
     public static class Element2 {
@@ -29,6 +39,15 @@ public class Source {
             this.a = a;
             this.b = b;
             this.c = c;
+        }
+
+        @Override
+        public String toString() {
+            return "Element2{" +
+                    "a=" + a +
+                    ", b=" + b +
+                    ", c=" + c +
+                    '}';
         }
     }
 }

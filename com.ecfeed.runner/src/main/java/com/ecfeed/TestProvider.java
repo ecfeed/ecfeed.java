@@ -116,8 +116,8 @@ public class TestProvider {
         IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
 
         DataSession dataSession = DataSession.create(this.connection, this.model, method, generator);
-        dataSession.setGeneratorOptions(properties);
-        dataSession.setTemplate(template);
+        dataSession.setOptionsGenerator(properties);
+        dataSession.setExportTemplate(template);
 
         new Thread(() -> {
             try {
@@ -360,7 +360,7 @@ public class TestProvider {
         ConfigDefault.validateUserParameters(properties);
 
         DataSession dataSession = DataSession.create(this.connection, this.model, method, generator);
-        dataSession.setGeneratorOptions(properties);
+        dataSession.setOptionsGenerator(properties);
 
         IterableTestQueue<Object[]> iterator = IterableTestQueue.createForStream(dataSession);
 
@@ -593,7 +593,7 @@ public class TestProvider {
      */
     public List<String> getArgumentNames(String method) {
 
-        return Arrays.asList(HelperConnection.sendMockRequest(this.connection, this.model, method).getArgumentNames());
+        return HelperConnection.sendMockRequest(this.connection, this.model, method).getArgumentNames();
     }
 
     /**
@@ -604,7 +604,7 @@ public class TestProvider {
      */
     public List<String> getArgumentTypes(String method) {
 
-        return Arrays.asList(HelperConnection.sendMockRequest(this.connection, this.model, method).getArgumentTypes());
+        return HelperConnection.sendMockRequest(this.connection, this.model, method).getArgumentTypes();
     }
 
     private void addProperty(Map<String, Object> map, String key, String value) {

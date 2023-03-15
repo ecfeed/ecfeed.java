@@ -2,6 +2,7 @@ package com.ecfeed.helper;
 
 import com.ecfeed.config.ConfigDefault;
 import com.ecfeed.data.DataConnection;
+import com.ecfeed.data.DataHelper;
 import com.ecfeed.data.DataSession;
 import com.ecfeed.queue.IterableTestQueue;
 import com.ecfeed.type.TypeGenerator;
@@ -33,7 +34,7 @@ public final class HelperConnection {
 
     public static InputStream getChunkStreamForTestData(DataSession dataSession) {
 
-        return createChunkStreamGet(dataSession.getHttpClient(), dataSession.generateURLForTestData());
+        return createChunkStreamGet(dataSession.getHttpClient(), DataHelper.generateURLForTestData(dataSession));
     }
 
     public static InputStream sendFeedbackRequest(DataSession dataSession) {
@@ -48,8 +49,8 @@ public final class HelperConnection {
             try {
                 return sendPostRequest(
                         dataSession.getHttpClient(),
-                        dataSession.generateURLForFeedback(),
-                        dataSession.generateBodyForFeedback());
+                        DataHelper.generateURLForFeedback(dataSession),
+                        DataHelper.generateBodyForFeedback(dataSession));
 
             } catch (Exception e) {
 
@@ -84,7 +85,7 @@ public final class HelperConnection {
         userProperties.put(ConfigDefault.Key.parLength, "0");
 
         DataSession dataSession = DataSession.create(connection, model, method, TypeGenerator.Random);
-        dataSession.setGeneratorOptions(userProperties);
+        dataSession.setOptionsGenerator(userProperties);
 
         IterableTestQueue<Object[]> iterator = IterableTestQueue.createForStream(dataSession);
 

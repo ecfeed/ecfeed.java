@@ -1,8 +1,8 @@
 package com.ecfeed.queue;
 
-import com.ecfeed.chunk.parser.ChunkParser;
-import com.ecfeed.chunk.parser.ChunkParserExport;
-import com.ecfeed.chunk.parser.ChunkParserStream;
+import com.ecfeed.chunk.ChunkParser;
+import com.ecfeed.chunk.ChunkParserExport;
+import com.ecfeed.chunk.ChunkParserStream;
 import com.ecfeed.data.DataSession;
 
 import java.util.Iterator;

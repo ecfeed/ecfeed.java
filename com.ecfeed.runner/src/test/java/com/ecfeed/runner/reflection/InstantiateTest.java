@@ -16,7 +16,7 @@ import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LoadSourceTest {
+public class InstantiateTest {
 
     @Test
     @DisplayName("List structures from classes - Single source")
@@ -294,7 +294,7 @@ public class LoadSourceTest {
         initializer.source("com.ecfeed.runner.reflection.source.correct");
         initializer.activate("Element2(int,int,int)");
 
-        Source.Element2 element = initializer.instantiate(Source.Element2.class, new LinkedList<>(Arrays.asList("1.9", "2", "3")));
+        Source.Element2 element = initializer.instantiate(Source.Element2.class, new LinkedList<>(Arrays.asList("1", "2", "3")));
 
         assertEquals(1, element.a);
         assertEquals(2, element.b);
@@ -425,7 +425,71 @@ public class LoadSourceTest {
         initializer.activate("Element2(int,int,int)");
 
         var testCase = initializer.getTestCase("method(Element1,String)", new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3", "ecFeed")));
-        System.out.println("test");
+
+        assertEquals(2, testCase.length);
+        assertNotNull(testCase[0]);
+        assertEquals(1, ((Source.Element1)testCase[0]).a);
+        assertEquals(2.5, ((Source.Element1)testCase[0]).b);
+        assertEquals("test", ((Source.Element1)testCase[0]).c);
+        assertNotNull(((Source.Element1)testCase[0]).d);
+        assertEquals(-1, ((Source.Element1)testCase[0]).d.a);
+        assertEquals(-2, ((Source.Element1)testCase[0]).d.b);
+        assertEquals(-3, ((Source.Element1)testCase[0]).d.c);
+    }
+
+    @Test
+    @DisplayName("Get test case - Not active")
+    void getTestCaseNotActiveTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+
+        assertThrows(RuntimeException.class, () -> {
+            initializer.getTestCase("method(Element1,String)", new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3", "ecFeed")));
+        });
+    }
+
+    @Test
+    @DisplayName("Get test case - Wrong parameter type")
+    void getTestCaseWrongSourceTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        assertThrows(RuntimeException.class, () -> {
+            initializer.getTestCase("method(Element1,String)", new LinkedList<>(Arrays.asList("1.5", "2.5", "test", "-1", "-2", "-3", "ecFeed")));
+        });
+    }
+
+    @Test
+    @DisplayName("Get test case - Too short parameter list")
+    void getTestCaseTooShortParameterListTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        assertThrows(RuntimeException.class, () -> {
+            initializer.getTestCase("method(Element1,String)", new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3")));
+        });
+    }
+
+    @Test
+    @DisplayName("Get test case - Too long parameter list")
+    void getTestCaseTooLongParameterListTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+        initializer.activate("Element1(int,double,String,Element2)");
+        initializer.activate("Element2(int,int,int)");
+
+        assertThrows(RuntimeException.class, () -> {
+            initializer.getTestCase("method(Element1,String)", new LinkedList<>(Arrays.asList("1", "2.5", "test", "-1", "-2", "-3", "ecFeed", "ecFeed")));
+        });
     }
 
 }

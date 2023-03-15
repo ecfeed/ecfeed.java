@@ -1,55 +1,53 @@
 package com.ecfeed.data;
 
-import com.ecfeed.TestHandle;
 import com.ecfeed.config.ConfigDefault;
-import com.ecfeed.helper.HelperConnection;
+import com.ecfeed.structure.StructureInitializer;
+import com.ecfeed.structure.StructureInitializerDefault;
 import com.ecfeed.type.TypeExport;
 import com.ecfeed.type.TypeGenerator;
 import org.apache.http.client.HttpClient;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class DataSession {
 
     private final JSONObject testResults = new JSONObject();
 
     private final DataConnection connection;
-    private final TypeGenerator generatorType;
+    private final TypeGenerator generator;
     private final String method;
     private final String model;
 
-    private String[] argumentTypes;
-    private String[] argumentNames;
+    private final StructureInitializer initializer = new StructureInitializerDefault();
 
-    private Map<String, Object> generatorOptions = new HashMap<>();
-    private Map<String, String> custom = new HashMap<>();
-    private String template = "";
+    private List<String> argumentTypes = new ArrayList<>();
+    private List<String> argumentNames = new ArrayList<>();
+
+    private Map<String, Object> optionsGenerator = new HashMap<>();
+    private Map<String, String> optionsCustom = new HashMap<>();
+    private String exportTemplate = "";
+    private String methodNameSignature = "";
     private String methodNameQualified = "";
     private String testSessionId = "";
     private String testSessionLabel = "";
     private Object constraints = ConfigDefault.Value.parAll;
     private Object testSuites = ConfigDefault.Value.parAll;
     private Object choices = ConfigDefault.Value.parAll;
+
     private int timestamp = -1;
 
-    private boolean enabled = false;
-    private boolean completed = false;
+    private boolean feedbackEnabled = false;
+    private boolean feedbackCompleted = false;
+
     private int testCasesTotal = 0;
     private int testCasesParsed = 0;
 
-    private DataSession(DataConnection connection, String model, String method, TypeGenerator generatorType) {
+    private DataSession(DataConnection connection, String model, String method, TypeGenerator generator) {
         this.connection = connection;
         this.model = model;
         this.method = method;
-        this.generatorType = generatorType;
+        this.generator = generator;
     }
 
     public static DataSession create(DataConnection connection, String model, String method, TypeGenerator generatorType) {
@@ -57,84 +55,103 @@ public class DataSession {
         return new DataSession(connection, model, method, generatorType);
     }
 
-    public String generateURLForTestData() {
-        StringBuilder requestBuilder = new StringBuilder();
+    public JSONObject getTestResults() {
 
-        generateURLForTestDataCore(requestBuilder);
-        generateURLForTestDataParameters(requestBuilder);
-
-        return requestBuilder.toString();
+        return testResults;
     }
 
-    public String generateBodyForTestData() {
+    public DataConnection getConnection() {
 
-        return "";
+        return connection;
     }
 
-    public String generateURLForFeedback() {
-        StringBuilder requestBuilder = new StringBuilder();
+    public TypeGenerator getGenerator() {
 
-        generateURLForFeedbackCore(requestBuilder);
-        generateURLForFeedbackParameters(requestBuilder);
-
-        return requestBuilder.toString();
+        return generator;
     }
 
-    public String generateBodyForFeedback() {
-        JSONObject json = new JSONObject();
+    public String getMethodName() {
 
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackModel, getModel());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackMethod, getMethodNameQualified());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionId, getTestSessionId());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSessionLabel, getTestSessionLabel());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackFramework, ConfigDefault.Value.parClient);
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTimestamp, getTimestamp());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackCustom, getCustom());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestSuites, getTestSuites());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackConstraints, getConstraints());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackChoices, getChoices());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackTestResults, getTestResults());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorType, getGeneratorType().getNickname());
-        parseFeedbackElement(json, ConfigDefault.Key.reqFeedbackGeneratorOptions, getGeneratorOptions().entrySet().stream()
-                .map(e -> e.getKey() + "=" + e.getValue())
-                .collect(Collectors.joining(", ")));
-
-        return json.toString();
+        return method;
     }
 
-    public void setTemplate(String template) {
+    public String getModel() {
 
-        this.template = template;
+        return model;
     }
 
-    public void setMethodNameQualified(String methodNameQualified) {
+    public StructureInitializer getInitializer() {
 
-        this.methodNameQualified = methodNameQualified;
+        return initializer;
     }
 
-    public void setGeneratorOptions(Map<String, Object> properties) {
-        this.generatorOptions = new HashMap<>();
+    public List<String> getArgumentTypes() {
 
-        properties.forEach((key, value) -> {
-            if (key.equalsIgnoreCase(ConfigDefault.Key.parConstraints)) {
-                setConstraints(value);
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSuites)) {
-                setTestSuites(value);
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parChoices)) {
-                setChoices(value);
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSessionLabel)) {
-                setTestSessionLabel(value.toString());
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parCustom)) {
-                setCustom((Map<String, String>) value);
-            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parFeedback)) {
-                if (value.equals(true) || value.toString().equalsIgnoreCase("true")) {
-                    feedbackSetEnable();
-                }
-            } else {
-                this.generatorOptions.put(key, value);
-            }
-        });
+        return this.argumentTypes;
+    }
 
+    public List<String> getArgumentNames() {
+
+        return this.argumentNames;
+    }
+
+    public Map<String, Object> getOptionsGenerator() {
+
+        return optionsGenerator;
+    }
+
+    public Map<String, String> getOptionsCustom() {
+
+        return optionsCustom;
+    }
+
+    public Optional<String> getExportTemplate() {
+
+        if (exportTemplate == null || exportTemplate.isBlank() || exportTemplate.equals(TypeExport.Raw.toString())) {
+            return Optional.empty();
+        }
+
+        return Optional.of(exportTemplate);
+    }
+
+    public String getMethodNameSignature() {
+
+        return methodNameSignature;
+    }
+
+    public String getMethodNameQualified() {
+
+        return methodNameQualified;
+    }
+
+    public String getTestSessionId() {
+
+        return this.testSessionId;
+    }
+
+    public String getTestSessionLabel() {
+
+        return this.testSessionLabel;
+    }
+
+    public Object getConstraints() {
+
+        return constraints;
+    }
+
+    public Object getTestSuites() {
+
+        return testSuites;
+    }
+
+    public Object getChoices() {
+
+        return choices;
+    }
+
+    public int getTimestamp() {
+
+        return this.timestamp;
     }
 
     public void setTimestamp(int timestamp) {
@@ -142,62 +159,66 @@ public class DataSession {
         this.timestamp = timestamp;
     }
 
-    public String[] getArgumentTypes() {
+    public boolean isFeedbackEnabled() {
 
-        return this.argumentTypes;
+        return feedbackEnabled;
     }
 
-    public void setArgumentTypes(String[] argumentTypes) {
+    public boolean isFeedbackCompleted() {
 
-        this.argumentTypes = argumentTypes;
+        return feedbackCompleted;
     }
 
-    public String[] getArgumentNames() {
+    public int getTestCasesTotal() {
 
-        return this.argumentNames;
+        return testCasesTotal;
     }
 
-    public void setArgumentNames(String[] argumentNames) {
+    public int getTestCasesParsed() {
 
-        this.argumentNames = argumentNames;
+        return testCasesParsed;
     }
 
-    public HttpClient getHttpClient() {
+//-----------------------------------------------------------------------------
 
-        return connection.getHttpClient();
+    public void setOptionsGenerator(Map<String, Object> properties) {
+        this.optionsGenerator = new HashMap<>();
+
+        properties.forEach((key, value) -> {
+            if (key.equalsIgnoreCase(ConfigDefault.Key.parConstraints)) {
+                constraints = value;
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSuites)) {
+                testSuites = value;
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parChoices)) {
+                choices = value;
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parTestSessionLabel)) {
+                testSessionLabel = value.toString();
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parCustom)) {
+                optionsCustom = (Map<String, String>) value;
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parFeedback)) {
+                if (value.equals(true) || value.toString().equalsIgnoreCase("true")) {
+                    feedbackEnabled = true;
+                }
+            } else {
+                this.optionsGenerator.put(key, value);
+            }
+        });
+
     }
 
-    public void feedbackSetComplete() {
+    public void setExportTemplate(String exportTemplate) {
 
-        this.completed = true;
-
-        if (testCasesParsed == testCasesTotal) {
-            sendFeedback();
-        }
+        this.exportTemplate = exportTemplate;
     }
 
-    public Optional<TestHandle> feedbackHandleCreate(String data) {
+    public void setMethodNameSignature(String methodNameSignature) {
 
-        if (!this.enabled) {
-            return Optional.empty();
-        }
-
-        return Optional.of(TestHandle.create(this, data, "0:" + testCasesTotal++));
+        this.methodNameSignature = methodNameSignature;
     }
 
-    public void feedbackHandleRegister(String id, JSONObject feedback) {
+    public void setMethodNameQualified(String methodNameQualified) {
 
-        if (!this.enabled) {
-            return;
-        }
-
-        testCasesParsed++;
-
-        testResults.put(id, feedback);
-
-        if (testCasesParsed == testCasesTotal && completed) {
-            sendFeedback();
-        }
+        this.methodNameQualified = methodNameQualified;
     }
 
     public void setTestSessionId(String testSessionId) {
@@ -205,216 +226,43 @@ public class DataSession {
         this.testSessionId = testSessionId;
     }
 
-    private void generateURLForTestDataCore(StringBuilder builder) {
+    public void setFeedbackCompleted() {
 
-        builder.append(getHttpAddress()).append("/").append(ConfigDefault.Key.urlService);
+        this.feedbackCompleted = true;
     }
 
-    private void generateURLForTestDataParameters(StringBuilder builder) {
-        String type = getTemplate().isPresent() ? ConfigDefault.Value.parRequestTypeExport : ConfigDefault.Value.parRequestTypeStream;
+    public void incTestCasesParsed() {
 
-        builder.append("?");
-        builder.append(ConfigDefault.Key.reqDataRequestType).append("=").append(type);
-        builder.append("&");
-        builder.append(ConfigDefault.Key.reqDataClient).append("=").append(ConfigDefault.Value.parClient);
-        builder.append("&");
-        builder.append(ConfigDefault.Key.reqDataRequest).append("=").append(generateURLForTestDataRequest());
+        this.testCasesParsed++;
     }
 
-    private String generateURLForTestDataRequest() {
-        JSONObject request = new JSONObject();
+    public void incTestCasesTotal() {
 
-        request.put(ConfigDefault.Key.reqDataMode, getModel());
-        request.put(ConfigDefault.Key.reqDataMethod, getMethodName());
-        request.put(ConfigDefault.Key.reqDataUserData, generateURLForTestDataRequestUserData());
-
-        getTemplate().ifPresent(e -> request.put(ConfigDefault.Key.parDataTemplate, e));
-
-        try {
-            return URLEncoder.encode(request.toString(), StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("The request could not be generated.");
-        }
+        this.testCasesTotal++;
     }
 
-    private String generateURLForTestDataRequestUserData() {
-        JSONObject requestUserData = new JSONObject();
+    public void addTestCase(String id, JSONObject feedback) {
 
-        requestUserData.put(ConfigDefault.Key.parDataSource, getGeneratorType().getName());
-        requestUserData.put(ConfigDefault.Key.parProperties, getGeneratorOptions());
-
-        if (getConstraints() != null) {
-            requestUserData.put(ConfigDefault.Key.parConstraints, getConstraints());
-        }
-        if (getChoices() != null) {
-            requestUserData.put(ConfigDefault.Key.parChoices, getChoices());
-        }
-        if (getTestSuites() != null) {
-            requestUserData.put(ConfigDefault.Key.parTestSuites, getTestSuites());
-        }
-
-        return requestUserData.toString().replaceAll("\"", "'");
+        this.testResults.put(id, feedback);
     }
 
-    private void generateURLForFeedbackCore(StringBuilder builder) {
+    public void addArgumentType(String argumentType) {
 
-        builder.append(getHttpAddress()).append("/").append(ConfigDefault.Key.urlFeedback);
+        this.argumentTypes.add(argumentType);
     }
 
-    private void generateURLForFeedbackParameters(StringBuilder builder) { }
+    public void addArgumentName(String argumentName) {
 
-    private void parseFeedbackElement(JSONObject json, String key, Object value) {
-
-        if (value == null) {
-            return;
-        }
-
-        if (value instanceof String) {
-            if (value.toString().equalsIgnoreCase("") || value.toString().equalsIgnoreCase(ConfigDefault.Value.parAll)) {
-                return;
-            }
-        }
-
-        if (value instanceof Map<?,?>) {
-            if (((Map<?, ?>) value).size() == 0) {
-                return;
-            }
-        }
-
-        if (value instanceof Collection<?>) {
-            if (((Collection<?>) value).size() == 0) {
-                return;
-            }
-        }
-
-        json.put(key, value);
+        this.argumentNames.add(argumentName);
     }
 
-    private TypeGenerator getGeneratorType() {
+//-----------------------------------------------------------------------------
 
-        return generatorType;
+    public HttpClient getHttpClient() {
+
+        return connection.getHttpClient();
     }
 
-    private String getMethodName() {
-
-        return method;
-    }
-
-    private String getModel() {
-
-        return model;
-    }
-
-    private JSONObject getTestResults() {
-
-        return testResults;
-    }
-
-    private Optional<String> getTemplate() {
-
-        if (this.template == null || this.template.isBlank() || this.template.equals(TypeExport.Raw)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(template);
-    }
-
-    private String getMethodNameQualified() {
-
-        return methodNameQualified;
-    }
-
-    private Map<String, Object> getGeneratorOptions() {
-
-        return generatorOptions;
-    }
-
-    private String getTestSessionId() {
-
-        return this.testSessionId;
-    }
-
-    private String getTestSessionLabel() {
-
-        return this.testSessionLabel;
-    }
-
-    private void setTestSessionLabel(String testSessionLabel) {
-
-        this.testSessionLabel = testSessionLabel;
-    }
-
-    private int getTimestamp() {
-
-        return this.timestamp;
-    }
-
-    private Map<String, String> getCustom() {
-
-        return custom;
-    }
-
-    private void setCustom(Map<String, String> custom) {
-
-        this.custom = custom;
-    }
-
-    private Object getConstraints() {
-
-        return constraints;
-    }
-
-    private void setConstraints(Object constraints) {
-
-        this.constraints = constraints;
-    }
-
-    private Object getTestSuites() {
-
-        return testSuites;
-    }
-
-    private void setTestSuites(Object testSuites) {
-
-        this.testSuites = testSuites;
-    }
-
-    private Object getChoices() {
-
-        return choices;
-    }
-
-    private void setChoices(Object choices) {
-
-        this.choices = choices;
-    }
-
-    private String getHttpAddress() {
-        String httpAddress = connection.getHttpAddress();
-
-        if (httpAddress == null) {
-            throw new IllegalArgumentException("The generator address is not defined");
-        }
-
-        if (!httpAddress.startsWith("https://")) {
-            throw new IllegalArgumentException("The generator address should start with https://");
-        }
-
-        return httpAddress;
-    }
-
-    private void feedbackSetEnable() {
-
-        this.enabled = true;
-    }
-
-    private void sendFeedback() {
-
-        if (!this.enabled) {
-            return;
-        }
-
-        HelperConnection.sendFeedbackRequest(this);
-    }
+//-----------------------------------------------------------------------------
 
 }

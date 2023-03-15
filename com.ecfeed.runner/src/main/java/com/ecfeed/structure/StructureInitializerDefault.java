@@ -44,22 +44,6 @@ public class StructureInitializerDefault implements StructureInitializer {
         structuresSetter.activate(structures, signatureStructure);
     }
 
-    private void addStructure(Structure source) {
-        var success = structures.add(source);
-
-        if (!success) {
-
-            for (Structure structure : structures) {
-                if (structure.equals(source)) {
-                    throw new RuntimeException("The structure '" + source.getNameQualified() + "' could not be added! " +
-                            "There is at least one additional structure with the same name, i.e. '" + structure.getNameQualified() + "'.");
-                }
-            }
-
-            throw new RuntimeException("The structure '" + source.getNameQualified() + "' could not be added!");
-        }
-    }
-
     @Override
     public Set<Structure> getStructuresRaw() {
 
@@ -97,6 +81,46 @@ public class StructureInitializerDefault implements StructureInitializer {
     }
 
     @Override
+    public <T> T instantiate(Class<T> type, Queue<String> arguments) {
+
+        return type.cast(instantiate(getTypeName(type), arguments));
+    }
+
+    @Override
+    public Object instantiate(String signature, Queue<String> arguments) {
+        Object element = instantiateStructure(getStructure(signature), arguments);
+
+        if (arguments.size() > 0) {
+            throw new RuntimeException("The list of parameters is too long! Parameters remaining: '" + arguments.size() + "'.");
+        }
+
+        return element;
+    }
+
+    @Override
+    public Object[] getTestCase(String signatureMethod, Queue<String> arguments) {
+        var parameters = getMethodParameters(signatureMethod);
+
+        var testCase = new ArrayList<>();
+
+        for (var parameter : parameters) {
+            if (isPrimitive(parameter)) {
+                testCase.add(instantiatePrimitive(parameter, arguments));
+            } else if (isEnum(parameter)) {
+                testCase.add(instantiateEnum(arguments));
+            } else {
+                testCase.add(instantiateStructure(getStructure(parameter), arguments));
+            }
+        }
+
+        if (arguments.size() > 0) {
+            throw new RuntimeException("The list of parameters is too long! Parameters remaining: '" + arguments.size() + "'.");
+        }
+
+        return testCase.toArray();
+    }
+
+    @Override
     public String toString() {
         var builder = new StringBuilder();
 
@@ -107,24 +131,33 @@ public class StructureInitializerDefault implements StructureInitializer {
         return builder.toString();
     }
 
-    @Override
-    public <T> T instantiate(Class<T> type, Queue<String> arguments) {
+    private void addStructure(Structure source) {
+        var success = structures.add(source);
 
-        return type.cast(instantiate(getTypeName(type), arguments));
-    }
+        if (!success) {
 
-    @Override
-    public Object instantiate(String signature, Queue<String> arguments) {
-        Object element = instantiate(getStructure(signature), arguments);
+            for (Structure structure : structures) {
+                if (structure.equals(source)) {
+                    throw new RuntimeException("The structure '" + source.getNameQualified() + "' could not be added! " +
+                            "There is at least one additional structure with the same name, i.e. '" + structure.getNameQualified() + "'.");
+                }
+            }
 
-        if (arguments.size() > 0) {
-            throw new RuntimeException("The list of parameters is too long! Parameters remaining: '" + arguments.size() + "'.");
+            throw new RuntimeException("The structure '" + source.getNameQualified() + "' could not be added!");
         }
-
-        return element;
     }
 
-    private Object instantiate(Structure structure, Queue<String> parameters) {
+    private Object instantiatePrimitive(String signature, Queue<String> arguments) {
+
+        return getValue(signature, arguments);
+    }
+
+    private Object instantiateEnum(Queue<String> arguments) {
+
+        return getValue("String", arguments);
+    }
+
+    private Object instantiateStructure(Structure structure, Queue<String> arguments) {
 
         if (!structure.isActive()) {
             throw new RuntimeException("The required structure '" + structure.getNameSimple() + "' has not been activated!'");
@@ -133,7 +166,7 @@ public class StructureInitializerDefault implements StructureInitializer {
         var constructorParameters = new LinkedList<>();
 
         for (var parameter : structure.getActiveConstructor().getParameters()) {
-            constructorParameters.add(getValue(parameter.getType(), parameters));
+            constructorParameters.add(getValue(getTypeName(parameter.getType()), arguments));
         }
 
         try {
@@ -154,30 +187,63 @@ public class StructureInitializerDefault implements StructureInitializer {
         throw new RuntimeException("The required structure '" + signature + "' could not be found in the source!");
     }
 
-    private Object getValue(Class<?> type, Queue<String> parameters) {
-        var typeName = getTypeName(type);
+    private boolean isPrimitive(String typeName) {
 
         switch (typeName) {
             case "byte":
-                return parsePrimitive(parameters, typeName, Byte::parseByte);
             case "short":
-                return parsePrimitive(parameters, typeName, Short::parseShort);
             case "int":
-                return parsePrimitive(parameters, typeName, Integer::parseInt);
             case "long":
-                return parsePrimitive(parameters, typeName, Long::parseLong);
             case "float":
-                return parsePrimitive(parameters, typeName, Float::parseFloat);
             case "double":
-                return parsePrimitive(parameters, typeName, Double::parseDouble);
             case "boolean":
-                return parsePrimitive(parameters, typeName, Boolean::parseBoolean);
             case "char":
-                return getPrimitive(parameters).charAt(0);
             case "String":
-                return parameters.poll();
+                return true;
             default: {
-                return instantiate(getStructure(typeName), parameters);
+                return false;
+            }
+        }
+    }
+
+    private boolean isEnum(String typeName) {
+
+        try {
+            getStructure(typeName);
+        } catch (Exception e) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private Object getValue(String typeName, Queue<String> arguments) {
+
+        if (arguments.size() <= 0) {
+            throw new RuntimeException("The list of arguments is too short");
+        }
+
+        switch (typeName) {
+            case "byte":
+                return parsePrimitive(arguments, typeName, Byte::parseByte);
+            case "short":
+                return parsePrimitive(arguments, typeName, Short::parseShort);
+            case "int":
+                return parsePrimitive(arguments, typeName, Integer::parseInt);
+            case "long":
+                return parsePrimitive(arguments, typeName, Long::parseLong);
+            case "float":
+                return parsePrimitive(arguments, typeName, Float::parseFloat);
+            case "double":
+                return parsePrimitive(arguments, typeName, Double::parseDouble);
+            case "boolean":
+                return parsePrimitive(arguments, typeName, Boolean::parseBoolean);
+            case "char":
+                return getPrimitive(arguments).charAt(0);
+            case "String":
+                return arguments.poll();
+            default: {
+                return instantiateStructure(getStructure(typeName), arguments);
             }
         }
     }
@@ -193,16 +259,6 @@ public class StructureInitializerDefault implements StructureInitializer {
         return nameSimple;
     }
 
-    private String getPrimitive(Queue<String> parameters) {
-        var value = parameters.poll();
-
-        if (value == null) {
-            throw new RuntimeException("Primitive types cannot accept null values!");
-        }
-
-        return value;
-    }
-
     private Object parsePrimitive(Queue<String> parameters, String type, Function<String, Object> fun) {
         var value = getPrimitive(parameters);
 
@@ -213,17 +269,15 @@ public class StructureInitializerDefault implements StructureInitializer {
         }
     }
 
-    @Override
-    public Object[] getTestCase(String signatureMethod, Queue<String> arguments) {
-        var parameters = getMethodParameters(signatureMethod);
+    private String getPrimitive(Queue<String> arguments) {
 
-        var testCase = new ArrayList<>();
+        var value = arguments.poll();
 
-        for (var parameter : parameters) {
-            testCase.add(instantiate(getStructure(parameter), arguments));
+        if (value == null) {
+            throw new RuntimeException("Primitive types cannot accept null values!");
         }
 
-        return testCase.toArray();
+        return value;
     }
 
     private String[] getMethodParameters(String signature) {

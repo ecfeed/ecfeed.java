@@ -80,6 +80,7 @@ public final class ConfigDefault {
         final public static String reqTestStatusEnd = "END_DATA";
         final public static String reqTestInfo = "info";
         final public static String reqTestInfoMethod = "method";
+        final public static String reqTestInfoSignature = "signature";
         final public static String reqTestInfoSessionId = "testSessionId";
         final public static String reqTestInfoTimestamp = "timestamp";
         final public static String reqTestInfoCase = "testCase";

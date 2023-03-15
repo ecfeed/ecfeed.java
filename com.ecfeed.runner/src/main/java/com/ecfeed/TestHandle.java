@@ -1,5 +1,6 @@
 package com.ecfeed;
 
+import com.ecfeed.data.DataHelper;
 import com.ecfeed.data.DataSession;
 import org.json.JSONObject;
 
@@ -266,7 +267,7 @@ public final class TestHandle {
     private String register() {
         JSONObject data = toJSONObject();
 
-        this.dataSession.feedbackHandleRegister(this.id, data);
+        DataHelper.feedbackHandleRegister(dataSession, this.id, data);
 
         return data.toString();
     }

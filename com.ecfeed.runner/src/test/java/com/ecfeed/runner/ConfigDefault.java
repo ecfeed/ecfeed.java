@@ -10,7 +10,7 @@ public class ConfigDefault {
     public static final boolean PROD = true;
     public static final boolean DEVELOP = false;
 
-    public static String KEYSTORE_PROD = "C:\\Users\\kskor\\.ecfeed\\security_dev.p12";
+    public static String KEYSTORE_PROD = "C:\\Users\\kskor\\.ecfeed\\security.p12";
     public static final String MODEL_DEVELOP = "QERK-K7BW-ME4G-W3TT-NT32";
     public static final String MODEL_PROD = "IMHL-K0DU-2U0I-J532-25J9";
     public static final String MODEL_DUMMY = "XXXX-XXXX-XXXX-XXXX-XXXX";
