@@ -1,6 +1,8 @@
 package com.ecfeed.chunk;
 
+import java.util.Optional;
+
 public interface ChunkParser<T> {
 
-    T parse(String chunk);
+    Optional<T> parse(String chunk);
 }

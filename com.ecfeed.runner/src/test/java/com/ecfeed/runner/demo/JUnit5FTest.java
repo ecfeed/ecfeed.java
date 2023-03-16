@@ -290,7 +290,7 @@ public class JUnit5FTest {
 
         for (Object[] chunk : testProvider.generateNWise(ConfigDefault.F_TEST, config)) {
             System.out.println(Arrays.toString(chunk));
-            Oracle.validateMapFTest((int) chunk[0], (int) chunk[1], (int) chunk[2], (TestHandle) chunk[3]);
+            Oracle.validateMapFTest(Integer.parseInt((String) chunk[0]), Integer.parseInt((String) chunk[1]), Integer.parseInt((String) chunk[2]), (TestHandle) chunk[3]);
         }
     }
 

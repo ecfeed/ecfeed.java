@@ -11,9 +11,13 @@ public class ConfigDefault {
     public static final boolean DEVELOP = false;
 
     public static String KEYSTORE_PROD = "C:\\Users\\kskor\\.ecfeed\\security.p12";
+    public static String KEYSTORE_DEVELOP = "C:\\Users\\kskor\\.ecfeed\\security_dev.p12";
     public static final String MODEL_DEVELOP = "QERK-K7BW-ME4G-W3TT-NT32";
     public static final String MODEL_PROD = "IMHL-K0DU-2U0I-J532-25J9";
     public static final String MODEL_DUMMY = "XXXX-XXXX-XXXX-XXXX-XXXX";
+    public static final String GENERATOR_ADDRESS_PROD = "https://gen.ecfeed.com";
+    public static final String GENERATOR_ADDRESS_DEVELOP = "https://develop-gen.ecfeed.com";
+    public static final String KEYSTORE_PASSWORD = "changeit";
 
     public static TestProvider getTestProvider(boolean prod) {
 
@@ -29,7 +33,8 @@ public class ConfigDefault {
 
     private static TestProvider getTestProviderDevelop() {
         Map<String, String> configProvider = new HashMap<>();
-        configProvider.put("generatorAddress", "https://develop-gen.ecfeed.com");
+        configProvider.put("generatorAddress", GENERATOR_ADDRESS_DEVELOP);
+        configProvider.put("keyStorePath", KEYSTORE_DEVELOP);
 
         return TestProvider.create(ConfigDefault.MODEL_DEVELOP, configProvider);
     }

@@ -227,6 +227,32 @@ public class InstantiateTest {
     }
 
     @Test
+    @DisplayName("Activate structures - Single with names")
+    void activateStructuresSingleWithNamesTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+
+        initializer.activate(" Element1(int arg1,double arg2,String arg3,Element2 arg4) ");
+
+        assertEquals(1, initializer.getStructuresActive().size());
+        assertEquals(1, initializer.getNamesSimpleActive().size());
+        assertEquals(1, initializer.getNamesQualifiedActive().size());
+    }
+
+    @Test
+    @DisplayName("Activate structures - Single with names and spaces")
+    void activateStructuresSingleWithNamesAndSpacesTest() {
+        StructureInitializer initializer = new StructureInitializerDefault();
+        initializer.source("com.ecfeed.runner.reflection.source.correct");
+
+        initializer.activate(" Element1 ( int arg1 , double arg2 , String arg3 , Element2 arg4) ");
+
+        assertEquals(1, initializer.getStructuresActive().size());
+        assertEquals(1, initializer.getNamesSimpleActive().size());
+        assertEquals(1, initializer.getNamesQualifiedActive().size());
+    }
+
+    @Test
     @DisplayName("Activate structures - Single with package name")
     void activateStructuresSingleWithPackageNameTest() {
         StructureInitializer initializer = new StructureInitializerDefault();

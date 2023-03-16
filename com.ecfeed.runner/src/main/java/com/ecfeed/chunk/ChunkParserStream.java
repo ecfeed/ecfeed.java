@@ -1,31 +1,28 @@
 package com.ecfeed.chunk;
 
-import com.ecfeed.config.ConfigDefault;
+import com.ecfeed.Factory;
 import com.ecfeed.TestHandle;
-import com.ecfeed.data.DataHelper;
+import com.ecfeed.config.ConfigDefault;
 import com.ecfeed.data.DataSession;
+import com.ecfeed.data.DataSessionFacade;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Optional;
 
-public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
-    private DataSession dataSession;
-
-    private String[] argumentTypes;
-    private String[] argumentNames;
+public class ChunkParserStream implements ChunkParser<Object[]> {
+    private final DataSessionFacade dataSessionFacade;
 
     private ChunkParserStream(DataSession dataSession) {
 
-        this.dataSession = dataSession;
+        dataSessionFacade = Factory.getDataSessionFacade(dataSession);
     }
 
-    public static ChunkParserStream create(DataSession dataSession) {
+    public static ChunkParserStream create(DataSession data) {
 
-        return new ChunkParserStream(dataSession);
+        return new ChunkParserStream(data);
     }
 
     @Override
@@ -62,7 +59,7 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
         String value = json.getString(ConfigDefault.Key.reqTestStatus);
 
         if (value.contains(ConfigDefault.Key.reqTestStatusEnd)) {
-            DataHelper.feedbackSetComplete(dataSession);
+            dataSessionFacade.feedbackSetComplete();
         }
 
         return Optional.empty();
@@ -73,18 +70,19 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
 
         if (value.contains(ConfigDefault.Key.reqTestInfoMethod)) {
             parseInfoArgumentTypes(value);
+            parseInfoMethodSignature();
         }
 
         if (value.contains(ConfigDefault.Key.reqTestInfoTimestamp)) {
-            dataSession.setTimestamp(new JSONObject(value).getInt(ConfigDefault.Key.reqTestInfoTimestamp));
+            dataSessionFacade.getDataSession().setTimestamp(new JSONObject(value).getInt(ConfigDefault.Key.reqTestInfoTimestamp));
         }
 
         if (value.contains(ConfigDefault.Key.reqTestInfoSessionId)) {
-            dataSession.setTestSessionId(new JSONObject(value).getString(ConfigDefault.Key.reqTestInfoSessionId));
+            dataSessionFacade.getDataSession().setTestSessionId(new JSONObject(value).getString(ConfigDefault.Key.reqTestInfoSessionId));
         }
 
         if (value.contains(ConfigDefault.Key.reqTestInfoSignature)) {
-            DataHelper.activateStructure(dataSession, new JSONObject(value).getString(ConfigDefault.Key.reqTestInfoSignature));
+            dataSessionFacade.activateStructure(new JSONObject(value).getString(ConfigDefault.Key.reqTestInfoSignature));
         }
 
         return Optional.empty();
@@ -95,40 +93,55 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
 
         parsedMethod = new JSONObject(method).getString(ConfigDefault.Key.reqTestInfoMethod);
 
-        dataSession.setMethodNameQualified(parsedMethod);
+        dataSessionFacade.getDataSession().setMethodNameQualified(parsedMethod);
 
         parsedMethod = parsedMethod.split("[()]")[1];
-        String[] argument = parsedMethod.split(", ");
-
-        argumentTypes = new String[argument.length];
-        argumentNames = new String[argument.length];
+        String[] argument = parsedMethod.split(",");
 
         for (int i = 0 ; i < argument.length ; i++) {
-            String[] parsedArgument = argument[i].split(" ");
-            dataSession.addArgumentType(parsedArgument[0]);
-            dataSession.addArgumentName(parsedArgument[1]);
-        }
+            String[] parsedArgument = argument[i].trim().split(" ");
 
-        dataSession.setMethodNameSignature(parseInfoMethodSignature());
+            if (parsedArgument.length == 1) {
+                parseInfoArgumentTypesDefault(parsedArgument[0]);
+            } else {
+                parseInfoArgumentTypesLegacy(parsedArgument[0], parsedArgument[1]);
+            }
+        }
     }
 
-    private String parseInfoMethodSignature() {
-        var parsedName = dataSession.getMethodName().substring(dataSession.getMethodName().lastIndexOf("."));
-        var parsedTypes = Arrays.asList(argumentTypes);
-        return parsedName + "(" + String.join(",", parsedTypes) + ")";
+    private void parseInfoArgumentTypesLegacy(String type, String name) {
+
+        if (type.equalsIgnoreCase("Structure")) {
+            dataSessionFacade.getDataSession().addArgumentType(name);
+        } else {
+            dataSessionFacade.getDataSession().addArgumentType(type);
+        }
+
+        dataSessionFacade.getDataSession().addArgumentName(name);
+    }
+
+    private void parseInfoArgumentTypesDefault(String type) {
+
+        dataSessionFacade.getDataSession().addArgumentType(type);
+        dataSessionFacade.getDataSession().addArgumentName("arg" + dataSessionFacade.getDataSession().getArgumentNames().size());
+    }
+
+    private void parseInfoMethodSignature() {
+
+        var methodName = dataSessionFacade.getDataSession().getMethodName().substring(dataSessionFacade.getDataSession().getMethodName().lastIndexOf("."));
+        var methodTypes = dataSessionFacade.getDataSession().getArgumentTypes();
+        var methodSignature = methodName + "(" + String.join(",", methodTypes) + ")";
+
+        dataSessionFacade.getDataSession().setMethodNameSignature(methodSignature);
     }
 
     private Optional<Object[]> parseTestCase(JSONObject json) {
 
         if (json.keySet().contains(ConfigDefault.Key.reqTestInfoCase)) {
-            Optional<TestHandle> feedbackHandle = DataHelper.feedbackHandleCreate(dataSession, json.toString());
+            Optional<TestHandle> feedbackHandle = dataSessionFacade.feedbackHandleCreate(json.toString());
             JSONArray arguments = json.getJSONArray(ConfigDefault.Key.reqTestInfoCase);
 
-            if (feedbackHandle.isPresent()) {
-                return parseTestCaseFeedback(arguments, feedbackHandle.get());
-            }
-
-            return parseTestCase(arguments);
+            return feedbackHandle.map(testHandle -> parseTestCaseWithFeedback(arguments, testHandle)).orElseGet(() -> parseTestCase(arguments));
         }
 
         return Optional.empty();
@@ -141,24 +154,29 @@ public class ChunkParserStream implements ChunkParser<Optional<Object[]>> {
             response.add(json.getJSONObject(i).getString(ConfigDefault.Key.reqTestInfoCaseValue));
         }
 
-        var test = DataHelper.getTestCase(dataSession, response);
+        var test = dataSessionFacade.getTestCase(response);
 
         return Optional.of(test);
     }
 
-    private Optional<Object[]> parseTestCaseFeedback(JSONArray json, TestHandle testHandle) {
+    private Optional<Object[]> parseTestCaseWithFeedback(JSONArray json, TestHandle testHandle) {
         var response = new LinkedList<String>();
 
         for (int i = 0 ; i < json.length() ; i++) {
             response.add(json.getJSONObject(i).getString(ConfigDefault.Key.reqTestInfoCaseValue));
         }
 
-        var test = DataHelper.getTestCase(dataSession, response);
+        var test = dataSessionFacade.getTestCase(response);
 
-        Object[] destArray = new Object[test.length + 1];
+        return Optional.of(parseTestCaseWithFeedbackExtendArray(test, testHandle));
+    }
+
+    private Object[] parseTestCaseWithFeedbackExtendArray(Object[] test, TestHandle testHandle) {
+
+        var destArray = new Object[test.length + 1];
         System.arraycopy(test, 0, destArray, 0, test.length);
         destArray[destArray.length - 1] = testHandle;
 
-        return Optional.of(destArray);
+        return destArray;
     }
 }

@@ -1,7 +1,7 @@
 package com.ecfeed;
 
-import com.ecfeed.data.DataHelper;
 import com.ecfeed.data.DataSession;
+import com.ecfeed.data.DataSessionFacadeDefault;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -265,9 +265,11 @@ public final class TestHandle {
     }
 
     private String register() {
+        var dataSessionFacade = Factory.getDataSessionFacade(dataSession);
+
         JSONObject data = toJSONObject();
 
-        DataHelper.feedbackHandleRegister(dataSession, this.id, data);
+        dataSessionFacade.feedbackHandleRegister(this.id, data);
 
         return data.toString();
     }

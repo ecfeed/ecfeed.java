@@ -8,13 +8,14 @@ import com.ecfeed.type.TypeGenerator;
 import org.apache.http.client.HttpClient;
 import org.json.JSONObject;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class DataSession {
 
     private final JSONObject testResults = new JSONObject();
 
-    private final DataConnection connection;
+    private final DataSessionConnection connection;
     private final TypeGenerator generator;
     private final String method;
     private final String model;
@@ -43,14 +44,14 @@ public class DataSession {
     private int testCasesTotal = 0;
     private int testCasesParsed = 0;
 
-    private DataSession(DataConnection connection, String model, String method, TypeGenerator generator) {
+    private DataSession(DataSessionConnection connection, String model, String method, TypeGenerator generator) {
         this.connection = connection;
         this.model = model;
         this.method = method;
         this.generator = generator;
     }
 
-    public static DataSession create(DataConnection connection, String model, String method, TypeGenerator generatorType) {
+    public static DataSession create(DataSessionConnection connection, String model, String method, TypeGenerator generatorType) {
 
         return new DataSession(connection, model, method, generatorType);
     }
@@ -60,7 +61,7 @@ public class DataSession {
         return testResults;
     }
 
-    public DataConnection getConnection() {
+    public DataSessionConnection getConnection() {
 
         return connection;
     }
@@ -263,6 +264,15 @@ public class DataSession {
         return connection.getHttpClient();
     }
 
-//-----------------------------------------------------------------------------
+    public String getHttpAddress() {
 
+        return connection.getHttpAddress();
+    }
+
+    public Path getKeyStorePath() {
+
+        return connection.getKeyStorePath();
+    }
+
+//-----------------------------------------------------------------------------
 }

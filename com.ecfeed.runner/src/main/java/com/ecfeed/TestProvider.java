@@ -1,9 +1,9 @@
 package com.ecfeed;
 
 import com.ecfeed.config.ConfigDefault;
-import com.ecfeed.data.DataConnection;
+import com.ecfeed.connection.ConnectionHandler;
+import com.ecfeed.data.DataSessionConnection;
 import com.ecfeed.data.DataSession;
-import com.ecfeed.helper.HelperConnection;
 import com.ecfeed.params.*;
 import com.ecfeed.queue.IterableTestQueue;
 import com.ecfeed.type.TypeExport;
@@ -12,7 +12,6 @@ import com.ecfeed.type.TypeGenerator;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +25,12 @@ public class TestProvider {
     private static int ITERATOR_TIMEOUT_STEP = 100;
 
     private String model;
-    private DataConnection connection;
+    private DataSessionConnection dataSessionConnection;
+    private ConnectionHandler connectionHandler;
 
     private TestProvider(String model, Map<String, String> config) {
+
+        connectionHandler = Factory.getConnectionHandler();
 
         setup(model, config);
     }
@@ -73,7 +75,7 @@ public class TestProvider {
      */
     public String getAddress() {
 
-        return this.connection.getHttpAddress();
+        return this.dataSessionConnection.getHttpAddress();
     }
 
     /**
@@ -83,7 +85,7 @@ public class TestProvider {
      */
     public Path getKeyStorePath() {
 
-        return this.connection.getKeyStorePath();
+        return this.dataSessionConnection.getKeyStorePath();
     }
 
     /**
@@ -113,15 +115,15 @@ public class TestProvider {
             template = typeExport.toString();
         }
 
-        IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
+        var iterator = Factory.getIterableTestQueueExport();
 
-        DataSession dataSession = DataSession.create(this.connection, this.model, method, generator);
+        DataSession dataSession = DataSession.create(this.dataSessionConnection, this.model, method, generator);
         dataSession.setOptionsGenerator(properties);
         dataSession.setExportTemplate(template);
 
         new Thread(() -> {
             try {
-                HelperConnection.processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
+                connectionHandler.processChunkStream(iterator, connectionHandler.getChunkStreamForTestData(dataSession));
             } finally {
                 iterator.terminate();
             }
@@ -359,14 +361,14 @@ public class TestProvider {
         ConfigDefault.processUserParameters(properties);
         ConfigDefault.validateUserParameters(properties);
 
-        DataSession dataSession = DataSession.create(this.connection, this.model, method, generator);
+        DataSession dataSession = DataSession.create(this.dataSessionConnection, this.model, method, generator);
         dataSession.setOptionsGenerator(properties);
 
-        IterableTestQueue<Object[]> iterator = IterableTestQueue.createForStream(dataSession);
+        var iterator = Factory.getIterableTestQueueStream(dataSession);
 
         new Thread(() -> {
             try {
-                HelperConnection.processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
+                connectionHandler.processChunkStream(iterator, connectionHandler.getChunkStreamForTestData(dataSession));
             } finally {
                 iterator.terminate();
             }
@@ -577,12 +579,12 @@ public class TestProvider {
     }
 
     /**
-     * Checks whether the connection with the ecFeed service can be established.
+     * Checks whether the connectionHandler with the ecFeed service can be established.
      * In case of an error, and exception is thrown.
      */
     public void validateConnection() {
 
-        HelperConnection.validateConnection(this.connection);
+        connectionHandler.validateConnection(this.dataSessionConnection);
     }
 
     /**
@@ -593,7 +595,7 @@ public class TestProvider {
      */
     public List<String> getArgumentNames(String method) {
 
-        return HelperConnection.sendMockRequest(this.connection, this.model, method).getArgumentNames();
+        return connectionHandler.sendMockRequest(this.dataSessionConnection, this.model, method).getArgumentNames();
     }
 
     /**
@@ -604,7 +606,7 @@ public class TestProvider {
      */
     public List<String> getArgumentTypes(String method) {
 
-        return HelperConnection.sendMockRequest(this.connection, this.model, method).getArgumentTypes();
+        return connectionHandler.sendMockRequest(this.dataSessionConnection, this.model, method).getArgumentTypes();
     }
 
     private void addProperty(Map<String, Object> map, String key, String value) {
@@ -617,7 +619,7 @@ public class TestProvider {
     private void setup(String model, Map<String, String> config) {
 
         this.model = model;
-        this.connection = DataConnection.create(
+        this.dataSessionConnection = DataSessionConnection.get(
                 setupExtractGeneratorAddress(config),
                 setupExtractKeyStorePath(config),
                 setupExtractKeyStorePassword(config)

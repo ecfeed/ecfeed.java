@@ -2,7 +2,7 @@ package com.ecfeed.chunk;
 
 import java.util.Optional;
 
-public class ChunkParserExport implements ChunkParser<Optional<String>> {
+public class ChunkParserExport implements ChunkParser<String> {
 
     private ChunkParserExport() { }
 

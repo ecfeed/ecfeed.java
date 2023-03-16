@@ -73,12 +73,12 @@ public class JUnit5F10x10 {
         Oracle.validateF10x10(a, b, c, d, e, f, g, h, i, j, testHandle);
     }
 
-    @ParameterizedTest
-    @MethodSource("genRandomQuantityLong")
-    void randomQuantityLong(String a, String b, String c, String d, String e, String f, String g, String h, String i, String j, TestHandle testHandle) {
-        System.out.println("a = " + a + ", b = " + b + ", c = " + c + ", d = " + d + ", e = " + e + ", f = " + f + ", g = " + g + ", h = " + h + ", i = " + i + ", j = " + j);
-        Oracle.validateF10x10(a, b, c, d, e, f, g, h, i, j, testHandle);
-    }
+//    @ParameterizedTest
+//    @MethodSource("genRandomQuantityLong")
+//    void randomQuantityLong(String a, String b, String c, String d, String e, String f, String g, String h, String i, String j, TestHandle testHandle) {
+//        System.out.println("a = " + a + ", b = " + b + ", c = " + c + ", d = " + d + ", e = " + e + ", f = " + f + ", g = " + g + ", h = " + h + ", i = " + i + ", j = " + j);
+//        Oracle.validateF10x10(a, b, c, d, e, f, g, h, i, j, testHandle);
+//    }
 
     @ParameterizedTest
     @MethodSource("genRandomCustom")

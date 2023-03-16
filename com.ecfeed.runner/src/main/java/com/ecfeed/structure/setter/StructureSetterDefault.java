@@ -4,9 +4,7 @@ import com.ecfeed.structure.dto.Structure;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StructureSetterDefault implements StructureSetter {
@@ -88,11 +86,22 @@ public class StructureSetterDefault implements StructureSetter {
     }
 
     private String getSignatureDefinition(String signature) {
-        var signatureParsed = signature.replaceAll(" ", "");
+        String[] argumentPairs = signature.split("[()]")[1].split(",");
+        List<String> argumentTypes = new ArrayList<>();
+
+        for (var i = 0 ; i < argumentPairs.length ; i++) {
+            String[] argumentParsed = argumentPairs[i].trim().split(" ");
+            argumentTypes.add(argumentParsed[0]);
+        }
+
+        var signatureParsed = signature;
 
         if (signatureParsed.contains(".")) {
-            return signatureParsed.substring(signature.lastIndexOf(".") + 1);
+            signatureParsed = signatureParsed.substring(signature.lastIndexOf(".") + 1);
         }
+
+        signatureParsed = signatureParsed.substring(0, signatureParsed.lastIndexOf("("));
+        signatureParsed = signatureParsed + "(" + String.join(",", argumentTypes) + ")";
 
         return signatureParsed;
     }

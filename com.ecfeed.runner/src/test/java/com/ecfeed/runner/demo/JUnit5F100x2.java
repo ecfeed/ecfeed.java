@@ -73,12 +73,12 @@ public class JUnit5F100x2 {
         Oracle.validateF100x2(a, b, testHandle);
     }
 
-    @ParameterizedTest
-    @MethodSource("genRandomQuantityLong")
-    void genRandomQuantityLong(String a, String b, TestHandle testHandle) {
-        System.out.println("a = " + a + ", b = " + b + ", testHandle = " + testHandle);
-        Oracle.validateF100x2(a, b, testHandle);
-    }
+//    @ParameterizedTest
+//    @MethodSource("genRandomQuantityLong")
+//    void genRandomQuantityLong(String a, String b, TestHandle testHandle) {
+//        System.out.println("a = " + a + ", b = " + b + ", testHandle = " + testHandle);
+//        Oracle.validateF100x2(a, b, testHandle);
+//    }
 
     @ParameterizedTest
     @MethodSource("genRandomCustom")

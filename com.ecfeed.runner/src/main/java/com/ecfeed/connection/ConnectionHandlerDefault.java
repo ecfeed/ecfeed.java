@@ -1,9 +1,9 @@
-package com.ecfeed.helper;
+package com.ecfeed.connection;
 
+import com.ecfeed.Factory;
 import com.ecfeed.config.ConfigDefault;
-import com.ecfeed.data.DataConnection;
-import com.ecfeed.data.DataHelper;
 import com.ecfeed.data.DataSession;
+import com.ecfeed.data.DataSessionConnection;
 import com.ecfeed.queue.IterableTestQueue;
 import com.ecfeed.type.TypeGenerator;
 import org.apache.http.HttpResponse;
@@ -19,42 +19,43 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class HelperConnection {
+public class ConnectionHandlerDefault implements ConnectionHandler {
 
-    private HelperConnection() {
-
-        throw new RuntimeException("The helper class cannot be instantiated");
+    private ConnectionHandlerDefault() {
     }
 
-    public static InputStream getChunkStreamForHealthCheck(DataConnection connection) {
-        String request = generateURLForHealthCheck(connection.getHttpAddress());
+    public static ConnectionHandler create() {
 
-        return createChunkStreamGet(connection.getHttpClient(), request);
+        return new ConnectionHandlerDefault();
     }
 
-    public static InputStream getChunkStreamForTestData(DataSession dataSession) {
+    @Override
+    public InputStream getChunkStreamForTestData(DataSession dataSession) {
+        var dataSessionFacade = Factory.getDataSessionFacade(dataSession);
 
-        return createChunkStreamGet(dataSession.getHttpClient(), DataHelper.generateURLForTestData(dataSession));
+        return createChunkStreamGet(dataSession.getHttpClient(), dataSessionFacade.generateURLForTestData());
     }
 
-    public static InputStream sendFeedbackRequest(DataSession dataSession) {
+    @Override
+    public InputStream getFeedbackRequest(DataSession dataSession) {
+        var dataSessionFacade = Factory.getDataSessionFacade(dataSession);
 
         final int MAX_ATTEMPTS = 5;
         final boolean IS_DIAGNOSTICS = false;
 
-        printDiagnosticMessage("Sending feeddback...", IS_DIAGNOSTICS);
+        printDiagnosticMessage("Sending feedback...", IS_DIAGNOSTICS);
 
         for (int attempt_number = 1; attempt_number <= MAX_ATTEMPTS; attempt_number++) {
 
             try {
                 return sendPostRequest(
                         dataSession.getHttpClient(),
-                        DataHelper.generateURLForFeedback(dataSession),
-                        DataHelper.generateBodyForFeedback(dataSession));
+                        dataSessionFacade.generateURLForFeedback(),
+                        dataSessionFacade.generateBodyForFeedback());
 
             } catch (Exception e) {
 
-                String attemptFailed = "Sending feeddback failed at attempt: " + attempt_number;
+                String attemptFailed = "Sending feedback failed at attempt: " + attempt_number;
                 printDiagnosticMessage(attemptFailed, IS_DIAGNOSTICS);
 
                 if (attempt_number >=  MAX_ATTEMPTS) {
@@ -68,18 +69,20 @@ public final class HelperConnection {
         return null;
     }
 
-    public static void validateConnection(DataConnection connection) {
-        IterableTestQueue<String> iterator = IterableTestQueue.createForExport();
+    @Override
+    public void validateConnection(DataSessionConnection connection) {
+        var iterator = Factory.getIterableTestQueueExport();
 
         try {
-            processChunkStream(iterator, HelperConnection.getChunkStreamForHealthCheck(connection));
+            processChunkStream(iterator, getChunkStreamForHealthCheck(connection));
             dryChunkStream(iterator);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("The connection could not be established", e);
         }
     }
 
-    public static DataSession sendMockRequest(DataConnection connection, String model, String method) {
+    @Override
+    public DataSession sendMockRequest(DataSessionConnection connection, String model, String method) {
         Map<String, Object> userProperties = new HashMap<>();
 
         userProperties.put(ConfigDefault.Key.parLength, "0");
@@ -87,15 +90,16 @@ public final class HelperConnection {
         DataSession dataSession = DataSession.create(connection, model, method, TypeGenerator.Random);
         dataSession.setOptionsGenerator(userProperties);
 
-        IterableTestQueue<Object[]> iterator = IterableTestQueue.createForStream(dataSession);
+        var iterator = Factory.getIterableTestQueueStream(dataSession);
 
-        processChunkStream(iterator, HelperConnection.getChunkStreamForTestData(dataSession));
+        processChunkStream(iterator, getChunkStreamForTestData(dataSession));
         dryChunkStream(iterator);
 
         return dataSession;
     }
 
-    public static void processChunkStream(IterableTestQueue<?> iterator, InputStream chunkInputStream) {
+    @Override
+    public void processChunkStream(IterableTestQueue<?> iterator, InputStream chunkInputStream) {
         String chunk;
 
         try (BufferedReader responseReader = new BufferedReader(new InputStreamReader(chunkInputStream))) {
@@ -109,14 +113,21 @@ public final class HelperConnection {
         cleanup(iterator);
     }
 
-    private static void printDiagnosticMessage(String message, boolean isDiagnostic) {
+    private InputStream getChunkStreamForHealthCheck(DataSessionConnection connection) {
+        String request = generateURLForHealthCheck(connection.getHttpAddress());
+
+        return createChunkStreamGet(connection.getHttpClient(), request);
+    }
+
+    private void printDiagnosticMessage(String message, boolean isDiagnostic) {
 
         if (isDiagnostic) {
             System.out.println(message);
         }
     }
 
-    static void sleep(int milliseconds) { // TODO move to helper
+    // TODO - move somewhere
+    private void sleep(int milliseconds) {
 
         try {
             Thread.sleep(milliseconds);
@@ -124,12 +135,12 @@ public final class HelperConnection {
         }
     }
 
-    private static String generateURLForHealthCheck(String generatorAddress) {
+    private String generateURLForHealthCheck(String generatorAddress) {
 
         return generatorAddress + "/" + ConfigDefault.Key.urlHealthCheck;
     }
 
-    private static InputStream createChunkStreamGet(HttpClient httpClient, String request) {
+    private InputStream createChunkStreamGet(HttpClient httpClient, String request) {
 
         try {
             HttpGet httpGet = new HttpGet(request);
@@ -140,7 +151,7 @@ public final class HelperConnection {
         }
     }
 
-    private static InputStream sendPostRequest(HttpClient httpClient, String uri, String body) {
+    private InputStream sendPostRequest(HttpClient httpClient, String uri, String body) {
 
         try {
             HttpPost httpPost = new HttpPost(uri);
@@ -152,26 +163,25 @@ public final class HelperConnection {
         }
     }
 
-    private static void processChunk(IterableTestQueue<?> iterator, String chunk) {
+    private void processChunk(IterableTestQueue<?> iterator, String chunk) {
 
         iterator.append(chunk);
     }
 
-    private static void cleanup(IterableTestQueue<?> iterator) {
+    private void cleanup(IterableTestQueue<?> iterator) {
 
         iterator.terminate();
     }
 
-    private static void dryChunkStream(IterableTestQueue<?> iterator) {
+    private void dryChunkStream(IterableTestQueue<?> iterator) {
 
         for (Object ignored : iterator) {
             nop(ignored);
         }
     }
 
-    private static void nop(Object chunk) {
+    private void nop(Object chunk) {
 
         System.out.println(chunk);
     }
-
 }
