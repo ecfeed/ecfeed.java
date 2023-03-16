@@ -362,6 +362,15 @@ public class TestProvider {
         ConfigDefault.validateUserParameters(properties);
 
         DataSession dataSession = DataSession.create(this.dataSessionConnection, this.model, method, generator);
+
+        if (properties.containsKey(ConfigDefault.Key.parSourceClass)) {
+            dataSession.getInitializer().source((Class[]) properties.get(ConfigDefault.Key.parSourceClass));
+        }
+
+        if (properties.containsKey(ConfigDefault.Key.parSourcePackage)) {
+            dataSession.getInitializer().source((String[]) properties.get(ConfigDefault.Key.parSourcePackage));
+        }
+
         dataSession.setOptionsGenerator(properties);
 
         var iterator = Factory.getIterableTestQueueStream(dataSession);

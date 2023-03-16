@@ -10,6 +10,14 @@ public class Source {
             this.name = name;
             this.age = age;
         }
+
+        @Override
+        public String toString() {
+            return "Person{" +
+                    "name='" + name + '\'' +
+                    ", age=" + age +
+                    '}';
+        }
     }
 
     public static class Data {
@@ -19,6 +27,14 @@ public class Source {
         public Data(Person delinquent, int id) {
             this.delinquent = delinquent;
             this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "Data{" +
+                    "delinquent=" + delinquent +
+                    ", id=" + id +
+                    '}';
         }
     }
 }

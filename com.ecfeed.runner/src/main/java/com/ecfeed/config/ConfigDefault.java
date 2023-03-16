@@ -53,6 +53,9 @@ public final class ConfigDefault {
         final public static String setupKeyStorePassword = "keyStorePassword";
         final public static String setupKeyStorePath = "keyStorePath";
 
+        final public static String parSourceClass = "sourceClass";
+        final public static String parSourcePackage = "sourcePackage";
+
         final public static String parN = "n";
         final public static String parCoverage = "coverage";
         final public static String parLength = "length";
@@ -108,7 +111,7 @@ public final class ConfigDefault {
         final public static String certServer = "ca";
 
         final public static List<String> userAllowedKeys = Arrays.asList(
-                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback, parCustom, parTestSessionLabel, parDataTemplate
+                parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback, parCustom, parTestSessionLabel, parDataTemplate, parSourceClass, parSourcePackage
         );
     }
 

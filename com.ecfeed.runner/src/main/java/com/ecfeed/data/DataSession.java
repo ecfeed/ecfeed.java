@@ -200,6 +200,8 @@ public class DataSession {
                 if (value.equals(true) || value.toString().equalsIgnoreCase("true")) {
                     feedbackEnabled = true;
                 }
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parSourceClass)) {
+            } else if (key.equalsIgnoreCase(ConfigDefault.Key.parSourcePackage)) {
             } else {
                 this.optionsGenerator.put(key, value);
             }

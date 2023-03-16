@@ -13,22 +13,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class JUnitStructure {
 
     static Iterable<Object[]> genNWise() {
-        return ConfigDefault.getTestProvider(ConfigDefault.DEVELOP).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
-                .feedback()
-                .label("NWise / Quantity - Single"));
+        return ConfigDefault.getTestProvider(ConfigDefault.DEVELOP).generateNWise(ConfigDefault.F_STRUCTURE, ParamsNWise.create()
+                        .feedback()
+                        .source(Source.class)
+                        .label("NWise / Quantity - Single"));
     }
 
     @ParameterizedTest
     @MethodSource("genNWise")
-    void genNWise(int a, int b, int c, TestHandle testHandle) {
-        System.out.println("a = " + a + ", b = " + b + ", c = " + c);
-    }
-
-    @Test
-    @DisplayName("Get method names")
-    void getMethodSignature() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.DEVELOP);
-
-        System.out.println(testProvider.getArgumentNames(ConfigDefault.F_STRUCTURE));
+    void genNWise(Source.Data a, int b, TestHandle testHandle) {
+        System.out.println("a = " + a + ", b = " + b );
+//        testHandle.addFeedback(true);
     }
 }

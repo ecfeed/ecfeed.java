@@ -11,6 +11,8 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
     private boolean feedback = ConfigDefault.Value.parFeedback;
     private String testSessionLabel = "";
     private String template = "";
+    private Class[] sourceClass = new Class[0];
+    private String[] sourcePackage = new String[0];
     private Map<String, String> custom = new HashMap<>();
 
     /**
@@ -169,6 +171,50 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
     }
 
     /**
+     * Gets source classes.
+     *
+     * @return  source classes
+     */
+    public Class[] getSourceClass() {
+
+        return sourceClass;
+    }
+
+    /**
+     * Sets source classes.
+     *
+     * @param source    source classes
+     * @return          the current object (can be used for chaining)
+     */
+    public T source(Class... source) {
+
+        this.sourceClass = source;
+        return self();
+    }
+
+    /**
+     * Gets source packages.
+     *
+     * @return  source packages
+     */
+    public String[] getSourcePackages() {
+
+        return sourcePackage;
+    }
+
+    /**
+     * Sets source packages.
+     *
+     * @param source    source packages
+     * @return          the current object (can be used for chaining)
+     */
+    public T source(String... source) {
+
+        this.sourcePackage = source;
+        return self();
+    }
+
+    /**
      * Gets all generation parameters
      *
      * @return  generation parameters
@@ -199,6 +245,14 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
 
         if (this.template != null && !this.template.isBlank()) {
             paramMap.put(ConfigDefault.Key.parDataTemplate, this.template);
+        }
+
+        if (this.sourceClass != null) {
+            paramMap.put(ConfigDefault.Key.parSourceClass, this.sourceClass);
+        }
+
+        if (this.sourcePackage != null) {
+            paramMap.put(ConfigDefault.Key.parSourcePackage, this.sourcePackage);
         }
 
         return paramMap;
