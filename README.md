@@ -60,7 +60,7 @@ public class JUnit5Test {
 }
 ```
 
-It is also possible to use enums as arguments. To do so, they must be defined in the project.  
+It is possible to use enums as arguments. To do so, they must be defined in the project.  
 
 ```java
 public class JUnit5Test {
@@ -84,6 +84,43 @@ public class JUnit5Test {
         System.out.println("name = " + name + ", firstName = " + firstName + ", gender = " + gender + ", age = " + age + ", id = " + id + ", type = " + type);
     }
 
+}
+```
+
+If you want to use classes (defined as structures in the model) you must manually create a constructor for each one of them. 
+Classes are retrieved from the code using reflection and instantiated using values received from the server. 
+Note, that if a structure is directly linked to a global structure (it does not contain any additional fields), only the definition of the global structure is needed, regardless of the name of the linked structure.  
+
+```java
+public class Source {
+
+    public static class Element1 {
+
+        public Element1(int a, double b, String c, Element2 d) {
+        }
+    }
+
+    public static class Element2 {
+
+        public Element2(int a, int b, int c) {
+        }
+    }
+}
+```
+
+```java
+public class JUnitStructure {
+
+    static Iterable<Object[]> testProviderNWise() {
+        TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");
+        return testProvider.generateNWise("com.example.test.structure", ParamsNWise.create().source(Source.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testProviderNWise")
+    void genNWise(Source.Element1 a, int b) {
+        System.out.println("a = " + a + ", b = " + b );
+    }
 }
 ```
 
@@ -172,6 +209,7 @@ Arguments:
 - *feedback* - A flag denoting whether feedback should be sent beck to the generator. By default, this functionality is switched off.
 - *label* - An additional label associated with feedback.
 - *custom* - An additional map ('Map<String, String>') with custom elements associated with feedback.
+- *source* - Classes or packages where custom definitions of the model structures can be found. Note, that nested packages are included as well.
 
 ```java
 String[] constraints = new String[]{ "constraint" };
@@ -189,6 +227,8 @@ Param.ParamsNWise config = new Param.ParamsNWise()
         .n(3)
         .feedback()
         .label("label")
+        .source(Source1.class, Source2.class)
+        .source("com.example.source.a", "com.example.source.b")
         .custom(custom);
 
 testProvider.generateNWise("QuickStart.test", config)
@@ -236,6 +276,7 @@ Arguments:
 - *feedback* - See 'generateNWise'.
 - *label* - See 'generateNWise'.
 - *custom* - See 'generateNWise'.
+- *source* - See 'generateNWise'.
 
 ### public Iterable<Object[]> generateRandom(String method, Param.ParamsRandom config)
 
@@ -251,6 +292,7 @@ Arguments:
 - *feedback* - See 'generateNWise'.
 - *label* - See 'generateNWise'.
 - *custom* - See 'generateNWise'.
+- *source* - See 'generateNWise'.
 
 ### public Iterable<Object[]> generateStatic(String method, Param.ParamsStatic config)
 
@@ -262,6 +304,7 @@ Arguments:
 - *feedback* - See 'generateNWise'.
 - *label* - See 'generateNWise'.
 - *custom* - See 'generateNWise'.
+- *source* - See 'generateNWise'.
 
 ## Export calls
 

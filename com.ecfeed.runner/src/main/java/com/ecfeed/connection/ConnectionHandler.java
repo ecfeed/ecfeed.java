@@ -1,7 +1,7 @@
 package com.ecfeed.connection;
 
-import com.ecfeed.data.DataSession;
-import com.ecfeed.data.DataSessionConnection;
+import com.ecfeed.session.dto.DataSession;
+import com.ecfeed.session.dto.DataSessionConnection;
 import com.ecfeed.queue.IterableTestQueue;
 
 import java.io.InputStream;

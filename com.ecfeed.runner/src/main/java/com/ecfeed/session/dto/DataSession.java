@@ -1,4 +1,4 @@
-package com.ecfeed.data;
+package com.ecfeed.session.dto;
 
 import com.ecfeed.config.ConfigDefault;
 import com.ecfeed.structure.StructureInitializer;

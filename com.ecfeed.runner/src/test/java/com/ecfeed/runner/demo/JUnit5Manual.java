@@ -1,8 +1,6 @@
 package com.ecfeed.runner.demo;
 
 import com.ecfeed.Factory;
-import com.ecfeed.data.DataSession;
-import com.ecfeed.data.DataSessionConnection;
 import com.ecfeed.runner.ConfigDefault;
 import com.ecfeed.type.TypeGenerator;
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +14,8 @@ public class JUnit5Manual {
     @Test
     @DisplayName("Manual basic")
     void manualBasic() {
-        var dataSession = DataSession.create(
-                DataSessionConnection.get(
+        var dataSession = Factory.getDataSession(
+                Factory.getDataSessionConnection(
                         ConfigDefault.GENERATOR_ADDRESS_DEVELOP,
                         Path.of(ConfigDefault.KEYSTORE_DEVELOP),
                         ConfigDefault.KEYSTORE_PASSWORD
@@ -44,8 +42,8 @@ public class JUnit5Manual {
     @Test
     @DisplayName("Manual structure")
     void manualStructure() {
-        var dataSession = DataSession.create(
-                DataSessionConnection.get(
+        var dataSession = Factory.getDataSession(
+                Factory.getDataSessionConnection(
                         ConfigDefault.GENERATOR_ADDRESS_DEVELOP,
                         Path.of(ConfigDefault.KEYSTORE_DEVELOP),
                         ConfigDefault.KEYSTORE_PASSWORD

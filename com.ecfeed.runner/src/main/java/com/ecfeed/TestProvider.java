@@ -2,8 +2,8 @@ package com.ecfeed;
 
 import com.ecfeed.config.ConfigDefault;
 import com.ecfeed.connection.ConnectionHandler;
-import com.ecfeed.data.DataSessionConnection;
-import com.ecfeed.data.DataSession;
+import com.ecfeed.session.dto.DataSessionConnection;
+import com.ecfeed.session.dto.DataSession;
 import com.ecfeed.params.*;
 import com.ecfeed.queue.IterableTestQueue;
 import com.ecfeed.type.TypeExport;
@@ -117,7 +117,7 @@ public class TestProvider {
 
         var iterator = Factory.getIterableTestQueueExport();
 
-        DataSession dataSession = DataSession.create(this.dataSessionConnection, this.model, method, generator);
+        DataSession dataSession = Factory.getDataSession(this.dataSessionConnection, this.model, method, generator);
         dataSession.setOptionsGenerator(properties);
         dataSession.setExportTemplate(template);
 
@@ -361,7 +361,7 @@ public class TestProvider {
         ConfigDefault.processUserParameters(properties);
         ConfigDefault.validateUserParameters(properties);
 
-        DataSession dataSession = DataSession.create(this.dataSessionConnection, this.model, method, generator);
+        DataSession dataSession = Factory.getDataSession(this.dataSessionConnection, this.model, method, generator);
 
         if (properties.containsKey(ConfigDefault.Key.parSourceClass)) {
             dataSession.getInitializer().source((Class[]) properties.get(ConfigDefault.Key.parSourceClass));
@@ -628,7 +628,7 @@ public class TestProvider {
     private void setup(String model, Map<String, String> config) {
 
         this.model = model;
-        this.dataSessionConnection = DataSessionConnection.get(
+        this.dataSessionConnection = Factory.getDataSessionConnection(
                 setupExtractGeneratorAddress(config),
                 setupExtractKeyStorePath(config),
                 setupExtractKeyStorePassword(config)
@@ -648,15 +648,16 @@ public class TestProvider {
 
             try {
                 Thread.sleep(ITERATOR_TIMEOUT_STEP);
-            } catch (InterruptedException e) { }
+            } catch (InterruptedException ignored) { }
 
         } while (timeout < ITERATOR_TIMEOUT);
 
         if (generator == TypeGenerator.Static) {
             throw new IllegalArgumentException("Empty test set error! " +
-                    "Please check if the name of the requested test suite is correct.");
+                    "Please check if the name of the requested test suite is correct!");
         } else {
-            throw new IllegalArgumentException("Will check in a while");
+            throw new IllegalArgumentException("The generator stream does not contain any data!" +
+                    "Please check if connection parameters are correct, e.g. address, keystore, model, method, etc.");
         }
     }
 

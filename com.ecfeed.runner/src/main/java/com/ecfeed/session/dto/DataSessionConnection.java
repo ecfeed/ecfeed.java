@@ -1,4 +1,4 @@
-package com.ecfeed.data;
+package com.ecfeed.session.dto;
 
 import com.ecfeed.config.ConfigDefault;
 import org.apache.http.client.HttpClient;
@@ -35,7 +35,7 @@ public class DataSessionConnection {
         this.httpClient = setupGetHTTPClient();
     }
 
-    public static DataSessionConnection get(String httpAddress, Path keyStorePath, String keyStorePassword) {
+    public static DataSessionConnection create(String httpAddress, Path keyStorePath, String keyStorePassword) {
 
         return new DataSessionConnection(httpAddress, keyStorePath, keyStorePassword);
     }

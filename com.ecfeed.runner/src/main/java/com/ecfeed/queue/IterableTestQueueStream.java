@@ -2,7 +2,7 @@ package com.ecfeed.queue;
 
 import com.ecfeed.Factory;
 import com.ecfeed.chunk.ChunkParser;
-import com.ecfeed.data.DataSession;
+import com.ecfeed.session.dto.DataSession;
 
 public class IterableTestQueueStream<T> extends IterableTestQueueAbstract<T> {
 

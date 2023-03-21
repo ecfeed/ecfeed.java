@@ -1,9 +1,10 @@
-package com.ecfeed.data;
+package com.ecfeed.session;
 
 import com.ecfeed.Factory;
 import com.ecfeed.TestHandle;
 import com.ecfeed.config.ConfigDefault;
 import com.ecfeed.connection.ConnectionHandler;
+import com.ecfeed.session.dto.DataSession;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;

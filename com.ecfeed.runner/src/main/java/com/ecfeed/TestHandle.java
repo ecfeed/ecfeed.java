@@ -1,7 +1,6 @@
 package com.ecfeed;
 
-import com.ecfeed.data.DataSession;
-import com.ecfeed.data.DataSessionFacadeDefault;
+import com.ecfeed.session.dto.DataSession;
 import org.json.JSONObject;
 
 import java.util.HashMap;

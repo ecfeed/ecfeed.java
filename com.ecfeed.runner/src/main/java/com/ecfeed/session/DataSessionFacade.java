@@ -1,6 +1,7 @@
-package com.ecfeed.data;
+package com.ecfeed.session;
 
 import com.ecfeed.TestHandle;
+import com.ecfeed.session.dto.DataSession;
 import org.json.JSONObject;
 
 import java.util.Optional;

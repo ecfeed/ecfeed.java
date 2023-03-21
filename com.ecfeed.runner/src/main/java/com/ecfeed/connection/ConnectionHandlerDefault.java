@@ -2,9 +2,10 @@ package com.ecfeed.connection;
 
 import com.ecfeed.Factory;
 import com.ecfeed.config.ConfigDefault;
-import com.ecfeed.data.DataSession;
-import com.ecfeed.data.DataSessionConnection;
+import com.ecfeed.session.dto.DataSession;
+import com.ecfeed.session.dto.DataSessionConnection;
 import com.ecfeed.queue.IterableTestQueue;
+import com.ecfeed.system.SystemHandler;
 import com.ecfeed.type.TypeGenerator;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -20,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConnectionHandlerDefault implements ConnectionHandler {
+
+    private final SystemHandler systemHandler = Factory.getSystemHandler();
 
     private ConnectionHandlerDefault() {
     }
@@ -43,7 +46,7 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
         final int MAX_ATTEMPTS = 5;
         final boolean IS_DIAGNOSTICS = false;
 
-        printDiagnosticMessage("Sending feedback...", IS_DIAGNOSTICS);
+        systemHandler.printDiagnosticMessage("Sending feedback...", IS_DIAGNOSTICS);
 
         for (int attempt_number = 1; attempt_number <= MAX_ATTEMPTS; attempt_number++) {
 
@@ -56,13 +59,13 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
             } catch (Exception e) {
 
                 String attemptFailed = "Sending feedback failed at attempt: " + attempt_number;
-                printDiagnosticMessage(attemptFailed, IS_DIAGNOSTICS);
+                systemHandler.printDiagnosticMessage(attemptFailed, IS_DIAGNOSTICS);
 
                 if (attempt_number >=  MAX_ATTEMPTS) {
-                    throw new RuntimeException("Sending feedback failed.", e);
+                    throw new RuntimeException("Sending feedback failed!", e);
                 }
 
-                sleep(500);
+                systemHandler.sleep(500);
             }
         }
 
@@ -87,7 +90,7 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
 
         userProperties.put(ConfigDefault.Key.parLength, "0");
 
-        DataSession dataSession = DataSession.create(connection, model, method, TypeGenerator.Random);
+        DataSession dataSession = Factory.getDataSession(connection, model, method, TypeGenerator.Random);
         dataSession.setOptionsGenerator(userProperties);
 
         var iterator = Factory.getIterableTestQueueStream(dataSession);
@@ -107,7 +110,7 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
                 processChunk(iterator, chunk);
             }
         } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was interrupted", e);
+            throw new IllegalArgumentException("The connection was interrupted!", e);
         }
 
         cleanup(iterator);
@@ -117,22 +120,6 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
         String request = generateURLForHealthCheck(connection.getHttpAddress());
 
         return createChunkStreamGet(connection.getHttpClient(), request);
-    }
-
-    private void printDiagnosticMessage(String message, boolean isDiagnostic) {
-
-        if (isDiagnostic) {
-            System.out.println(message);
-        }
-    }
-
-    // TODO - move somewhere
-    private void sleep(int milliseconds) {
-
-        try {
-            Thread.sleep(milliseconds);
-        } catch (Exception e) {
-        }
     }
 
     private String generateURLForHealthCheck(String generatorAddress) {
@@ -147,7 +134,7 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
             HttpResponse httpResponse = httpClient.execute(httpGet);
             return httpResponse.getEntity().getContent();
         } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous).", e);
+            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous)!", e);
         }
     }
 
@@ -159,7 +146,7 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
             HttpResponse httpResponse = httpClient.execute(httpPost);
             return httpResponse.getEntity().getContent();
         } catch (IOException e) {
-            throw new RuntimeException("Sending post request failed.", e);
+            throw new RuntimeException("Sending post request failed!", e);
         }
     }
 
@@ -176,12 +163,7 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
     private void dryChunkStream(IterableTestQueue<?> iterator) {
 
         for (Object ignored : iterator) {
-            nop(ignored);
+            systemHandler.nop(ignored);
         }
-    }
-
-    private void nop(Object chunk) {
-
-        System.out.println(chunk);
     }
 }

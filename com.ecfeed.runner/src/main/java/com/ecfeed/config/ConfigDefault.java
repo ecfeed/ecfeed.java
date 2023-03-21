@@ -15,7 +15,8 @@ public final class ConfigDefault {
         homeJava = System.getProperty("java.home");
     }
 
-    private ConfigDefault() { }
+    private ConfigDefault() {
+    }
 
     final public static class Value {
 
