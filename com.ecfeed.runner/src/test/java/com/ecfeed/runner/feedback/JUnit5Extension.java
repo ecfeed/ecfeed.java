@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class JUnit5Extension {
 
     static Iterable<Object[]> method() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create().feedback());
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create().feedback());
     }
 
     @ParameterizedTest

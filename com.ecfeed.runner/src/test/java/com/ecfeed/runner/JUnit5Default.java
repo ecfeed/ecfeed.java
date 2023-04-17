@@ -27,27 +27,27 @@ public class JUnit5Default {
     }
 
     static Iterable<Object[]> testProviderNWise() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_LOAN_2);
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderPairwise() {
-        return  ConfigDefault.getTestProvider(ConfigDefault.PROD).generatePairwise(ConfigDefault.F_LOAN_2);
+        return  ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generatePairwise(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderCartesian() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateCartesian(ConfigDefault.F_LOAN_2);
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateCartesian(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderRandom() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_LOAN_2);
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderStatic() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateStatic(ConfigDefault.F_LOAN_2);
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateStatic(ConfigDefault.F_LOAN_2);
     }
 
     static Iterable<Object[]> testProviderNWiseFeedback() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_LOAN_2, ParamsNWise.create().feedback());
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_LOAN_2, ParamsNWise.create().feedback());
     }
 
     @ParameterizedTest
@@ -95,7 +95,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export raw")
     void exportTypeRaw() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.Raw, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -105,7 +105,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export xml")
     void exportTypeXml() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.XML, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -115,7 +115,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export json")
     void exportTypeJson() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.JSON, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -125,7 +125,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export csv")
     void exportTypeCsv() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.CSV, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -135,7 +135,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Export gherkin")
     void exportTypeGherkin() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.Gherkin, ParamsNWise.create())) {
             System.out.println(chunk);
@@ -150,7 +150,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", constraints);
@@ -174,7 +174,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         ParamsNWise config = ParamsNWise.create()
                 .constraints(constraints)
@@ -198,7 +198,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", constraints);
@@ -221,7 +221,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         ParamsPairwise config = ParamsPairwise.create()
                 .constraints(constraints)
@@ -244,7 +244,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", constraints);
@@ -266,7 +266,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         ParamsCartesian config = ParamsCartesian.create()
                 .constraints(constraints)
@@ -288,7 +288,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", constraints);
@@ -313,7 +313,7 @@ public class JUnit5Default {
         Map<String, String[]> choices = new HashMap<>();
         choices.put("firstName", new String[]{ "male:short" });
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         ParamsRandom config = ParamsRandom.create()
                 .constraints(constraints)
@@ -335,7 +335,7 @@ public class JUnit5Default {
     void exportStatic() {
         String[] testSuites = new String[]{ "default suite" };
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("testSuites", testSuites);
@@ -353,7 +353,7 @@ public class JUnit5Default {
     void exportStaticParams() {
         String[] testSuites = new String[]{ "default suite" };
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         ParamsStatic config = ParamsStatic.create()
                 .testSuites(testSuites);
@@ -369,7 +369,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Get method types")
     void getMethodTypes() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         System.out.println(testProvider.getArgumentTypes(ConfigDefault.F_LOAN_2));
     }
@@ -377,7 +377,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Get method names")
     void getMethodNames() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         System.out.println(testProvider.getArgumentNames(ConfigDefault.F_LOAN_2));
     }
@@ -385,7 +385,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Validate")
     void validate() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         testProvider.validateConnection();
     }
@@ -393,7 +393,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Get model")
     void getModel() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         assertTrue(ConfigDefault.MODEL_PROD.equals(testProvider.getModel()) || ConfigDefault.MODEL_DEVELOP.equals(testProvider.getModel()),
                 "The default name of the model is erroneous");
@@ -411,7 +411,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Get generator address")
     void getGeneratorAddress() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         assertTrue("https://gen.ecfeed.com".equalsIgnoreCase(testProvider.getAddress()) || "https://develop-gen.ecfeed.com".equalsIgnoreCase(testProvider.getAddress()),
                 "The default generator address is erroneous");
@@ -455,7 +455,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Error - method name")
     void errorMethodName() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise("testMethod", TypeExport.JSON, new HashMap<>())) {
             System.out.println(chunk);
@@ -492,7 +492,7 @@ public class JUnit5Default {
     @Test
     @DisplayName("Error - invalid user parameters")
     void errorInvalidUserParameters() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("error", "error");

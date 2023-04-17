@@ -11,8 +11,8 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
     private boolean feedback = ConfigDefault.Value.parFeedback;
     private String testSessionLabel = "";
     private String template = "";
-    private Class[] sourceClass = new Class[0];
-    private String[] sourcePackage = new String[0];
+    private Class[] typeDefinitionSourceClass = new Class[0];
+    private String[] typeDefinitionSourcePackage = new String[0];
     private Map<String, String> custom = new HashMap<>();
 
     /**
@@ -175,9 +175,9 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
      *
      * @return  source classes
      */
-    public Class[] getSourceClass() {
+    public Class[] getTypeDefinitionSourceClass() {
 
-        return sourceClass;
+        return typeDefinitionSourceClass;
     }
 
     /**
@@ -186,9 +186,9 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
      * @param source    source classes
      * @return          the current object (can be used for chaining)
      */
-    public T source(Class... source) {
+    public T typesDefinitionsSource(Class... source) {
 
-        this.sourceClass = source;
+        this.typeDefinitionSourceClass = source;
         return self();
     }
 
@@ -197,9 +197,9 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
      *
      * @return  source packages
      */
-    public String[] getSourcePackages() {
+    public String[] getTypeDefinitionSourcePackage() {
 
-        return sourcePackage;
+        return typeDefinitionSourcePackage;
     }
 
     /**
@@ -208,9 +208,9 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
      * @param source    source packages
      * @return          the current object (can be used for chaining)
      */
-    public T source(String... source) {
+    public T typesDefinitionsSource(String... source) {
 
-        this.sourcePackage = source;
+        this.typeDefinitionSourcePackage = source;
         return self();
     }
 
@@ -247,12 +247,12 @@ abstract class ParamsAbstract<T extends ParamsAbstract> implements Params {
             paramMap.put(ConfigDefault.Key.parDataTemplate, this.template);
         }
 
-        if (this.sourceClass != null) {
-            paramMap.put(ConfigDefault.Key.parSourceClass, this.sourceClass);
+        if (this.typeDefinitionSourceClass != null) {
+            paramMap.put(ConfigDefault.Key.parSourceClass, this.typeDefinitionSourceClass);
         }
 
-        if (this.sourcePackage != null) {
-            paramMap.put(ConfigDefault.Key.parSourcePackage, this.sourcePackage);
+        if (this.typeDefinitionSourcePackage != null) {
+            paramMap.put(ConfigDefault.Key.parSourcePackage, this.typeDefinitionSourcePackage);
         }
 
         return paramMap;

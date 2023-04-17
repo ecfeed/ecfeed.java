@@ -7,7 +7,6 @@ import com.ecfeed.params.ParamsNWise;
 import com.ecfeed.params.ParamsRandom;
 import com.ecfeed.params.ParamsStatic;
 import com.ecfeed.runner.ConfigDefault;
-import com.ecfeed.type.TypeExport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,34 +20,34 @@ import java.util.concurrent.ThreadLocalRandom;
 public class JUnit5FTest {
 
     static Iterable<Object[]> genRandomQuantitySingle() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .length(1)
                 .label("Random / Quantity - Single"));
     }
 
     static Iterable<Object[]> genRandomQuantityShort() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(100, 500))
                 .label("Random / Quantity - Short"));
     }
 
     static Iterable<Object[]> genRandomQuantityLong() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(1000, 5000))
                 .label("Random / Quantity - Long"));
     }
 
     static Iterable<Object[]> genRandom() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .label("Random"));
     }
 
     static Iterable<Object[]> genRandomAdaptive() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .length(10)
                 .adaptive(false)
@@ -56,7 +55,7 @@ public class JUnit5FTest {
     }
 
     static Iterable<Object[]> genRandomDuplicates() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()
                 .feedback()
                 .length(10)
                 .duplicates(true)
@@ -64,87 +63,87 @@ public class JUnit5FTest {
     }
 
     static Iterable<Object[]> genNWise() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .label("NWise"));
     }
 
     static Iterable<Object[]> genNWiseN() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .n(3)
                 .label("NWise - N"));
     }
 
     static Iterable<Object[]> genNWiseCoverage() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .coverage(50)
                 .label("NWise - Coverage"));
     }
 
     static Iterable<Object[]> genNWiseConstraintsNone() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .constraints("NONE")
                 .label("NWise / Constraints - None"));
     }
 
     static Iterable<Object[]> genNWiseConstraintsSelected() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .constraints(new String[]{"constraint1", "constraint2"})
                 .label("NWise / Constraints - Selected"));
     }
 
     static Iterable<Object[]> genNWiseChoicesSelected() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .choices(new HashMap<>(){{put("arg1", new String[]{"choice1", "choice2"});put("arg2", new String[]{"choice2", "choice3"});}})
                 .label("NWise / Choices - Selected"));
     }
 
     static Iterable<Object[]> genNWiseCustom() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .custom(new HashMap<>(){{put("key1","value1");put("key2","value2");}})
                 .label("NWise / Custom"));
     }
 
     static Iterable<Object[]> genPairwise() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .label("Pairwise"));
     }
 
     static Iterable<Object[]> genCartesian() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateCartesian(ConfigDefault.F_TEST, ParamsCartesian.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateCartesian(ConfigDefault.F_TEST, ParamsCartesian.create()
                 .feedback()
                 .label("Cartesian"));
     }
 
     static Iterable<Object[]> genStatic() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
                 .feedback()
                 .label("Static"));
     }
 
     static Iterable<Object[]> genStaticAll() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
                 .feedback()
                 .testSuites("ALL")
                 .label("Static  - All"));
     }
 
     static Iterable<Object[]> genStaticSelected() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateStatic(ConfigDefault.F_TEST, ParamsStatic.create()
                 .feedback()
                 .testSuites(new String[]{"suite1"})
                 .label("Static - Selected"));
     }
 
     static Iterable<Object[]> genNWiseTest() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_TEST, ParamsNWise.create()
                 .feedback()
                 .label("NWise / Feedback"));
     }
@@ -278,7 +277,7 @@ public class JUnit5FTest {
 
     @Test
     void genNWiseMap() {
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         Map<String, Object> config = new HashMap<>();
         config.put("constraints", new String[]{"constraint1"});
@@ -290,7 +289,7 @@ public class JUnit5FTest {
 
         for (Object[] chunk : testProvider.generateNWise(ConfigDefault.F_TEST, config)) {
             System.out.println(Arrays.toString(chunk));
-            Oracle.validateMapFTest(Integer.parseInt((String) chunk[0]), Integer.parseInt((String) chunk[1]), Integer.parseInt((String) chunk[2]), (TestHandle) chunk[3]);
+            Oracle.validateMapFTest(Integer.parseInt(chunk[0].toString()), Integer.parseInt(chunk[1].toString()), Integer.parseInt(chunk[2].toString()), (TestHandle) chunk[3]);
         }
     }
 

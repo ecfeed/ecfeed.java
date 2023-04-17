@@ -89,14 +89,21 @@ public class ChunkParserStream implements ChunkParser<Object[]> {
     }
 
     private void parseInfoArgumentTypes(String method) {
-        String parsedMethod;
-
-        parsedMethod = new JSONObject(method).getString(ConfigDefault.Key.reqTestInfoMethod);
+        String parsedMethod = new JSONObject(method).getString(ConfigDefault.Key.reqTestInfoMethod);
 
         dataSessionFacade.getDataSession().setMethodNameQualified(parsedMethod);
 
         parsedMethod = parsedMethod.split("[()]")[1];
         String[] argument = parsedMethod.split(",");
+
+        if (argument.length > 0 && argument[0].contains(":")) {
+            parseInfoArgumentTypesNew(argument);
+        } else {
+            parseInfoArgumentTypesOld(argument);
+        }
+    }
+
+    private void parseInfoArgumentTypesOld(String[] argument) {
 
         for (int i = 0 ; i < argument.length ; i++) {
             String[] parsedArgument = argument[i].trim().split(" ");
@@ -105,6 +112,21 @@ public class ChunkParserStream implements ChunkParser<Object[]> {
                 parseInfoArgumentTypesDefault(parsedArgument[0]);
             } else {
                 parseInfoArgumentTypesLegacy(parsedArgument[0], parsedArgument[1]);
+            }
+        }
+    }
+
+    private void parseInfoArgumentTypesNew(String[] argument) {
+
+        for (int i = 0 ; i < argument.length ; i++) {
+            String[] parsedArgument = argument[i].trim().split(" ");
+            String parsedArgumentName = parsedArgument[0];
+            String parsedArgumentType = parsedArgument[parsedArgument.length - 1];
+
+            if (parsedArgument.length == 1) {
+                parseInfoArgumentTypesDefault(parsedArgumentType);
+            } else {
+                parseInfoArgumentTypesLegacy(parsedArgumentType, parsedArgumentName);
             }
         }
     }

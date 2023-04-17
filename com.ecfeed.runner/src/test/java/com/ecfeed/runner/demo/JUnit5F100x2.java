@@ -13,28 +13,28 @@ import java.util.concurrent.ThreadLocalRandom;
 public class JUnit5F100x2 {
 
     static Iterable<Object[]> genRandomQuantitySingle() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_100x2, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_100x2, ParamsRandom.create()
                 .feedback()
                 .length(1)
                 .label("Random / Quantity - Single"));
     }
 
     static Iterable<Object[]> genRandomQuantityShort() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_100x2, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_100x2, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(100, 500))
                 .label("Random / Quantity - Short"));
     }
 
     static Iterable<Object[]> genRandomQuantityLong() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_100x2, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_100x2, ParamsRandom.create()
                 .feedback()
                 .length(ThreadLocalRandom.current().nextInt(1000, 5000))
                 .label("Random / Quantity - Long"));
     }
 
     static Iterable<Object[]> genRandomCustom() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateRandom(ConfigDefault.F_100x2, ParamsRandom.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateRandom(ConfigDefault.F_100x2, ParamsRandom.create()
                 .feedback()
                 .length(1)
                 .label("Random / Custom")
@@ -42,19 +42,19 @@ public class JUnit5F100x2 {
     }
 
     static Iterable<Object[]> genNWise() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_100x2, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_100x2, ParamsNWise.create()
                 .feedback()
                 .label("NWise"));
     }
 
     static Iterable<Object[]> genPairwise() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_100x2, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_100x2, ParamsNWise.create()
                 .feedback()
                 .label("Pairwise"));
     }
 
     static Iterable<Object[]> genNWiseTest() {
-        return ConfigDefault.getTestProvider(ConfigDefault.PROD).generateNWise(ConfigDefault.F_100x2, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_100x2, ParamsNWise.create()
                 .feedback()
                 .label("NWise / Feedback"));
     }

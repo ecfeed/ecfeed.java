@@ -443,7 +443,7 @@ public class InstantiateTest {
 
     @Test
     @DisplayName("Get test case")
-    void getTestCase() {
+    void getTestCaseTest() {
         StructureInitializer initializer = new StructureInitializerDefault();
 
         initializer.source("com.ecfeed.runner.reflection.source.correct");
@@ -461,6 +461,7 @@ public class InstantiateTest {
         assertEquals(-1, ((Source.Element1)testCase[0]).d.a);
         assertEquals(-2, ((Source.Element1)testCase[0]).d.b);
         assertEquals(-3, ((Source.Element1)testCase[0]).d.c);
+        assertEquals("ecFeed", testCase[1]);
     }
 
     @Test

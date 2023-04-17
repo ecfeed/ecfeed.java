@@ -1,21 +1,17 @@
 package com.ecfeed.runner.demo;
 
 import com.ecfeed.TestHandle;
-import com.ecfeed.TestProvider;
 import com.ecfeed.params.ParamsNWise;
-import com.ecfeed.params.ParamsRandom;
 import com.ecfeed.runner.ConfigDefault;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class JUnitStructure {
 
     static Iterable<Object[]> genNWise() {
-        return ConfigDefault.getTestProvider(ConfigDefault.DEVELOP).generateNWise(ConfigDefault.F_STRUCTURE, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.DEVELOP).generateNWise(ConfigDefault.F_STRUCTURE, ParamsNWise.create()
                         .feedback()
-                        .source(Source.class)
+                        .typesDefinitionsSource(Source.class)
                         .label("NWise / Quantity - Single"));
     }
 
@@ -23,6 +19,6 @@ public class JUnitStructure {
     @MethodSource("genNWise")
     void genNWise(Source.Data a, int b, TestHandle testHandle) {
         System.out.println("a = " + a + ", b = " + b );
-//        testHandle.addFeedback(true);
+        testHandle.addFeedback(true);
     }
 }

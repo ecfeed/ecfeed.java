@@ -48,7 +48,7 @@ public class JUnit5LoanDecision {
                 "\t]\n" +
                 "} ";
 
-        TestProvider testProvider = ConfigDefault.getTestProvider(ConfigDefault.PROD);
+        TestProvider testProvider = ConfigDefault.getTestProviderRemote(ConfigDefault.PROD);
 
         for (String chunk : testProvider.exportNWise(ConfigDefault.F_LOAN_2, TypeExport.Custom, ParamsNWise.create().template(template))) {
             System.out.println(chunk);

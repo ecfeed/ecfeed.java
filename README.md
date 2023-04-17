@@ -113,7 +113,7 @@ public class JUnitStructure {
 
     static Iterable<Object[]> testProviderNWise() {
         TestProvider testProvider = TestProvider.create("XXXX-XXXX-XXXX-XXXX-XXXX");
-        return testProvider.generateNWise("com.example.test.structure", ParamsNWise.create().source(Source.class));
+        return testProvider.generateNWise("com.example.test.structure", ParamsNWise.create().typesDefinitionsSource(Source.class));
     }
 
     @ParameterizedTest
@@ -209,7 +209,7 @@ Arguments:
 - *feedback* - A flag denoting whether feedback should be sent beck to the generator. By default, this functionality is switched off.
 - *label* - An additional label associated with feedback.
 - *custom* - An additional map ('Map<String, String>') with custom elements associated with feedback.
-- *source* - Classes or packages where custom definitions of the model structures can be found. Note, that nested packages are included as well.
+- *typesDefinitionsSource* - Classes or packages where custom definitions of the model structures can be found. Note, that nested packages are included as well.
 
 ```java
 String[] constraints = new String[]{ "constraint" };
@@ -227,8 +227,8 @@ Param.ParamsNWise config = new Param.ParamsNWise()
         .n(3)
         .feedback()
         .label("label")
-        .source(Source1.class, Source2.class)
-        .source("com.example.source.a", "com.example.source.b")
+        .typesDefinitionsSource(Source1.class, Source2.class)
+        .typesDefinitionsSource("com.example.source.a", "com.example.source.b")
         .custom(custom);
 
 testProvider.generateNWise("QuickStart.test", config)
@@ -276,7 +276,7 @@ Arguments:
 - *feedback* - See 'generateNWise'.
 - *label* - See 'generateNWise'.
 - *custom* - See 'generateNWise'.
-- *source* - See 'generateNWise'.
+- *typesDefinitionsSource* - See 'generateNWise'.
 
 ### public Iterable<Object[]> generateRandom(String method, Param.ParamsRandom config)
 
@@ -292,7 +292,7 @@ Arguments:
 - *feedback* - See 'generateNWise'.
 - *label* - See 'generateNWise'.
 - *custom* - See 'generateNWise'.
-- *source* - See 'generateNWise'.
+- *typesDefinitionsSource* - See 'generateNWise'.
 
 ### public Iterable<Object[]> generateStatic(String method, Param.ParamsStatic config)
 
@@ -304,7 +304,7 @@ Arguments:
 - *feedback* - See 'generateNWise'.
 - *label* - See 'generateNWise'.
 - *custom* - See 'generateNWise'.
-- *source* - See 'generateNWise'.
+- *typesDefinitionsSource* - See 'generateNWise'.
 
 ## Export calls
 
