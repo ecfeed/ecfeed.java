@@ -13,8 +13,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 @ExtendWith(TestHandleExtension.class)
 public class JUnit5Extension {
 
+    private static ConfigDefault.Stage stage = ConfigDefault.Stage.PROD;
+
     static Iterable<Object[]> method() {
-        return ConfigDefault.getTestProviderRemote(ConfigDefault.PROD).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create().feedback());
+        return ConfigDefault.getTestProviderRemote(stage).generateNWise(ConfigDefault.F_10x10, ParamsNWise.create().feedback());
     }
 
     @ParameterizedTest
