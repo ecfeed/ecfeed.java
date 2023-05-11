@@ -12,6 +12,7 @@ import com.ecfeed.type.TypeGenerator;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +29,17 @@ public class TestProvider {
     private DataSessionConnection dataSessionConnection;
     private ConnectionHandler connectionHandler;
 
+    private final List<Exception> exceptions = new ArrayList<>();
+
     private TestProvider(String model, Map<String, String> config) {
 
         connectionHandler = Factory.getConnectionHandler();
 
         setup(model, config);
+    }
+
+    public List<Exception> getExceptions() {
+        return exceptions;
     }
 
     /**
@@ -124,12 +131,14 @@ public class TestProvider {
         new Thread(() -> {
             try {
                 connectionHandler.processChunkStream(iterator, connectionHandler.getChunkStreamForTestData(dataSession));
+            } catch (Exception e) {
+                exceptions.add(e);
             } finally {
                 iterator.terminate();
             }
         }).start();
 
-        validate(iterator, generator);
+        validate(iterator);
 
         return iterator;
     }
@@ -378,12 +387,14 @@ public class TestProvider {
         new Thread(() -> {
             try {
                 connectionHandler.processChunkStream(iterator, connectionHandler.getChunkStreamForTestData(dataSession));
+            } catch (Exception e) {
+                exceptions.add(e);
             } finally {
                 iterator.terminate();
             }
         }).start();
 
-        validate(iterator, generator);
+        validate(iterator);
 
         return iterator;
     }
@@ -636,7 +647,7 @@ public class TestProvider {
 
     }
 
-    private void validate(IterableTestQueue<?> iterator, TypeGenerator generator) {
+    private void validate(IterableTestQueue<?> iterator) {
         int timeout = 0;
 
         do {
@@ -652,12 +663,18 @@ public class TestProvider {
 
         } while (timeout < ITERATOR_TIMEOUT);
 
-        if (generator == TypeGenerator.Static) {
-            throw new IllegalArgumentException("Empty test set error! " +
-                    "Please check if the name of the requested test suite is correct!");
+        validateError();
+    }
+
+    private void validateError() {
+        var data = getExceptions();
+
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("The generator stream does not contain any data. Please check if connection parameters are correct.");
+        } else if (data.size() == 1) {
+            throw new RuntimeException(data.get(0));
         } else {
-            throw new IllegalArgumentException("The generator stream does not contain any data!" +
-                    "Please check if connection parameters are correct, e.g. address, keystore, model, method, etc.");
+            throw new RuntimeException("Multiple errors occurred! To investigate them in more detail use the 'getExceptions' method.");
         }
     }
 

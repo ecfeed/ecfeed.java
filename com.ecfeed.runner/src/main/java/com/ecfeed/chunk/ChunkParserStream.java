@@ -40,6 +40,10 @@ public class ChunkParserStream implements ChunkParser<Object[]> {
             throw new RuntimeException("The data received from the generator is erroneous!");
         }
 
+        if (json.keySet().contains(ConfigDefault.Key.error)) {
+            parseError(json);
+        }
+
         if (json.keySet().contains(ConfigDefault.Key.reqTestInfoCase)) {
             return parseTestCase(json);
         }
@@ -53,6 +57,12 @@ public class ChunkParserStream implements ChunkParser<Object[]> {
         }
 
         return Optional.empty();
+    }
+
+    private void parseError(JSONObject json) {
+        var message = json.getString(ConfigDefault.Key.error);
+
+        throw new RuntimeException(message);
     }
 
     private Optional<Object[]> parseStatus(JSONObject json) {

@@ -160,14 +160,24 @@ public class DataSessionFacadeDefault implements DataSessionFacade {
         builder.append("?");
         builder.append(ConfigDefault.Key.reqDataRequestType).append("=").append(type);
         builder.append("&");
-        builder.append(ConfigDefault.Key.reqDataClient).append("=").append(ConfigDefault.Value.parClient);
-        builder.append("&");
         builder.append(ConfigDefault.Key.reqDataRequest).append("=").append(generateURLForTestDataRequest());
+        builder.append("&");
+        builder.append(ConfigDefault.Key.reqDataClient).append("=").append(ConfigDefault.Value.parClient);
+
+        if (data.getModel().equals("TestUuid11")) {
+            builder.append("&clientType=localTestRap");
+
+        }
     }
 
     private void generateURLForFeedbackCore(StringBuilder builder) {
 
         builder.append(getHttpAddress()).append("/").append(ConfigDefault.Key.urlFeedback);
+
+        if (data.getModel().equals("TestUuid11")) {
+            builder.append("?clientType=localTestRap");
+
+        }
     }
 
     private void generateURLForFeedbackParameters(StringBuilder builder) { }

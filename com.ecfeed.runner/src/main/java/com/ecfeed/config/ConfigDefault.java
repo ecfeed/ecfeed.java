@@ -111,6 +111,8 @@ public final class ConfigDefault {
         final public static String certClient = "connection";
         final public static String certServer = "ca";
 
+        final public static String error = "error";
+
         final public static List<String> userAllowedKeys = Arrays.asList(
                 parN, parCoverage, parLength, parDuplicates, parAdaptive, parConstraints, parChoices, parTestSuites, parFeedback, parCustom, parTestSessionLabel, parDataTemplate, parSourceClass, parSourcePackage
         );
