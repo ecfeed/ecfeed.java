@@ -20,6 +20,8 @@ public class DataSession {
     private final String method;
     private final String model;
 
+    private final String runner;
+
     private final StructureInitializer initializer = new StructureInitializerDefault();
 
     private List<String> argumentTypes = new ArrayList<>();
@@ -46,9 +48,23 @@ public class DataSession {
 
     private DataSession(DataSessionConnection connection, String model, String method, TypeGenerator generator) {
         this.connection = connection;
-        this.model = model;
         this.method = method;
         this.generator = generator;
+
+        if (model.contains(":")) {
+            var elements = model.split(":");
+
+            if (elements.length == 2) {
+                this.model = elements[0];
+                this.runner = elements[1];
+            } else {
+                this.model = elements[0];
+                this.runner = "";
+            }
+        } else {
+            this.model = model;
+            this.runner = "";
+        }
     }
 
     public static DataSession create(DataSessionConnection connection, String model, String method, TypeGenerator generatorType) {
@@ -79,6 +95,11 @@ public class DataSession {
     public String getModel() {
 
         return model;
+    }
+
+    public String getRunner() {
+
+        return runner;
     }
 
     public StructureInitializer getInitializer() {

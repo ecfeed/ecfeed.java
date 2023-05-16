@@ -134,7 +134,7 @@ public class ConnectionHandlerDefault implements ConnectionHandler {
             HttpResponse httpResponse = httpClient.execute(httpGet);
             return httpResponse.getEntity().getContent();
         } catch (IOException e) {
-            throw new IllegalArgumentException("The connection was closed (the generator address might be erroneous)!", e);
+            throw new IllegalArgumentException("The connection was closed! The generator address might be erroneous.", e);
         }
     }
 

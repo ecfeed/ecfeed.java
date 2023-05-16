@@ -7,15 +7,16 @@ import java.util.Map;
 
 public class ConfigDefault {
 
-    public enum Stage { PROD, DEVELOP, LOCAL};
+    public enum Stage { PROD, DEVELOP, LOCAL_BASIC, LOCAL_TEAM};
 
     public static String KEYSTORE_PROD = "C:\\Users\\kskor\\.ecfeed\\security.p12";
     public static String KEYSTORE_DEVELOP = "C:\\Users\\kskor\\.ecfeed\\security_dev.p12";
-    public static String KEYSTORE_LOCAL = "C:\\Users\\kskor\\.ecfeed\\security_rap.p12";
+    public static String KEYSTORE_LOCAL = "C:\\Users\\kskor\\.ecfeed\\security_dev.p12";
     public static final String MODEL_PROD = "IMHL-K0DU-2U0I-J532-25J9";
     public static final String MODEL_DEVELOP = "QERK-K7BW-ME4G-W3TT-NT32";
-    public static final String MODEL_LOCAL = "TestUuid11";
     public static final String MODEL_DUMMY = "XXXX-XXXX-XXXX-XXXX-XXXX";
+    public static final String MODEL_LOCAL_BASIC = "TestUuid11:basic";
+    public static final String MODEL_LOCAL_TEAM = "TestUuid11:team";
     public static final String GENERATOR_ADDRESS_PROD = "https://gen.ecfeed.com";
     public static final String GENERATOR_ADDRESS_DEVELOP = "https://develop-gen.ecfeed.com";
     public static final String GENERATOR_ADDRESS_LOCAL = "https://localhost:8090";
@@ -32,7 +33,8 @@ public class ConfigDefault {
         switch (stage) {
             case PROD: return getTestProviderRemoteProd();
             case DEVELOP: return getTestProviderRemoteDevelop();
-            case LOCAL: return getTestProviderLocal();
+            case LOCAL_BASIC: return getTestProviderLocalBasic();
+            case LOCAL_TEAM: return getTestProviderLocalTeam();
         }
 
         throw new IllegalArgumentException("The stage definition is erroneous!");
@@ -53,11 +55,57 @@ public class ConfigDefault {
         return TestProvider.create(ConfigDefault.MODEL_DEVELOP, configProvider);
     }
 
-    private static TestProvider getTestProviderLocal() {
+    private static TestProvider getTestProviderLocalBasic() {
         Map<String, String> configProvider = new HashMap<>();
         configProvider.put("generatorAddress", GENERATOR_ADDRESS_LOCAL);
         configProvider.put("keyStorePath", KEYSTORE_LOCAL);
 
-        return TestProvider.create(ConfigDefault.MODEL_LOCAL, configProvider);
+        return TestProvider.create(ConfigDefault.MODEL_LOCAL_BASIC, configProvider);
+    }
+
+    private static TestProvider getTestProviderLocalTeam() {
+        Map<String, String> configProvider = new HashMap<>();
+        configProvider.put("generatorAddress", GENERATOR_ADDRESS_LOCAL);
+        configProvider.put("keyStorePath", KEYSTORE_LOCAL);
+
+        return TestProvider.create(ConfigDefault.MODEL_LOCAL_TEAM, configProvider);
+    }
+
+    public static String getGeneratorAddress(Stage stage) {
+
+        switch (stage) {
+            case PROD: return GENERATOR_ADDRESS_PROD;
+            case DEVELOP: return GENERATOR_ADDRESS_DEVELOP;
+            case LOCAL_BASIC:
+            case LOCAL_TEAM:
+                return GENERATOR_ADDRESS_LOCAL;
+        }
+
+        return null;
+    }
+
+    public static String getKeystorePath(Stage stage) {
+
+        switch (stage) {
+            case PROD: return KEYSTORE_PROD;
+            case DEVELOP: return KEYSTORE_DEVELOP;
+            case LOCAL_BASIC:
+            case LOCAL_TEAM:
+                return KEYSTORE_LOCAL;
+        }
+
+        return null;
+    }
+
+    public static String getModel(Stage stage) {
+
+        switch (stage) {
+            case PROD: return MODEL_PROD;
+            case DEVELOP: return MODEL_DEVELOP;
+            case LOCAL_BASIC: return MODEL_LOCAL_BASIC;
+            case LOCAL_TEAM: return MODEL_LOCAL_TEAM;
+        }
+
+        return null;
     }
 }

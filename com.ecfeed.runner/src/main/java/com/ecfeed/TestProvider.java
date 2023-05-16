@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class provides connectivity with the ecFeed test generation service.
@@ -36,10 +37,6 @@ public class TestProvider {
         connectionHandler = Factory.getConnectionHandler();
 
         setup(model, config);
-    }
-
-    public List<Exception> getExceptions() {
-        return exceptions;
     }
 
     /**
@@ -667,15 +664,24 @@ public class TestProvider {
     }
 
     private void validateError() {
-        var data = getExceptions();
 
-        if (data.isEmpty()) {
+        if (exceptions.isEmpty()) {
             throw new IllegalArgumentException("The generator stream does not contain any data. Please check if connection parameters are correct.");
-        } else if (data.size() == 1) {
-            throw new RuntimeException(data.get(0));
+        } else if (exceptions.size() == 1) {
+            throw new RuntimeException(exceptions.get(0));
         } else {
-            throw new RuntimeException("Multiple errors occurred! To investigate them in more detail use the 'getExceptions' method.");
+            validateErrorMerge();
         }
+    }
+
+    private void validateErrorMerge() {
+        var message = new ArrayList<String>();
+
+        for (int i = 0 ; i < exceptions.size() ; i++) {
+            message.add(i + " - " + exceptions.get(i));
+        }
+
+        throw new RuntimeException("Multiple errors occurred!\n" + String.join("\n", message));
     }
 
     private String setupExtractGeneratorAddress(Map<String, String> config) {
@@ -721,15 +727,15 @@ public class TestProvider {
         Path keyStorePath = Paths.get(keyStoreAddress);
 
         if (!Files.exists(keyStorePath)) {
-            throw new IllegalArgumentException("The keystore does not exist: " + keyStorePath.toAbsolutePath());
+            throw new IllegalArgumentException("The keystore does not exist: " + keyStorePath.toAbsolutePath() + ".");
         }
 
         if (!Files.isReadable(keyStorePath)) {
-            throw new IllegalArgumentException("The keystore is not readable: " + keyStorePath.toAbsolutePath());
+            throw new IllegalArgumentException("The keystore is not readable: " + keyStorePath.toAbsolutePath() + ".");
         }
 
         if (!Files.isRegularFile(keyStorePath)) {
-            throw new IllegalArgumentException("The keystore file type is erroneous: " + keyStorePath.toAbsolutePath());
+            throw new IllegalArgumentException("The keystore file type is erroneous: " + keyStorePath.toAbsolutePath() + ".");
         }
 
         return keyStorePath;

@@ -164,9 +164,12 @@ public class DataSessionFacadeDefault implements DataSessionFacade {
         builder.append("&");
         builder.append(ConfigDefault.Key.reqDataClient).append("=").append(ConfigDefault.Value.parClient);
 
-        if (data.getModel().equals("TestUuid11")) {
-            builder.append("&clientType=localTestRap");
-
+        if (!data.getRunner().isBlank()) {
+            if (data.getRunner().equalsIgnoreCase("basic")) {
+                builder.append("&clientType=localTestRunner");
+            } else if (data.getRunner().equalsIgnoreCase("team")) {
+                builder.append("&clientType=localTestRunnerTeam");
+            }
         }
     }
 
@@ -174,9 +177,12 @@ public class DataSessionFacadeDefault implements DataSessionFacade {
 
         builder.append(getHttpAddress()).append("/").append(ConfigDefault.Key.urlFeedback);
 
-        if (data.getModel().equals("TestUuid11")) {
-            builder.append("?clientType=localTestRap");
-
+        if (!data.getRunner().isBlank()) {
+            if (data.getRunner().equalsIgnoreCase("basic")) {
+                builder.append("?clientType=localTestRunner");
+            } else if (data.getRunner().equalsIgnoreCase("team")) {
+                builder.append("?clientType=localTestRunnerTeam");
+            }
         }
     }
 
@@ -205,11 +211,11 @@ public class DataSessionFacadeDefault implements DataSessionFacade {
         String httpAddress = data.getHttpAddress();
 
         if (httpAddress == null) {
-            throw new IllegalArgumentException("The generator address is not defined");
+            throw new IllegalArgumentException("The generator address is not defined.");
         }
 
         if (!httpAddress.startsWith("https://")) {
-            throw new IllegalArgumentException("The generator address should start with https://");
+            throw new IllegalArgumentException("The generator address should start with https://.");
         }
 
         return httpAddress;

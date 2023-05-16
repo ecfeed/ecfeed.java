@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class JUnitStructure {
 
     static Iterable<Object[]> genNWise() {
-        return ConfigDefault.getTestProviderRemote(ConfigDefault.Stage.LOCAL).generateNWise(ConfigDefault.F_STRUCTURE, ParamsNWise.create()
+        return ConfigDefault.getTestProviderRemote(ConfigDefault.Stage.LOCAL_BASIC).generateNWise(ConfigDefault.F_STRUCTURE, ParamsNWise.create()
                         .feedback()
                         .typesDefinitionsSource(Source.class)
                         .label("NWise / Quantity - Single"));
