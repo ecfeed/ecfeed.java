@@ -86,8 +86,14 @@ public class StructureSetterDefault implements StructureSetter {
     }
 
     private String getSignatureDefinition(String signature) {
-        String[] argumentPairs = signature.split("[()]")[1].split(",");
+
+        if (signature.endsWith("()")) {
+            return signature;
+        }
+
         List<String> argumentTypes = new ArrayList<>();
+
+        String[] argumentPairs = signature.split("[()]")[1].split(",");
 
         for (var i = 0 ; i < argumentPairs.length ; i++) {
             String[] argumentParsed = argumentPairs[i].trim().split(" ");

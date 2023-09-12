@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class JUnit5FTest {
 
-    private static ConfigDefault.Stage stage = ConfigDefault.Stage.PROD;
+    private static ConfigDefault.Stage stage = ConfigDefault.Stage.LOCAL_BASIC;
 
     static Iterable<Object[]> genRandomQuantitySingle() {
         return ConfigDefault.getTestProviderRemote(stage).generateRandom(ConfigDefault.F_TEST, ParamsRandom.create()

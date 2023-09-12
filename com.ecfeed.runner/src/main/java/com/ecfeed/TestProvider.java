@@ -115,6 +115,10 @@ public class TestProvider {
             template = properties.get(ConfigDefault.Key.parDataTemplate).toString();
 
             properties.remove(ConfigDefault.Key.parDataTemplate);
+        } else if (typeExport == TypeExport.RFC_4180) {
+            template = "RFC 4180\nDelimiter:,\nExplicit:false\nNested:false";
+        } else if (typeExport == TypeExport.RFC_4627) {
+            template = "RFC 4627\nIndent:2\nExplicit:false\nNested:false";
         } else {
             template = typeExport.toString();
         }

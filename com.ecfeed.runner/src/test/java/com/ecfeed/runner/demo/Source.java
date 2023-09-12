@@ -24,6 +24,9 @@ public class Source {
         private Person delinquent;
         private int id;
 
+        public Data() {
+        }
+
         public Data(Person delinquent, int id) {
             this.delinquent = delinquent;
             this.id = id;
