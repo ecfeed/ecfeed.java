@@ -7,6 +7,9 @@ import com.ecfeed.type.TypeExport;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TemplateCSV {
 
     private static ConfigDefault.Stage stage = ConfigDefault.Stage.LOCAL_TEAM;
@@ -22,7 +25,8 @@ public class TemplateCSV {
     }
 
     static Iterable<String> expNWiseRFC4627() {
-        return ConfigDefault.getTestProviderRemote(stage).exportNWise(ConfigDefault.F_STRUCTURE, TypeExport.RFC_4627);
+
+        return ConfigDefault.getTestProviderRemote(stage).exportNWise(ConfigDefault.F_STRUCTURE, TypeExport.RFC_4627.setIndent(0));
     }
 
     static Iterable<String> expNWiseCSV() {
@@ -30,7 +34,8 @@ public class TemplateCSV {
     }
 
     static Iterable<String> expNWiseRFC4180() {
-        return ConfigDefault.getTestProviderRemote(stage).exportNWise(ConfigDefault.F_STRUCTURE, TypeExport.RFC_4180);
+
+        return ConfigDefault.getTestProviderRemote(stage).exportNWise(ConfigDefault.F_STRUCTURE, TypeExport.RFC_4180.setDelimiter(";"));
     }
 
     @ParameterizedTest
